@@ -24,6 +24,15 @@ The source repository does not include datasets, trained model files, evaluation
 
 Call Monitor inspects audio supplied by this browser; it is not connected to a phone network. Model performance is limited on held-out and out-of-distribution speech. Read the evaluation caveats before interpreting results.
 
+## Frontend stylesheet build
+
+The generated Tailwind stylesheet is committed and served locally; Node is not needed to run the app. If you change Tailwind classes or the theme, regenerate it with the locked development dependency:
+
+```powershell
+npm ci --ignore-scripts --no-audit --no-fund
+npm run build:css
+```
+
 ## Checks
 
 Run from the repository root:
@@ -41,6 +50,7 @@ node --check app/static/app-runtime.js
 - [Evaluation evidence and caveats](docs/AUDIT.md)
 - [Dataset protocol notes](docs/DATASET_NOTES.md)
 - [Authentication and deployment requirements](docs/AUTH_DEPLOY_PLAN.md)
+- [Local presentation/demo steps](docs/DEMO_GUIDE.md)
 
 ## Deployment status
 

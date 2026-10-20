@@ -1,0 +1,10 @@
+{
+  "name": "synthetic-voice-forensics-ui-assets",
+  "private": true,
+  "scripts": {
+    "build:css": "tailwindcss -c app/static/tailwind.config.cjs -i app/static/tailwind-input.css -o app/static/vendor/tailwind.css --minify"
+  },
+  "devDependencies": {
+    "tailwindcss": "3.4.17"
+  }
+}

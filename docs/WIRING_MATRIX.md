@@ -4,7 +4,7 @@ The active HTML views are in `app/static/pages/`; `app/static/app-runtime.js` bi
 
 | View/control | Expected behavior | Data/API | Current evidence |
 |---|---|---|---|
-| Dashboard totals, percentages, graph, recent rows | Show saved account activity; empty account has zero/empty values | `GET /api/dashboard/summary`, `GET /api/history`, `GET /api/model/info` | Full API suite passes; post-rename Edge route pass showed READY and no backend error; full viewport sweep remains limited |
+| Dashboard totals, percentages, graph, recent rows | Show saved account activity; empty account has zero/empty values | `GET /api/dashboard/summary`, `GET /api/history`, `GET /api/model/info` | Full API suite passes; post-rename Edge route pass showed READY and no backend error; document width matched viewport at 375/768/1280 px across all seven routes |
 | File analysis, profile picker, result, JSON download | Validate/upload audio; show actual model score and details; export current result | `POST /api/analyze/upload`, `GET /api/model/info` | API suite passes; Edge upload returned a measured result and persisted an Upload history row |
 | Live Check: consent, source, start/stop, VAD and score graph | Stream captured PCM16 audio to the FoR window model; persist completed session | AudioWorklet, one-use ticket API, `WS /ws/live` | Full suite passes; headless Edge fake-audio stream produced model windows and history; physical microphone remains **NOT VERIFIED** |
 | Call Monitor: microphone/shared tab/demo, start/stop | Monitor browser-provided audio only; show live model windows and saved session | `GET /api/demo/samples`, `GET /api/demo/audio/{id}`, `POST /api/demo/analyze/{id}`, `WS /ws/live` | Headless Edge demo replay completed and saved a 3.9 second session with two windows; shared-tab/system audio and physical devices remain **NOT VERIFIED** |
@@ -21,11 +21,11 @@ python scripts/scan_no_mock.py
 node --check app/static/app-runtime.js
 ```
 
-Latest recorded local output is in [Project status](PROJECT_STATE.md). These checks do not replace physical-device, shared-tab audio, full viewport, offline, or hosted deployment acceptance.
+Latest recorded local output is in [Project status](PROJECT_STATE.md). The Tailwind stylesheet is generated locally and served without the Tailwind CDN; Google Fonts, Material Symbols, and the logo still use remote resources. These checks do not replace physical-device, shared-tab audio, full viewport, fully offline, or hosted deployment acceptance.
 
 ## Limitations
 
 - The legacy FoR held-out test result is weak; the score is not proof of authenticity. See [evaluation evidence](AUDIT.md).
 - The ASVspoof complete-clip model is not the streaming model. Do not label one as the other.
 - Monitoring reads a browser audio stream on this device. It has no phone-network integration.
-- Physical microphone, shared-tab capture, API-down rendering, offline rendering, and full responsive viewport coverage are **NOT VERIFIED**.
+- Physical microphone, shared-tab capture, API-down rendering, offline rendering, and full offline rendering is **NOT VERIFIED**; responsive width check passed at 375/768/1280 px across all seven routes.

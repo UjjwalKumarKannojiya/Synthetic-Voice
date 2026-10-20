@@ -8,7 +8,7 @@ Last updated: 2026-10-20. This page is the short, current handoff; older working
 - File analysis supports the legacy FoR window model and the ASVspoof complete-clip model. Live Check and Call Monitor use the FoR window model over a browser audio stream.
 - Model weights, evaluation reports, dataset audio, and demo audio are intentionally excluded from Git. A checkout without matching local artifacts cannot perform detector inference.
 - Before the page-folder rename, `.venv\Scripts\python.exe -m pytest -q --basetemp .pytest-tmp-r8-final` returned `53 passed, 2 warnings in 93.10s`; both warnings were librosa short-input `n_fft=1024` warnings. After the rename, the full suite returned `53 passed, 2 warnings in 66.31s`; details and browser acceptance are recorded below.
-- Post-rename Edge acceptance covered all seven routes plus upload, live fake-audio stream, call-monitor demo replay, history source filter, settings save, account menu, and theme. Physical microphone, shared-tab/system audio, and additional viewport sizes remain **NOT VERIFIED**.
+- Post-rename Edge acceptance covered all seven routes plus upload, live fake-audio stream, call-monitor demo replay, history source filter, settings save, account menu, and theme. Physical microphone and shared-tab/system audio remain **NOT VERIFIED**.
 
 ## Research limits
 
@@ -80,5 +80,21 @@ offline use, and Vercel/PostgreSQL remain **NOT VERIFIED**.
 - Local site after restart: `/api/health` returned HTTP 200 with `model_loaded: true`; `/static/app-runtime.js` returned HTTP 200 (97,204 bytes); direct `/static/pages/dashboard.html` returned HTTP 404; unauthenticated `/dashboard` returned HTTP 303 to login.
 - Headless Edge opened all seven authenticated routes without backend error panels or JS exceptions. A file upload returned a measured FoR result and persisted history; the Upload filter kept its record; Settings Save displayed its API-backed success toast; account menu and theme toggles worked.
 - A fake-audio browser stream completed Live Check, produced model windows, and persisted history. Call Monitor demo replay completed a 3.9 second clip, produced two live FoR windows, saved history, and revealed the separate ASVspoof complete-clip result afterward. Disposable test accounts were deleted (HTTP 200).
-- Physical microphone and shared-tab/system audio are still **NOT VERIFIED**. The app is running locally at `http://127.0.0.1:8000/`; this does not clear the Vercel deployment gate.
+- Physical microphone and shared-tab/system audio are still **NOT VERIFIED**. Responsive checks at 375, 768, and 1280 px were completed later (see the R8 local stylesheet section). The app is running locally at `http://127.0.0.1:8000/`; this does not clear the Vercel deployment gate.
 - This later acceptance supersedes the earlier headless microphone-start failure recorded above: fake-audio Live Check succeeded in the later run. Physical devices still need interactive-browser verification.
+
+
+## R8 local stylesheet and final regression — 2026-10-20
+
+- Reused the exact shared Tailwind theme from all seven existing page templates and generated a checked-in local CSS bundle. The pages no longer request Tailwind from `cdn.tailwindcss.com`; no layout markup or detector logic was replaced for this change. `package.json` and `package-lock.json` pin the build-only Tailwind CLI. Regenerate with `npm ci --ignore-scripts --no-audit --no-fund` then `npm run build:css`; normal app startup does not require Node.
+- `npm run build:css` output: `Done in 751ms.` (Tailwind warns its bundled Browserslist data is outdated.) The bundle is 31,854 bytes. External Google Fonts/Material Symbols and the hosted logo remain network resources, so full offline rendering is **NOT VERIFIED**.
+- Final regression command `.venv\Scripts\python.exe -m pytest -q --basetemp .pytest-tmp-r8-final-css` returned `53 passed, 2 warnings in 92.21s`; warnings are librosa short-input `n_fft=1024` warnings. `scripts/scan_no_mock.py` reported no mock patterns in 32 active app files and confirmed authenticated page routing. Node syntax checks, Python compilation, and `git diff --check` exited 0.
+- Post-build `.local-notes\browser_demo_acceptance.py` Edge run opened all seven authenticated routes without backend error panels; upload and history, settings save, live fake-audio stream, Call Monitor demo replay, account menu/theme toggles all completed. Browser JS exceptions were `[]`; disposable account cleanup returned HTTP 200. A second Edge run at 375, 768, and 1280 px found `document.documentElement.scrollWidth == innerWidth` on all seven routes at each width; the 375 px dashboard screenshot was visually inspected. Physical microphone, shared-tab/system audio, full offline use, and hosted Vercel behavior remain **NOT VERIFIED**.
+
+## Current streaming evaluation command — 2026-10-20
+
+`.venv\Scripts\python.exe scripts\stream_eval.py` exited 0. It scored 100 files from the validation manifest (first 50 per class): file accuracy 0.99, ROC-AUC 0.9976, EER 0.02, FPR 0.02, FNR 0.00; file latency mean 15.69 ms, median 3.80 ms, p95 4.61 ms. This is a small validation sample, not the official test set or a generalization claim. The separately reported locked 50-file `demo_holdout` was scored using the ASVspoof complete-clip model (not the live FoR stream model): accuracy 0.88, ROC-AUC 0.9536, EER 0.16, FPR 0, FNR 0.24; mean latency 4.33 ms. It was not used for fitting, validation, threshold selection, or tuning. The weak FoR held-out test result above remains the relevant warning against claiming reliable authenticity detection.
+
+## Remaining gate / next phase
+
+R8 is partially complete; do not mark offline or responsive acceptance complete based on these checks. Run the manual physical-microphone and shared-tab checklist, verify 375/768/1280 px layouts and offline behavior, then complete the R9 checklist. Push only after reviewing the exact staged paths and remote-visible history for sensitive files. Production/Vercel deployment still requires the user's hosted PostgreSQL and private artifact configuration, followed by an actual preview acceptance.
