@@ -23,7 +23,7 @@ MongoDB is not supported by the current relational schema or migrations. Use Pos
 3. Private HTTPS delivery for the generated model bundle. The packaging script creates a small archive from the local trained models and reports; it excludes datasets and is written only to ignored `.local-notes/`.
 4. Hosted tests for cold start, upload limits, database connections, and authenticated WebSocket live monitoring.
 
-The API uses Python WebSockets for live scoring. Vercel's current material describes WebSockets as beta, while its Limits page conflicts about support, so local tests do not establish hosted compatibility. If the Vercel preview cannot sustain that stream, use a long-running WebSocket-capable Python host. Do not claim deployment readiness until each required gate has actual preview evidence.
+The API uses Python WebSockets for live scoring. Vercel's WebSocket knowledge-base article says Functions natively support WebSockets, while its Limits page still says Functions cannot act as a WebSocket server. These official pages conflict, so local tests do not establish hosted compatibility. If Preview cannot sustain the stream, use a long-running WebSocket-capable Python host. Do not claim deployment readiness until each required gate has actual Preview evidence.
 
 See [the Vercel deployment runbook](VERCEL_DEPLOY.md) for the private bundle, environment variables, build exclusions, and preview acceptance steps.
 
