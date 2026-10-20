@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "verdict-uncertain-base": "#D97706", "on-background": "#0b1c30", "on-tertiary-container": "#c7d6ee", "secondary-fixed-dim": "#bec6e0", "on-primary": "#ffffff", "tertiary-container": "#4f5d71", "primary-container": "#1d4ed8", "surface-container": "#e5eeff", "on-secondary-fixed-variant": "#3f465c", "on-surface-variant": "#434655", "inverse-on-surface": "#eaf1ff", "surface-panel": "#FFFFFF", "error": "#ba1a1a", "on-error-container": "#93000a", "border-subtle": "#E2E8F0", "outline-variant": "#c4c5d7", "background": "#f8f9ff", "tertiary-fixed-dim": "#b9c7df", "primary-fixed": "#dce1ff", "verdict-real-base": "#059669", "surface-dim": "#cbdbf5", "surface-sidebar": "#0F172A", "on-surface": "#0b1c30", "waveform-threshold": "#94A3B8", "verdict-uncertain-border": "#FDE68A", "waveform-active": "#2563EB", "on-primary-fixed": "#001551", "on-error": "#ffffff", "on-secondary-container": "#5c647a", "surface-canvas": "#F8FAFC", "on-primary-fixed-variant": "#0039b5", "secondary-container": "#dae2fd", "tertiary-fixed": "#d5e3fc", "error-container": "#ffdad6", "verdict-synthetic-base": "#DC2626", "verdict-real-border": "#A7F3D0", "surface-container-lowest": "#ffffff", "surface-tint": "#2151da", "surface": "#f8f9ff", "surface-container-highest": "#d3e4fe", "primary": "#0037b0", "primary-fixed-dim": "#b7c4ff", "surface-container-high": "#dce9ff", "on-secondary": "#ffffff", "secondary-fixed": "#dae2fd", "inverse-primary": "#b7c4ff", "surface-variant": "#d3e4fe", "verdict-uncertain-surface": "#FFFBEB", "verdict-synthetic-border": "#FECACA", "outline": "#747686", "tertiary": "#374559", "verdict-real-surface": "#ECFDF5", "on-tertiary": "#ffffff", "on-tertiary-fixed-variant": "#3a485b", "border-strong": "#CBD5E1", "surface-sidebar-hover": "#1E293B", "secondary": "#565e74", "inverse-surface": "#213145", "surface-bright": "#f8f9ff", "verdict-synthetic-surface": "#FEF2F2", "on-tertiary-fixed": "#0d1c2e", "surface-container-low": "eff4ff", "on-secondary-fixed": "#131b2e", "on-primary-container": "#cad3ff" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-sm": "0.5rem", "space-md": "1rem", "gutter": "1.5rem", "space-lg": "1.5rem", "space-xl": "2rem", "margin": "2rem", "space-xs": "0.25rem" }, "fontFamily": { "label-numeric": [ "JetBrains Mono" ], "label-code": [ "JetBrains Mono" ], "headline-lg": [ "Inter" ], "body-lg": [ "Inter" ], "badge-label": [ "Inter" ], "headline-sm": [ "Inter" ], "headline-md": [ "Inter" ], "body-sm": [ "Inter" ], "body-md": [ "Inter" ] }, "fontSize": { "label-numeric": [ "0.875rem", { "lineHeight": "1.25rem", "letterSpacing": "-0.01em", "fontWeight": "500" } ], "label-code": [ "0.75rem", { "lineHeight": "1rem", "fontWeight": "400" } ], "headline-lg": [ "1.75rem", { "lineHeight": "2.25rem", "letterSpacing": "-0.02em", "fontWeight": "600" } ], "body-lg": [ "1rem", { "lineHeight": "1.5rem", "fontWeight": "400" } ], "badge-label": [ "0.75rem", { "lineHeight": "1rem", "letterSpacing": "0.025em", "fontWeight": "600" } ], "headline-sm": [ "1rem", { "lineHeight": "1.5rem", "letterSpacing": "-0.01em", "fontWeight": "600" } ], "headline-md": [ "1.25rem", { "lineHeight": "1.75rem", "letterSpacing": "-0.015em", "fontWeight": "600" } ], "body-sm": [ "0.75rem", { "lineHeight": "1rem", "fontWeight": "400" } ], "body-md": [ "0.875rem", { "lineHeight": "1.25rem", "fontWeight": "400" } ] } } } };</script></head><body class="bg-surface-canvas font-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-full w-[240px] bg-surface-sidebar z-50 flex flex-col justify-between py-6 px-4"><div class="flex flex-col gap-6"><div class="flex flex-col gap-3 px-2"><div class="flex items-center gap-3"><img alt="VoiceGuard Forensics Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1VB-RLDeoXhUydQDzSW3_qWbhu-b4-EBRxuUnVJ13SFGnSmVUagXxlVV0_cVu2Q-jh0fF0R-wgV0IClrej-XbmltkyEOIR5CjJ5sdHgDFO5bzWxy2bHcpU1wDdPfxa--aEoY3G6HW6ke1aQGeG4WQR7ZXXhKG9heKu4qPfsxQZNdpzlEMZOdFqb6w1hLBvdr-qXM6qBqhkIQok-CXYeHtBSAtzNZIaXqx015iymlbz4ALfFR2EL2W-Clw"/><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-surface-panel tracking-tight leading-none">VoiceGuard</span><span class="font-label-code text-label-code text-waveform-threshold tracking-wider uppercase leading-snug">Forensics</span></div></div><div class="inline-flex items-center self-start"><span class="px-2 py-0.5 rounded bg-surface-sidebar-hover text-waveform-threshold font-badge-label text-[10px] tracking-wider uppercase border border-border-strong/20">RESEARCH PROTOTYPE</span></div></div><nav class="flex flex-col gap-1" data-active-classes="bg-primary text-on-primary font-medium shadow-sm"><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-waveform-threshold hover:bg-surface-sidebar-hover hover:text-surface-panel transition-all font-body-md text-body-md" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px]">grid_view</span><span>Dashboard</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-waveform-threshold hover:bg-surface-sidebar-hover hover:text-surface-panel transition-all font-body-md text-body-md" data-path="analyze-file" href="#"><span class="material-symbols-outlined text-[20px]">audio_file</span><span>Analyze File</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-waveform-threshold hover:bg-surface-sidebar-hover hover:text-surface-panel transition-all font-body-md text-body-md" data-path="live-check" href="#"><span class="material-symbols-outlined text-[20px]">mic</span><span>Live Check</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-waveform-threshold hover:bg-surface-sidebar-hover hover:text-surface-panel transition-all font-body-md text-body-md" data-path="call-monitor" href="#"><span class="material-symbols-outlined text-[20px]">phone_in_talk</span><span>Call Monitor</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-waveform-threshold hover:bg-surface-sidebar-hover hover:text-surface-panel transition-all font-body-md text-body-md" data-path="history" href="#"><span class="material-symbols-outlined text-[20px]">history</span><span>History</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-waveform-threshold hover:bg-surface-sidebar-hover hover:text-surface-panel transition-all font-body-md text-body-md" data-path="model-and-evaluation" href="#"><span class="material-symbols-outlined text-[20px]">analytics</span><span>Model &amp; Evaluation</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-waveform-threshold hover:bg-surface-sidebar-hover hover:text-surface-panel transition-all font-body-md text-body-md" data-path="settings" href="#"><span class="material-symbols-outlined text-[20px]">settings</span><span>Settings</span></a></nav></div><div class="px-2 pt-4 border-t border-border-strong/10"><div class="flex items-center justify-between text-waveform-threshold font-label-code text-label-code"><span>KERNEL STATUS</span><span class="font-label-numeric text-label-numeric text-verdict-real-base">ONLINE</span></div></div></aside><div class="pl-[240px]"><header class="fixed top-0 left-[240px] right-0 h-16 bg-surface-panel z-40 border-b border-border-subtle flex items-center justify-between px-8"><div class="flex items-center gap-4"><img alt="VoiceGuard Forensics Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1VB-RLDeoXhUydQDzSW3_qWbhu-b4-EBRxuUnVJ13SFGnSmVUagXxlVV0_cVu2Q-jh0fF0R-wgV0IClrej-XbmltkyEOIR5CjJ5sdHgDFO5bzWxy2bHcpU1wDdPfxa--aEoY3G6HW6ke1aQGeG4WQR7ZXXhKG9heKu4qPfsxQZNdpzlEMZOdFqb6w1hLBvdr-qXM6qBqhkIQok-CXYeHtBSAtzNZIaXqx015iymlbz4ALfFR2EL2W-Clw"/><span class="font-headline-md text-headline-md text-on-surface">VoiceGuard Forensics</span></div><div class="flex items-center gap-6"><div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-canvas border border-border-subtle"><span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-verdict-real-base opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-verdict-real-base"></span></span><span class="font-body-sm text-body-sm text-on-surface font-medium">Model loaded</span><span class="h-3 w-[1px] bg-border-strong mx-1"></span><span class="font-label-code text-label-code text-secondary">v1.4.2 · FoR-2s</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="w-full pt-16 bg-surface-canvas min-h-screen"><div class="flex flex-col w-full">
+<!-- Sub-Header & Metadata Strip -->
+<div class="px-8 py-5 bg-surface-panel shadow-sm mb-6">
+<div class="max-w-[1400px] mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<div class="flex items-center gap-3">
+<span class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Analysis History &amp; Case Archive</span>
+<span class="px-2.5 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-badge-label text-badge-label uppercase tracking-wider">SEC-LEVEL 4</span>
+</div>
+<p class="font-body-md text-body-md text-secondary mt-1">Archived forensic telemetry, live verification sessions, and batch audio inspections.</p>
+</div>
+<div class="flex items-center gap-3 self-start md:self-auto">
+<button class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-surface-canvas text-on-surface hover:bg-surface-container font-body-md text-body-md font-medium transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px] text-waveform-threshold">download</span>
+<span>Export CSV</span>
+</button>
+<button class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-container text-on-primary hover:bg-primary font-body-md text-body-md font-medium transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px]">terminal</span>
+<span>Batch Telemetry Export</span>
+</button>
+</div>
+</div>
+</div>
+<div class="px-8 max-w-[1400px] mx-auto w-full flex flex-col gap-6 pb-12">
+<!-- Filter Control Hub -->
+<div class="bg-surface-panel rounded-xl p-4 shadow-sm flex flex-col lg:flex-row gap-4 justify-between items-stretch lg:items-center">
+<!-- Source Segmented Control -->
+<div class="flex items-center bg-surface-canvas p-1 rounded-lg overflow-x-auto text-nowrap">
+<button class="px-3 py-1.5 rounded bg-surface-panel text-on-surface font-body-sm text-body-sm font-semibold shadow-sm flex items-center gap-2" type="button">
+<span>All Sources</span>
+<span class="font-label-numeric text-label-code text-waveform-threshold">1,428</span>
+</button>
+<button class="px-3 py-1.5 rounded text-secondary hover:text-on-surface font-body-sm text-body-sm font-medium flex items-center gap-2" type="button">
+<span>File Upload</span>
+<span class="font-label-numeric text-label-code text-waveform-threshold">840</span>
+</button>
+<button class="px-3 py-1.5 rounded text-secondary hover:text-on-surface font-body-sm text-body-sm font-medium flex items-center gap-2" type="button">
+<span>Live Check</span>
+<span class="font-label-numeric text-label-code text-waveform-threshold">342</span>
+</button>
+<button class="px-3 py-1.5 rounded text-secondary hover:text-on-surface font-body-sm text-body-sm font-medium flex items-center gap-2" type="button">
+<span>Call Monitor</span>
+<span class="font-label-numeric text-label-code text-waveform-threshold">246</span>
+</button>
+</div>
+<!-- Filters & Date Selector -->
+<div class="flex flex-wrap items-center gap-3">
+<!-- Verdict Dropdown simulation -->
+<div class="relative inline-flex items-center">
+<select class="appearance-none bg-surface-canvas text-on-surface font-body-sm text-body-sm pl-3 pr-8 py-2 rounded-lg cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-container shadow-sm">
+<option>All Verdicts</option>
+<option>Likely Real</option>
+<option>Uncertain</option>
+<option>Likely Synthetic</option>
+</select>
+<span class="material-symbols-outlined absolute right-2 pointer-events-none text-[18px] text-waveform-threshold">expand_more</span>
+</div>
+<!-- Date Range Filter -->
+<div class="inline-flex items-center gap-2 px-3 py-2 bg-surface-canvas text-on-surface rounded-lg font-body-sm text-body-sm shadow-sm cursor-pointer hover:bg-surface-container">
+<span class="material-symbols-outlined text-[16px] text-waveform-threshold">calendar_today</span>
+<span class="font-medium">Last 30 Days</span>
+<span class="font-label-code text-label-code text-secondary">(Oct 1 – Oct 31, 2024)</span>
+</div>
+<!-- Search Input -->
+<div class="relative flex-1 min-w-[240px]">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-[18px] text-waveform-threshold">search</span>
+<input class="w-full bg-surface-canvas text-on-surface placeholder:text-secondary font-body-sm text-body-sm pl-9 pr-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-container shadow-sm" placeholder="Search by session ID, filename, or case ref..." type="text"/>
+</div>
+</div>
+</div>
+<!-- Main Forensic Inspection Layout (Table Left ~65%, Drawer Right ~35%) -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+<!-- Table Section (xl:col-span-8) -->
+<div class="xl:col-span-8 flex flex-col bg-surface-panel rounded-xl shadow-sm overflow-hidden">
+<div class="px-5 py-4 flex items-center justify-between bg-surface-panel">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-[20px]">folder_open</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Case Registry Ledger</h2>
+</div>
+<span class="font-label-code text-label-code text-secondary tracking-wider uppercase">BUFFER POOL: SYNCED</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="bg-surface-canvas font-badge-label text-[11px] uppercase tracking-wider text-secondary">
+<th class="py-3 px-4 font-semibold">Date/Time</th>
+<th class="py-3 px-4 font-semibold">Source</th>
+<th class="py-3 px-4 font-semibold">Name / Reference</th>
+<th class="py-3 px-3 font-semibold text-right">Duration</th>
+<th class="py-3 px-4 font-semibold">Verdict</th>
+<th class="py-3 px-3 font-semibold text-right">Mean</th>
+<th class="py-3 px-3 font-semibold text-right">Max</th>
+<th class="py-3 px-3 font-semibold text-right">Latency</th>
+<th class="py-3 px-3 font-semibold text-center">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-canvas font-body-md text-body-md">
+<!-- Row 1: Selected Record -->
+<tr class="bg-surface-container-low hover:bg-surface-container transition-colors cursor-pointer ring-1 ring-primary-container/20">
+<td class="py-3 px-4 font-label-code text-label-code text-on-surface whitespace-nowrap">
+<div class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-verdict-synthetic-base"></span>
+<span class="font-medium">Today 14:32:10</span>
+</div>
+</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-canvas text-secondary font-label-code text-[11px]">
+<span class="material-symbols-outlined text-[13px]">upload_file</span>
+<span>Upload</span>
+</span>
+</td>
+<td class="py-3 px-4 font-medium text-on-surface truncate max-w-[170px]" title="voicemail_ext_882.wav">
+                  voicemail_ext_882.wav
+                </td>
+<td class="py-3 px-3 font-label-numeric text-label-numeric text-right text-secondary whitespace-nowrap">
+                  28.5s
+                </td>
+<td class="py-3 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-verdict-synthetic-surface text-verdict-synthetic-base font-badge-label text-badge-label">
+<span class="material-symbols-outlined text-[14px]">close</span>
+<span>Likely Synthetic</span>
+</span>
+</td>
+<td class="py-3 px-3 font-label-numeric text-label-numeric text-right font-medium text-verdict-synthetic-base">0.84</td>
+<td class="py-3 px-3 font-label-numeric text-label-numeric text-right text-on-surface">0.94</td>
+<td class="py-3 px-3 font-label-numeric text-label-numeric text-right text-waveform-threshold">340ms</td>
+<td class="py-3 px-3 text-center">
+<button class="p-1 rounded hover:bg-surface-canvas text-primary-container" title="Inspect Telemetry" type="button">
+<span class="material-symbols-outlined text-[18px]">readiness_score</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-canvas transition-colors cursor-pointer">
+<td class="py-3 px-4 font-label-code text-label-code text-secondary whitespace-nowrap">Today 14:15:04</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-canvas text-secondary font-label-code text-[11px]">
+<span class="material-symbols-outlined text-[13px]">mic</span>
+<span>Live</span>
+</span>
+</td>
+<td class="py-3 px-4 font-medium text-on-surface truncate max-w-[170px]">Mic Check Session #104</td>
+<td class="py-3 px-3 font-label-numeric text-label-numeric text-right text-secondary whitespace-nowrap">48.0s</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-verdict-real-surface text-verdict-real-base font-badge-label text-badge-label">
+<span class="material-symbols-outlined text-[14px]">check</span>
+<span>Likely Real</span>
+</span>
+</td>
+<td class="py-3 px-3 font-label-numeric text-label-numeric text-right font-medium text-verdict-real-base">0.18</td>
+<td class="py-3 px-3 font-label-numeric text-label-numeric text-right text-on-surface">0.44</td>
+<td class="py-3 px-3 font-label-numeric text-label-numeric text-right text-waveform-threshold">38ms</td>
+<td class="py-3 px-3 text-center">
+<button class="p-1 rounded hover:bg-surface-canvas text-secondary hover:text-on-surface" title="Inspect Telemetry" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-canvas transition-colors cursor-pointer">
+<td class="py-3 px-4 font-label-code text-label-code text-secondary whitespace-nowrap">Today 13:58:22</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-canvas text-secondary font-label-code text-[11px]">
+<span class="material-symbols-outlined text-[13px]">phone_in_talk</span>
+<span>Call</span>
+</span>
+</td>
+<td class="py-3 px-4 font-medium text-on-surface truncate max-w-[170px]">Inbound Support Call #492</td>
+<td class="py-3 px-3 font-label-numeric text-label-numeric text-right text-secondary whitespace-nowrap">3m 12s</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-verdict-synthetic-surface text-verdict-synthetic-base font-badge-label text-badge-label">
+<span class="material-symbols-outlined text-[14px]">close</span>
+<span>Likely Synthetic</span>
+</span>
+</td>
+<td class="py-3 px-3 font-label-numeric text-label-numeric text-right font-medium text-verdict-synthetic-base">0.76</td>
+<td class="py-3 px-3 font-label-numeric text-label-numeric text-right text-on-surface">0.91</td>
+<td class="py-3 px-3 font-label-numeric text-label-numeric text-right text-waveform-threshold">42ms</td>
+<td class="py-3 px-3 text-center">
+<button class="p-1 rounded hover:bg-surface-canvas text-secondary hover:text-on-surface" title="Inspect Telemetry" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-canvas transition-colors cursor-pointer">
+<td class="py-3 px-4 font-label-code text-label-code text-secondary whitespace-nowrap">Today 13:41:09</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-canvas text-secondary font-label-code text-[11px]">
+<span class="material-symbols-outlined text-[13px]">upload_file</span>
+<span>Upload</span>
+</span>
+</td>
+<td class="py-3 px-4 font-medium text-on-surface truncate max-w-[170px]">ceo_briefing_draft.mp3</td>
+<td class="py-3 px-3 font-label-numeric text-label-numeric text-right text-secondary whitespace-nowrap">14.2s</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-verdict-uncertain-surface text-verdict-uncertain-base font-badge-label text-badge-label">
+<span class="material-symbols-outlined text-[14px]">warning</span>
+<span>Uncertain</span>
+</span>
+</td>
+<td class="py-3 px-3 font-label-numeric text-label-numeric text-right font-medium text-verdict-uncertain-base">0.48</td>
+<td class="py-3 px-3 font-label-numeric text-label-numeric text-right text-on-surface">0.58</td>
+<td class="py-3 px-3 font-label-numeric text-label-numeric text-right text-waveform-threshold">210ms</td>
+<td class="py-3 px-3 text-center">
+<button class="p-1 rounded hover:bg-surface-canvas text-secondary hover:text-on-surface" title="Inspect Telemetry" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-surface-canvas transition-colors cursor-pointer">
+<td class="py-3 px-4 font-label-code text-label-code text-secondary whitespace-nowrap">Today 12:55:18</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-canvas text-secondary font-label-code text-[11px]">
+<span class="material-symbols-outlined text-[13px]">upload_file</span>
+<span>Upload</span>
+</span>
+</td>
+<td class="py-3 px-4 font-medium text-on-surface truncate max-w-[170px]">customer_kyc_audio.wav</td>
+<td class="py-3 px-3 font-label-numeric text-label-numeric text-right text-secondary whitespace-nowrap">8.4s</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-verdict-real-surface text-verdict-real-base font-badge-label text-badge-label">
+<span class="material-symbols-outlined text-[14px]">check</span>
+<span>Likely Real</span>
+</span>
+</td>
+<td class="py-3 px-3 font-label-numeric text-label-numeric text-right font-medium text-verdict-real-base">0.12</td>
+<td class="py-3 px-3 font-label-numeric text-label-numeric text-right text-on-surface">0.24</td>
+<td class="py-3 px-3 font-label-numeric text-label-numeric text-right text-waveform-threshold">180ms</td>
+<td class="py-3 px-3 text-center">
+<button class="p-1 rounded hover:bg-surface-canvas text-secondary hover:text-on-surface" title="Inspect Telemetry" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</td>
+</tr>
+<!-- Row 6 -->
+<tr class="hover:bg-surface-canvas transition-colors cursor-pointer">
+<td class="py-3 px-4 font-label-code text-label-code text-secondary whitespace-nowrap">Yesterday 16:40:12</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-canvas text-secondary font-label-code text-[11px]">
+<span class="material-symbols-outlined text-[13px]">phone_in_talk</span>
+<span>Call</span>
+</span>
+</td>
+<td class="py-3 px-4 font-medium text-on-surface truncate max-w-[170px]">Wire Transfer Auth #311</td>
+<td class="py-3 px-3 font-label-numeric text-label-numeric text-right text-secondary whitespace-nowrap">4m 18s</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-verdict-synthetic-surface text-verdict-synthetic-base font-badge-label text-badge-label">
+<span class="material-symbols-outlined text-[14px]">close</span>
+<span>Likely Synthetic</span>
+</span>
+</td>
+<td class="py-3 px-3 font-label-numeric text-label-numeric text-right font-medium text-verdict-synthetic-base">0.81</td>
+<td class="py-3 px-3 font-label-numeric text-label-numeric text-right text-on-surface">0.96</td>
+<td class="py-3 px-3 font-label-numeric text-label-numeric text-right text-waveform-threshold">45ms</td>
+<td class="py-3 px-3 text-center">
+<button class="p-1 rounded hover:bg-surface-canvas text-secondary hover:text-on-surface" title="Inspect Telemetry" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</td>
+</tr>
+<!-- Row 7 -->
+<tr class="hover:bg-surface-canvas transition-colors cursor-pointer">
+<td class="py-3 px-4 font-label-code text-label-code text-secondary whitespace-nowrap">Yesterday 11:20:45</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-canvas text-secondary font-label-code text-[11px]">
+<span class="material-symbols-outlined text-[13px]">mic</span>
+<span>Live</span>
+</span>
+</td>
+<td class="py-3 px-4 font-medium text-on-surface truncate max-w-[170px]">Mic Ambient Baseline #103</td>
+<td class="py-3 px-3 font-label-numeric text-label-numeric text-right text-secondary whitespace-nowrap">60.0s</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-verdict-real-surface text-verdict-real-base font-badge-label text-badge-label">
+<span class="material-symbols-outlined text-[14px]">check</span>
+<span>Likely Real</span>
+</span>
+</td>
+<td class="py-3 px-3 font-label-numeric text-label-numeric text-right font-medium text-verdict-real-base">0.08</td>
+<td class="py-3 px-3 font-label-numeric text-label-numeric text-right text-on-surface">0.19</td>
+<td class="py-3 px-3 font-label-numeric text-label-numeric text-right text-waveform-threshold">36ms</td>
+<td class="py-3 px-3 text-center">
+<button class="p-1 rounded hover:bg-surface-canvas text-secondary hover:text-on-surface" title="Inspect Telemetry" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Controls -->
+<div class="px-5 py-3.5 bg-surface-canvas flex flex-col sm:flex-row items-center justify-between gap-3">
+<span class="font-body-sm text-body-sm text-secondary">
+            Showing <strong class="text-on-surface">1–7</strong> of <strong class="text-on-surface">1,428</strong> entries
+          </span>
+<div class="flex items-center gap-1">
+<button class="px-2.5 py-1 rounded bg-surface-panel text-secondary hover:text-on-surface text-body-sm disabled:opacity-40" disabled="" type="button">
+<span class="material-symbols-outlined text-[16px]">chevron_left</span>
+</button>
+<button class="px-2.5 py-1 rounded bg-primary-container text-on-primary font-label-numeric text-label-numeric font-medium" type="button">1</button>
+<button class="px-2.5 py-1 rounded bg-surface-panel hover:bg-surface-container text-on-surface font-label-numeric text-label-numeric" type="button">2</button>
+<button class="px-2.5 py-1 rounded bg-surface-panel hover:bg-surface-container text-on-surface font-label-numeric text-label-numeric" type="button">3</button>
+<span class="px-1 text-secondary font-label-numeric text-label-numeric">...</span>
+<button class="px-2.5 py-1 rounded bg-surface-panel hover:bg-surface-container text-on-surface font-label-numeric text-label-numeric" type="button">204</button>
+<button class="px-2.5 py-1 rounded bg-surface-panel text-secondary hover:text-on-surface text-body-sm" type="button">
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Selected Inspection Drawer / Panel (xl:col-span-4) -->
+<div class="xl:col-span-4 flex flex-col bg-surface-panel rounded-xl shadow-sm p-6 gap-6 relative">
+<!-- Inspector Header -->
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="px-2 py-0.5 rounded bg-primary/10 text-primary font-badge-label text-[10px] uppercase tracking-wider font-semibold">SELECTED RECORD</span>
+<span class="font-label-code text-label-code text-waveform-threshold">ID: REC-202410-0982</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface truncate" title="voicemail_ext_882.wav">voicemail_ext_882.wav</h3>
+<p class="font-label-code text-label-code text-secondary mt-0.5">Logged: Oct 31, 2024 · 14:32:10 UTC</p>
+</div>
+</div>
+<!-- Verdict Summary Card -->
+<div class="bg-surface-canvas rounded-lg p-4 flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<span class="font-badge-label text-[11px] uppercase tracking-wider text-secondary">Integrity Decision</span>
+<span class="font-label-numeric text-headline-sm font-semibold text-verdict-synthetic-base">0.84 <span class="font-body-sm text-waveform-threshold">/ 1.00</span></span>
+</div>
+<div class="flex items-center justify-between">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-verdict-synthetic-surface text-verdict-synthetic-base font-badge-label text-badge-label">
+<span class="material-symbols-outlined text-[16px]">close</span>
+<span>Likely Synthetic</span>
+</div>
+<span class="font-label-code text-label-code text-secondary">Risk Score: HIGH</span>
+</div>
+<!-- Probability Gauge Component with Threshold and Band -->
+<div class="mt-2 flex flex-col gap-1.5">
+<div class="relative w-full h-3 rounded-full bg-surface-container overflow-hidden">
+<!-- Uncertain window band (0.40 - 0.60) -->
+<div class="absolute top-0 bottom-0 left-[40%] right-[40%] bg-verdict-uncertain-surface opacity-80"></div>
+<!-- Decision Threshold Marker (0.50) -->
+<div class="absolute top-0 bottom-0 left-[50%] w-[2px] bg-on-surface z-10"></div>
+<!-- Active Score Fill / Indicator -->
+<div class="absolute top-0 bottom-0 left-0 bg-verdict-synthetic-base opacity-20" style="width: 84%;"></div>
+<div class="absolute top-0 bottom-0 rounded-full bg-verdict-synthetic-base z-20" style="left: 84%; width: 4px; transform: translateX(-50%);"></div>
+</div>
+<div class="flex justify-between font-label-code text-[10px] text-secondary">
+<span>0.00 (Real)</span>
+<span class="text-on-surface font-semibold">0.50 Threshold</span>
+<span>1.00 (Fake)</span>
+</div>
+</div>
+</div>
+<!-- Mini Per-Window Timeline Chart Container -->
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-badge-label text-[11px] uppercase tracking-wider text-secondary">Acoustic Window Timeline</span>
+<span class="font-label-code text-label-code text-verdict-synthetic-base font-semibold">Peak: 0.94 @ 16.0s</span>
+</div>
+<div class="bg-surface-canvas rounded-lg p-3">
+<!-- Inline SVG Chart -->
+<svg class="w-full h-24 overflow-visible" fill="none" preserveaspectratio="none" viewbox="0 0 320 80">
+<!-- Background grid rules -->
+<line class="text-surface-container" stroke="currentColor" stroke-dasharray="2 2" stroke-width="1" x1="0" x2="320" y1="20" y2="20"></line>
+<line class="text-surface-container" stroke="currentColor" stroke-width="1" x1="0" x2="320" y1="40" y2="40"></line>
+<line class="text-surface-container" stroke="currentColor" stroke-dasharray="2 2" stroke-width="1" x1="0" x2="320" y1="60" y2="60"></line>
+<!-- Threshold Line (0.50 -> y=40) -->
+<line class="text-waveform-threshold" stroke="currentColor" stroke-dasharray="4 2" stroke-width="1" x1="0" x2="320" y1="40" y2="40"></line>
+<!-- Probability Path Area Under Curve -->
+<path class="text-verdict-synthetic-base opacity-10" d="M0,72 L20,68 L40,65 L60,54 L80,50 L100,42 L120,38 L140,24 L160,12 L180,10 L200,18 L220,22 L240,16 L260,28 L280,34 L300,40 L320,44 L320,80 L0,80 Z" fill="currentColor"></path>
+<!-- Probability Solid Stroke Line -->
+<path class="text-verdict-synthetic-base" d="M0,72 L20,68 L40,65 L60,54 L80,50 L100,42 L120,38 L140,24 L160,12 L180,10 L200,18 L220,22 L240,16 L260,28 L280,34 L300,40 L320,44" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+<!-- Peak Indicator Pin -->
+<circle class="text-verdict-synthetic-base" cx="180" cy="10" fill="currentColor" r="3.5"></circle>
+<circle class="text-verdict-synthetic-base opacity-30" cx="180" cy="10" r="7" stroke="currentColor" stroke-width="1"></circle>
+</svg>
+<div class="flex justify-between font-label-code text-[10px] text-waveform-threshold mt-1">
+<span>0.0s</span>
+<span>14.0s</span>
+<span>28.5s</span>
+</div>
+</div>
+</div>
+<!-- Telemetry Metadata List -->
+<div class="flex flex-col gap-2.5">
+<span class="font-badge-label text-[11px] uppercase tracking-wider text-secondary">Forensic Artifact Parameters</span>
+<div class="bg-surface-canvas rounded-lg p-3 space-y-2 font-label-code text-[11px]">
+<div class="flex justify-between items-center text-secondary">
+<span>SHA-256</span>
+<span class="text-on-surface font-semibold truncate max-w-[170px]" title="e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855">e3b0c44298fc1c14...</span>
+</div>
+<div class="flex justify-between items-center text-secondary">
+<span>Resample Rate</span>
+<span class="text-on-surface font-semibold">44.1 kHz → 16 kHz</span>
+</div>
+<div class="flex justify-between items-center text-secondary">
+<span>Windows Processed</span>
+<span class="text-on-surface font-semibold">28 windows (1.0s hop)</span>
+</div>
+<div class="flex justify-between items-center text-secondary">
+<span>Speech Density</span>
+<span class="text-on-surface font-semibold">89.4% active</span>
+</div>
+<div class="flex justify-between items-center text-secondary">
+<span>Inference Architecture</span>
+<span class="text-primary-container font-semibold">v1.4.2 (FoR-ResNet34-STFT)</span>
+</div>
+</div>
+</div>
+<!-- Action Drawer Operations -->
+<div class="flex flex-col gap-2 pt-2">
+<button class="w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-surface-canvas text-on-surface hover:bg-surface-container font-body-sm text-body-sm font-medium transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-[16px] text-secondary">data_object</span>
+<span>Download Full JSON Telemetry</span>
+</button>
+<div class="grid grid-cols-2 gap-2">
+<button class="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-surface-canvas text-secondary hover:text-on-surface font-body-sm text-body-sm font-medium transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-[16px]">tune</span>
+<span>Re-run Threshold</span>
+</button>
+<button class="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-primary text-on-primary hover:bg-primary-container font-body-sm text-body-sm font-medium transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-[16px]">picture_as_pdf</span>
+<span>Forensic PDF</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Standard Evidentiary Disclaimer Footer -->
+<div class="mt-4 p-4 rounded-xl bg-surface-panel shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+<div class="flex items-center gap-3">
+<div class="p-2 rounded-lg bg-surface-canvas text-secondary">
+<span class="material-symbols-outlined text-[20px]">verified_user</span>
+</div>
+<p class="font-body-sm text-body-sm text-secondary">
+<strong class="text-on-surface font-semibold">Research prototype notice:</strong> Telemetry metrics represent probabilistic anomaly vectors and do not constitute legal proof. ISO/IEC 30107-3 compliant reporting.
+        </p>
+</div>
+<div class="flex items-center gap-4 text-waveform-threshold font-label-code text-label-code">
+<span>ARCHIVE-HASH: 7F4A-981D</span>
+<span class="inline-block w-1 h-1 rounded-full bg-waveform-threshold"></span>
+<span>LATENCY TARGET: &lt;50ms</span>
+</div>
+</div>
+</div>
+</div></main></div></body></html>

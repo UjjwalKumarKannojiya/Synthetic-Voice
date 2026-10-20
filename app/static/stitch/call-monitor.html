@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "verdict-uncertain-base": "#D97706", "on-background": "#0b1c30", "on-tertiary-container": "#c7d6ee", "secondary-fixed-dim": "#bec6e0", "on-primary": "#ffffff", "tertiary-container": "#4f5d71", "primary-container": "#1d4ed8", "surface-container": "#e5eeff", "on-secondary-fixed-variant": "#3f465c", "on-surface-variant": "#434655", "inverse-on-surface": "#eaf1ff", "surface-panel": "#FFFFFF", "error": "#ba1a1a", "on-error-container": "#93000a", "border-subtle": "#E2E8F0", "outline-variant": "#c4c5d7", "background": "#f8f9ff", "tertiary-fixed-dim": "#b9c7df", "primary-fixed": "#dce1ff", "verdict-real-base": "#059669", "surface-dim": "#cbdbf5", "surface-sidebar": "#0F172A", "on-surface": "#0b1c30", "waveform-threshold": "#94A3B8", "verdict-uncertain-border": "#FDE68A", "waveform-active": "#2563EB", "on-primary-fixed": "#001551", "on-error": "#ffffff", "on-secondary-container": "#5c647a", "surface-canvas": "#F8FAFC", "on-primary-fixed-variant": "#0039b5", "secondary-container": "#dae2fd", "tertiary-fixed": "#d5e3fc", "error-container": "#ffdad6", "verdict-synthetic-base": "#DC2626", "verdict-real-border": "#A7F3D0", "surface-container-lowest": "#ffffff", "surface-tint": "#2151da", "surface": "#f8f9ff", "surface-container-highest": "#d3e4fe", "primary": "#0037b0", "primary-fixed-dim": "#b7c4ff", "surface-container-high": "#dce9ff", "on-secondary": "#ffffff", "secondary-fixed": "#dae2fd", "inverse-primary": "#b7c4ff", "surface-variant": "#d3e4fe", "verdict-uncertain-surface": "#FFFBEB", "verdict-synthetic-border": "#FECACA", "outline": "#747686", "tertiary": "#374559", "verdict-real-surface": "#ECFDF5", "on-tertiary": "#ffffff", "on-tertiary-fixed-variant": "#3a485b", "border-strong": "#CBD5E1", "surface-sidebar-hover": "#1E293B", "secondary": "#565e74", "inverse-surface": "#213145", "surface-bright": "#f8f9ff", "verdict-synthetic-surface": "#FEF2F2", "on-tertiary-fixed": "#0d1c2e", "surface-container-low": "eff4ff", "on-secondary-fixed": "#131b2e", "on-primary-container": "#cad3ff" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-sm": "0.5rem", "space-md": "1rem", "gutter": "1.5rem", "space-lg": "1.5rem", "space-xl": "2rem", "margin": "2rem", "space-xs": "0.25rem" }, "fontFamily": { "label-numeric": [ "JetBrains Mono" ], "label-code": [ "JetBrains Mono" ], "headline-lg": [ "Inter" ], "body-lg": [ "Inter" ], "badge-label": [ "Inter" ], "headline-sm": [ "Inter" ], "headline-md": [ "Inter" ], "body-sm": [ "Inter" ], "body-md": [ "Inter" ] }, "fontSize": { "label-numeric": [ "0.875rem", { "lineHeight": "1.25rem", "letterSpacing": "-0.01em", "fontWeight": "500" } ], "label-code": [ "0.75rem", { "lineHeight": "1rem", "fontWeight": "400" } ], "headline-lg": [ "1.75rem", { "lineHeight": "2.25rem", "letterSpacing": "-0.02em", "fontWeight": "600" } ], "body-lg": [ "1rem", { "lineHeight": "1.5rem", "fontWeight": "400" } ], "badge-label": [ "0.75rem", { "lineHeight": "1rem", "letterSpacing": "0.025em", "fontWeight": "600" } ], "headline-sm": [ "1rem", { "lineHeight": "1.5rem", "letterSpacing": "-0.01em", "fontWeight": "600" } ], "headline-md": [ "1.25rem", { "lineHeight": "1.75rem", "letterSpacing": "-0.015em", "fontWeight": "600" } ], "body-sm": [ "0.75rem", { "lineHeight": "1rem", "fontWeight": "400" } ], "body-md": [ "0.875rem", { "lineHeight": "1.25rem", "fontWeight": "400" } ] } } } };</script></head><body class="bg-surface-canvas font-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-full w-[240px] bg-surface-sidebar z-50 flex flex-col justify-between py-6 px-4"><div class="flex flex-col gap-6"><div class="flex flex-col gap-3 px-2"><div class="flex items-center gap-3"><img alt="VoiceGuard Forensics Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1VB-RLDeoXhUydQDzSW3_qWbhu-b4-EBRxuUnVJ13SFGnSmVUagXxlVV0_cVu2Q-jh0fF0R-wgV0IClrej-XbmltkyEOIR5CjJ5sdHgDFO5bzWxy2bHcpU1wDdPfxa--aEoY3G6HW6ke1aQGeG4WQR7ZXXhKG9heKu4qPfsxQZNdpzlEMZOdFqb6w1hLBvdr-qXM6qBqhkIQok-CXYeHtBSAtzNZIaXqx015iymlbz4ALfFR2EL2W-Clw"/><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-surface-panel tracking-tight leading-none">VoiceGuard</span><span class="font-label-code text-label-code text-waveform-threshold tracking-wider uppercase leading-snug">Forensics</span></div></div><div class="inline-flex items-center self-start"><span class="px-2 py-0.5 rounded bg-surface-sidebar-hover text-waveform-threshold font-badge-label text-[10px] tracking-wider uppercase border border-border-strong/20">RESEARCH PROTOTYPE</span></div></div><nav class="flex flex-col gap-1" data-active-classes="bg-primary text-on-primary font-medium shadow-sm"><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-waveform-threshold hover:bg-surface-sidebar-hover hover:text-surface-panel transition-all font-body-md text-body-md" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px]">grid_view</span><span>Dashboard</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-waveform-threshold hover:bg-surface-sidebar-hover hover:text-surface-panel transition-all font-body-md text-body-md" data-path="analyze-file" href="#"><span class="material-symbols-outlined text-[20px]">audio_file</span><span>Analyze File</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-waveform-threshold hover:bg-surface-sidebar-hover hover:text-surface-panel transition-all font-body-md text-body-md" data-path="live-check" href="#"><span class="material-symbols-outlined text-[20px]">mic</span><span>Live Check</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-waveform-threshold hover:bg-surface-sidebar-hover hover:text-surface-panel transition-all font-body-md text-body-md" data-path="call-monitor" href="#"><span class="material-symbols-outlined text-[20px]">phone_in_talk</span><span>Call Monitor</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-waveform-threshold hover:bg-surface-sidebar-hover hover:text-surface-panel transition-all font-body-md text-body-md" data-path="history" href="#"><span class="material-symbols-outlined text-[20px]">history</span><span>History</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-waveform-threshold hover:bg-surface-sidebar-hover hover:text-surface-panel transition-all font-body-md text-body-md" data-path="model-and-evaluation" href="#"><span class="material-symbols-outlined text-[20px]">analytics</span><span>Model &amp; Evaluation</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-waveform-threshold hover:bg-surface-sidebar-hover hover:text-surface-panel transition-all font-body-md text-body-md" data-path="settings" href="#"><span class="material-symbols-outlined text-[20px]">settings</span><span>Settings</span></a></nav></div><div class="px-2 pt-4 border-t border-border-strong/10"><div class="flex items-center justify-between text-waveform-threshold font-label-code text-label-code"><span>KERNEL STATUS</span><span class="font-label-numeric text-label-numeric text-verdict-real-base">ONLINE</span></div></div></aside><div class="pl-[240px]"><header class="fixed top-0 left-[240px] right-0 h-16 bg-surface-panel z-40 border-b border-border-subtle flex items-center justify-between px-8"><div class="flex items-center gap-4"><img alt="VoiceGuard Forensics Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1VB-RLDeoXhUydQDzSW3_qWbhu-b4-EBRxuUnVJ13SFGnSmVUagXxlVV0_cVu2Q-jh0fF0R-wgV0IClrej-XbmltkyEOIR5CjJ5sdHgDFO5bzWxy2bHcpU1wDdPfxa--aEoY3G6HW6ke1aQGeG4WQR7ZXXhKG9heKu4qPfsxQZNdpzlEMZOdFqb6w1hLBvdr-qXM6qBqhkIQok-CXYeHtBSAtzNZIaXqx015iymlbz4ALfFR2EL2W-Clw"/><span class="font-headline-md text-headline-md text-on-surface">VoiceGuard Forensics</span></div><div class="flex items-center gap-6"><div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-canvas border border-border-subtle"><span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-verdict-real-base opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-verdict-real-base"></span></span><span class="font-body-sm text-body-sm text-on-surface font-medium">Model loaded</span><span class="h-3 w-[1px] bg-border-strong mx-1"></span><span class="font-label-code text-label-code text-secondary">v1.4.2 · FoR-2s</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="w-full pt-16 bg-surface-canvas min-h-screen"><div class="flex flex-col w-full">
+<div class="w-full max-w-[1280px] mx-auto px-6 py-6 flex flex-col gap-6">
+<!-- Top Section Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2">
+<span class="font-headline-lg text-headline-lg text-on-surface">Call Monitor</span>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-sidebar text-surface-panel font-label-code text-label-code">
+<span class="inline-block w-1.5 h-1.5 rounded-full bg-verdict-real-base animate-pulse"></span>
+            ACTIVE SESSION #4092
+          </span>
+</div>
+<p class="font-body-md text-body-md text-secondary">
+          Analyzes the audio stream on this device. Not connected to a phone network.
+        </p>
+</div>
+<!-- Real-time status chips -->
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-panel shadow-sm">
+<span class="font-label-code text-label-code text-secondary">RTT</span>
+<span class="font-label-numeric text-label-numeric text-on-surface font-semibold">41ms</span>
+</div>
+<div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-panel shadow-sm">
+<span class="material-symbols-outlined text-secondary text-[18px]">timer</span>
+<span class="font-label-numeric text-label-numeric text-on-surface font-semibold">04:18 active</span>
+</div>
+<div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-verdict-real-surface text-verdict-real-base font-badge-label text-badge-label font-semibold">
+<span class="inline-block w-2 h-2 rounded-full bg-verdict-real-base animate-ping"></span>
+          MONITORING ACTIVE
+        </div>
+<button class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-verdict-synthetic-base text-on-primary font-body-md text-body-md font-medium shadow-sm hover:opacity-95 transition-all" id="btn-stop-monitoring">
+<span class="material-symbols-outlined text-[18px]">stop_circle</span>
+          Stop Monitoring
+        </button>
+</div>
+</div>
+<!-- Source Selector Control Bar -->
+<div class="flex flex-col gap-2 p-4 rounded-xl bg-surface-panel shadow-sm">
+<div class="flex flex-wrap items-center justify-between gap-4">
+<div class="flex items-center gap-2 bg-surface-canvas p-1 rounded-lg">
+<button class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-md bg-surface-panel text-primary font-body-md text-body-md font-semibold shadow-sm transition-all">
+<span class="material-symbols-outlined text-[18px]">mic</span>
+            Microphone (speakerphone)
+          </button>
+<button class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-md text-secondary hover:text-on-surface font-body-md text-body-md font-medium transition-all">
+<span class="material-symbols-outlined text-[18px]">desktop_windows</span>
+            System / tab audio
+          </button>
+<button class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-md text-secondary hover:text-on-surface font-body-md text-body-md font-medium transition-all">
+<span class="material-symbols-outlined text-[18px]">replay</span>
+            Demo replay (audio file)
+          </button>
+</div>
+<div class="flex items-center gap-3">
+<span class="font-label-code text-label-code text-secondary">SPEECH ACTIVITY DETECTOR</span>
+<div class="flex items-center gap-1">
+<span class="w-1.5 h-3 rounded-full bg-verdict-real-base"></span>
+<span class="w-1.5 h-5 rounded-full bg-verdict-real-base"></span>
+<span class="w-1.5 h-4 rounded-full bg-verdict-real-base"></span>
+<span class="w-1.5 h-6 rounded-full bg-verdict-real-base"></span>
+<span class="w-1.5 h-2 rounded-full bg-waveform-threshold"></span>
+</div>
+<span class="font-label-numeric text-label-numeric text-verdict-real-base font-semibold">VAD LOCK</span>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-secondary">
+        Captures ambient speakerphone audio via local microphone. For softphones/meetings, use System/tab audio.
+      </p>
+</div>
+<!-- Sustained Synthetic Alert Banner -->
+<div class="flex items-start justify-between p-4 rounded-xl bg-verdict-synthetic-surface shadow-sm" id="alert-banner">
+<div class="flex items-start gap-3">
+<div class="p-1 rounded-full bg-verdict-synthetic-base text-on-primary mt-0.5">
+<span class="material-symbols-outlined text-[18px]">warning</span>
+</div>
+<div class="flex flex-col gap-0.5">
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-headline-sm text-verdict-synthetic-base font-semibold">
+              Sustained synthetic-like speech detected
+            </span>
+<span class="px-2 py-0.5 rounded bg-verdict-synthetic-base text-on-primary font-badge-label text-badge-label uppercase">
+              Critical Advisory
+            </span>
+</div>
+<p class="font-body-md text-body-md text-verdict-synthetic-base font-normal">
+            Verify caller identity through an out-of-band communication channel immediately. Consecutive flagged analysis windows: <span class="font-semibold underline">4</span> (exceeds alert threshold N=3).
+          </p>
+</div>
+</div>
+<button class="text-verdict-synthetic-base hover:opacity-70 p-1" onclick="document.getElementById('alert-banner').style.display='none'">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- Main Body Grid: 2 Columns -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+<!-- Column 1 (Left 7 Cols): Call Risk & Instant Score -->
+<div class="lg:col-span-7 flex flex-col justify-between p-6 rounded-xl bg-surface-panel shadow-sm gap-6">
+<div class="flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-headline-md text-headline-md text-on-surface">Call Risk Assessment</span>
+<span class="font-label-code text-label-code text-secondary">REAL-TIME INFERENCE (ROLLING 2.0s WINDOW)</span>
+</div>
+<!-- Suspected Synthetic Voice Badge -->
+<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-verdict-synthetic-surface text-verdict-synthetic-base font-badge-label text-badge-label font-semibold">
+<span class="material-symbols-outlined text-[18px]">cancel</span>
+<span>Suspected Synthetic Voice</span>
+</div>
+</div>
+<!-- Main Metric Readout -->
+<div class="flex items-baseline justify-between p-4 rounded-xl bg-surface-canvas">
+<div class="flex flex-col">
+<span class="font-label-code text-label-code text-secondary uppercase">Smoothed Synthetic Probability</span>
+<div class="flex items-baseline gap-2 mt-1">
+<span class="font-label-numeric text-[2.25rem] leading-none text-verdict-synthetic-base font-bold">0.78</span>
+<span class="font-label-numeric text-label-numeric text-secondary">/ 1.00</span>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="px-2.5 py-1 rounded bg-verdict-synthetic-surface text-verdict-synthetic-base font-badge-label text-badge-label font-semibold">
+                High Risk (+0.14)
+              </span>
+<span class="font-label-code text-label-code text-secondary">Window: #128 · 16:02:44</span>
+</div>
+</div>
+<!-- Horizontal Probability Gauge -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between font-label-code text-label-code text-secondary">
+<span>0.00 (LIKELY REAL)</span>
+<span class="text-on-surface font-semibold">DECISION THRESHOLD: 0.50</span>
+<span>1.00 (SYNTHETIC)</span>
+</div>
+<!-- Gauge track -->
+<div class="relative w-full h-4 rounded-full bg-border-subtle overflow-hidden">
+<!-- Real region (0.0 to 0.40) -->
+<div class="absolute left-0 top-0 bottom-0 w-[40%] bg-verdict-real-surface"></div>
+<!-- Uncertainty Region (0.40 to 0.60) -->
+<div class="absolute left-[40%] top-0 bottom-0 w-[20%] bg-verdict-uncertain-surface"></div>
+<!-- Synthetic region (0.60 to 1.0) -->
+<div class="absolute left-[60%] top-0 bottom-0 w-[40%] bg-verdict-synthetic-surface"></div>
+<!-- Decision Threshold Line -->
+<div class="absolute left-[50%] top-0 bottom-0 w-[2px] bg-on-surface z-10"></div>
+<!-- Score Pointer Fill -->
+<div class="absolute left-0 top-0 bottom-0 w-[78%] bg-verdict-synthetic-base opacity-20"></div>
+<!-- Marker Pin -->
+<div class="absolute left-[78%] -translate-x-1/2 top-0 bottom-0 w-2 rounded-full bg-verdict-synthetic-base shadow-sm z-20"></div>
+</div>
+<div class="flex justify-between items-center text-secondary font-label-code text-label-code">
+<span class="text-verdict-real-base font-medium">Safe Margin</span>
+<span class="text-verdict-uncertain-base font-medium">Inconclusive Band (0.40 - 0.60)</span>
+<span class="text-verdict-synthetic-base font-medium">Current: 0.78</span>
+</div>
+</div>
+</div>
+<!-- Telemetry metric tiles -->
+<div class="grid grid-cols-3 gap-3 pt-2">
+<div class="flex flex-col p-3 rounded-lg bg-surface-canvas">
+<span class="font-label-code text-label-code text-secondary">SPEECH RATIO</span>
+<span class="font-label-numeric text-headline-sm text-on-surface font-semibold mt-1">84.2%</span>
+<span class="font-body-sm text-body-sm text-secondary">Active speech presence</span>
+</div>
+<div class="flex flex-col p-3 rounded-lg bg-surface-canvas">
+<span class="font-label-code text-label-code text-secondary">FLAGGED WINDOWS</span>
+<span class="font-label-numeric text-headline-sm text-verdict-synthetic-base font-semibold mt-1">7 / 24</span>
+<span class="font-body-sm text-body-sm text-secondary">Rolling window count</span>
+</div>
+<div class="flex flex-col p-3 rounded-lg bg-surface-canvas">
+<span class="font-label-code text-label-code text-secondary">SILENCE GATED</span>
+<span class="font-label-numeric text-headline-sm text-on-surface font-semibold mt-1">3 windows</span>
+<span class="font-body-sm text-body-sm text-secondary">Below VAD threshold</span>
+</div>
+</div>
+</div>
+<!-- Column 2 (Right 5 Cols): Capture Telemetry & Consent -->
+<div class="lg:col-span-5 flex flex-col justify-between p-6 rounded-xl bg-surface-panel shadow-sm gap-5">
+<div class="flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<span class="font-headline-md text-headline-md text-on-surface">Capture Telemetry</span>
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-verdict-real-surface text-verdict-real-base font-badge-label text-badge-label font-semibold">
+<span class="material-symbols-outlined text-[16px]">verified</span>
+              Consent Validated
+            </div>
+</div>
+<!-- Consent Notice Box -->
+<div class="flex items-start gap-3 p-3.5 rounded-lg bg-surface-canvas">
+<span class="material-symbols-outlined text-primary text-[20px] mt-0.5">gavel</span>
+<div class="flex flex-col gap-0.5">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Consent Notice Acknowledged</span>
+<p class="font-body-sm text-body-sm text-secondary leading-snug">
+                Operator verified local call participant notification. Timestamped signature recorded at session start (16:00:26 UTC).
+              </p>
+</div>
+</div>
+<!-- Pipeline Architecture Specs -->
+<div class="flex flex-col gap-2">
+<span class="font-label-code text-label-code text-secondary uppercase">Ingestion Stream Parameters</span>
+<div class="flex flex-col divide-y divide-border-subtle bg-surface-canvas rounded-lg overflow-hidden">
+<div class="flex items-center justify-between p-2.5 font-label-code text-label-code">
+<span class="text-secondary">Audio Pipeline</span>
+<span class="text-on-surface font-semibold">16 kHz · Mono PCM (Linear-16)</span>
+</div>
+<div class="flex items-center justify-between p-2.5 font-label-code text-label-code">
+<span class="text-secondary">Stream Channel</span>
+<span class="text-primary font-semibold">ws://localhost:8000/ws/live</span>
+</div>
+<div class="flex items-center justify-between p-2.5 font-label-code text-label-code">
+<span class="text-secondary">Engine Thread</span>
+<span class="text-on-surface font-semibold">Async-Thread-01 (GPU: 0)</span>
+</div>
+<div class="flex items-center justify-between p-2.5 font-label-code text-label-code">
+<span class="text-secondary">Model Backbone</span>
+<span class="text-on-surface font-semibold">FoR-2s v1.4.2 (ResNet-W2S)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Alert Trigger Logic Reference -->
+<div class="flex flex-col gap-2 p-3.5 rounded-lg bg-surface-canvas">
+<div class="flex items-center justify-between">
+<span class="font-label-code text-label-code text-secondary uppercase font-semibold">Alert Trigger Rules</span>
+<span class="font-label-code text-label-code text-primary font-medium">Policy #DEF-02</span>
+</div>
+<div class="flex flex-wrap items-center gap-2 font-label-code text-label-code text-on-surface">
+<span class="px-2 py-0.5 rounded bg-surface-panel font-medium">Score: ≥ 0.50</span>
+<span class="text-waveform-threshold">|</span>
+<span class="px-2 py-0.5 rounded bg-surface-panel font-medium">Window: 2.0s (1.0s hop)</span>
+<span class="text-waveform-threshold">|</span>
+<span class="px-2 py-0.5 rounded bg-surface-panel font-medium">Trigger: N=3 consecutive</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Live Call Rolling Timeline Card -->
+<div class="flex flex-col p-6 rounded-xl bg-surface-panel shadow-sm gap-4">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
+<div class="flex items-center gap-3">
+<span class="font-headline-md text-headline-md text-on-surface">Live Call Rolling Timeline (Last 90s)</span>
+<span class="px-2 py-0.5 rounded bg-surface-canvas text-secondary font-label-code text-label-code">
+            1-SECOND HOP RESOLUTION
+          </span>
+</div>
+<div class="flex items-center gap-4 font-label-code text-label-code">
+<div class="flex items-center gap-1.5">
+<span class="w-2.5 h-2.5 rounded-full bg-verdict-real-base"></span>
+<span class="text-secondary">Real (&lt;0.40)</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-2.5 h-2.5 rounded-full bg-verdict-uncertain-base"></span>
+<span class="text-secondary">Uncertain (0.40–0.60)</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-2.5 h-2.5 rounded-full bg-verdict-synthetic-base"></span>
+<span class="text-secondary">Synthetic (≥0.60)</span>
+</div>
+</div>
+</div>
+<!-- Timeline Chart Graphic Container -->
+<div class="relative w-full h-56 rounded-lg bg-surface-canvas overflow-hidden flex flex-col justify-between p-4">
+<!-- Background Guidance Lines & Uncertainty Band -->
+<div class="absolute inset-x-0 top-[20%] h-[1px] bg-border-subtle flex items-center justify-end px-2">
+<span class="font-label-code text-[10px] text-waveform-threshold">0.80 Fake Score</span>
+</div>
+<div class="absolute inset-x-0 top-[50%] h-[1px] border-b border-dashed border-waveform-threshold flex items-center justify-between px-2 z-10">
+<span class="font-label-code text-[10px] text-secondary font-semibold bg-surface-canvas px-1">DECISION THRESHOLD (0.50)</span>
+<span class="font-label-code text-[10px] text-waveform-threshold">0.50 Fake Score</span>
+</div>
+<!-- Uncertainty Highlight Zone (0.40 to 0.60 on score axis -> 40% to 60% vertical range) -->
+<div class="absolute inset-x-0 top-[40%] bottom-[40%] bg-verdict-uncertain-surface opacity-60"></div>
+<div class="absolute inset-x-0 top-[80%] h-[1px] bg-border-subtle flex items-center justify-end px-2">
+<span class="font-label-code text-[10px] text-waveform-threshold">0.20 Fake Score</span>
+</div>
+<!-- Highlighted Anomaly Injected Segment -->
+<div class="absolute left-[62%] right-[10%] top-2 bottom-6 bg-verdict-synthetic-surface/80 rounded z-10 flex flex-col justify-start p-1.5">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-verdict-synthetic-base text-[14px]">crisis_alert</span>
+<span class="font-label-code text-[10px] text-verdict-synthetic-base font-bold uppercase tracking-wider">
+              [02:40 - 03:15: Synthetic Voice Injected]
+            </span>
+</div>
+</div>
+<!-- Continuous Waveform / Timeline Line Overlay via SVG -->
+<svg class="absolute inset-0 w-full h-full pointer-events-none z-20" preserveaspectratio="none" viewbox="0 0 900 200">
+<!-- Baseline fill area -->
+<path class="text-primary/10" d="M 0,165 
+                   L 70,160 L 140,168 L 210,155 L 280,140 L 350,148 L 420,130 
+                   L 490,110 L 560,70 L 630,45 L 700,38 L 770,42 L 840,40 L 900,44 
+                   L 900,200 L 0,200 Z" fill="currentColor"></path>
+<!-- Plotted Probability Trajectory Line -->
+<path class="text-waveform-active" d="M 0,165 
+                   L 70,160 L 140,168 L 210,155 L 280,140 L 350,148 L 420,130 
+                   L 490,110 L 560,70 L 630,45 L 700,38 L 770,42 L 840,40 L 900,44" fill="none" stroke="currentColor" stroke-width="2.5"></path>
+<!-- Individual data point markers -->
+<circle cx="70" cy="160" fill="#059669" r="4"></circle>
+<circle cx="140" cy="168" fill="#059669" r="4"></circle>
+<circle cx="210" cy="155" fill="#059669" r="4"></circle>
+<circle cx="280" cy="140" fill="#059669" r="4"></circle>
+<circle cx="350" cy="148" fill="#059669" r="4"></circle>
+<circle cx="420" cy="130" fill="#059669" r="4"></circle>
+<!-- Crossing uncertainty window -->
+<circle cx="490" cy="110" fill="#D97706" r="4"></circle>
+<!-- Entering synthetic territory -->
+<circle cx="560" cy="70" fill="#DC2626" r="5"></circle>
+<circle cx="630" cy="45" fill="#DC2626" r="5"></circle>
+<circle cx="700" cy="38" fill="#DC2626" r="5"></circle>
+<circle cx="770" cy="42" fill="#DC2626" r="5"></circle>
+<circle cx="840" cy="40" fill="#DC2626" r="5"></circle>
+<circle cx="900" cy="44" fill="#DC2626" r="5"></circle>
+</svg>
+<!-- Dynamic Live Head Marker at 0s -->
+<div class="absolute right-0 top-0 bottom-6 w-[2px] bg-verdict-synthetic-base z-30">
+<div class="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-verdict-synthetic-base animate-ping"></div>
+</div>
+<div class="w-full"></div>
+<!-- Timeline axis markings -->
+<div class="relative z-30 flex justify-between w-full pt-1 font-label-code text-label-code text-secondary border-t border-border-subtle bg-surface-canvas/90">
+<span>-90s</span>
+<span>-75s</span>
+<span>-60s</span>
+<span>-45s</span>
+<span>-30s</span>
+<span>-15s</span>
+<span class="text-on-surface font-semibold">0s (Live)</span>
+</div>
+</div>
+</div>
+<!-- Bottom Card: Post-Call Summary & Evidentiary Export -->
+<div class="flex flex-col p-6 rounded-xl bg-surface-panel shadow-sm gap-5">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-headline-md text-headline-md text-on-surface">Ongoing Session Buffer Summary</span>
+<span class="px-2 py-0.5 rounded bg-surface-canvas text-secondary font-label-code text-label-code">
+              CASE REF: VG-2025-0418
+            </span>
+</div>
+<span class="font-body-sm text-body-sm text-secondary">
+            Continuous forensic aggregation from audio packet buffer #311
+          </span>
+</div>
+<!-- Action Export Buttons -->
+<div class="flex flex-wrap items-center gap-2.5">
+<button class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-surface-panel text-on-surface font-body-md text-body-md font-medium hover:bg-surface-canvas transition-all shadow-sm">
+<span class="material-symbols-outlined text-[18px]">bookmark_border</span>
+            Save to Case History
+          </button>
+<button class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-surface-panel text-on-surface font-body-md text-body-md font-medium hover:bg-surface-canvas transition-all shadow-sm">
+<span class="material-symbols-outlined text-[18px]">flag</span>
+            Flag for Expert Review
+          </button>
+<button class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-container text-on-primary font-body-md text-body-md font-medium hover:bg-primary transition-all shadow-sm">
+<span class="material-symbols-outlined text-[18px]">file_download</span>
+            Export Incident Report (PDF/JSON)
+          </button>
+</div>
+</div>
+<!-- Segment Table and Metrics Overview -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 rounded-xl bg-surface-canvas">
+<div class="flex flex-col">
+<span class="font-label-code text-label-code text-secondary">CALL DURATION</span>
+<span class="font-label-numeric text-headline-sm text-on-surface font-bold mt-1">4m 18s</span>
+<span class="font-body-sm text-body-sm text-secondary">16:00:26 – Present</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-code text-label-code text-secondary">SPEECH RATIO</span>
+<span class="font-label-numeric text-headline-sm text-on-surface font-bold mt-1">84.2%</span>
+<span class="font-body-sm text-body-sm text-secondary">217.2s analyzed audio</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-code text-label-code text-secondary">FLAGGED INTERVALS</span>
+<span class="font-label-numeric text-headline-sm text-verdict-synthetic-base font-bold mt-1">2 Segments</span>
+<span class="font-body-sm text-body-sm text-verdict-synthetic-base font-medium">01:14–01:26, 03:02–03:40</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-code text-label-code text-secondary">MAX RISK WINDOW</span>
+<span class="font-label-numeric text-headline-sm text-verdict-synthetic-base font-bold mt-1">0.89 Fake</span>
+<span class="font-body-sm text-body-sm text-secondary">At timestamp 03:22</span>
+</div>
+</div>
+<!-- Flagged Interval Breakdown Mini-Table -->
+<div class="flex flex-col rounded-lg bg-surface-canvas overflow-hidden">
+<div class="flex items-center justify-between px-4 py-2.5 bg-surface-container font-label-code text-label-code font-semibold text-secondary uppercase">
+<span>Interval Timestamp</span>
+<span>Duration</span>
+<span>Peak Fake Score</span>
+<span>Forensic Artifacts</span>
+<span>Verification Status</span>
+</div>
+<div class="divide-y divide-border-subtle">
+<div class="flex items-center justify-between px-4 py-3 font-body-sm text-body-sm">
+<span class="font-label-numeric text-label-numeric text-on-surface font-medium">01:14 - 01:26</span>
+<span class="text-secondary font-label-numeric text-label-numeric">12.0s</span>
+<span class="font-label-numeric text-label-numeric text-verdict-synthetic-base font-semibold">0.71 Fake</span>
+<span class="text-secondary">Phase discontinuity, Mel spectral smearing</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-verdict-synthetic-surface text-verdict-synthetic-base font-badge-label text-badge-label">
+<span class="material-symbols-outlined text-[14px]">priority_high</span> Confirmed Injected
+            </span>
+</div>
+<div class="flex items-center justify-between px-4 py-3 font-body-sm text-body-sm">
+<span class="font-label-numeric text-label-numeric text-on-surface font-medium">03:02 - 03:40</span>
+<span class="text-secondary font-label-numeric text-label-numeric">38.0s</span>
+<span class="font-label-numeric text-label-numeric text-verdict-synthetic-base font-semibold">0.89 Fake</span>
+<span class="text-secondary">Neural vocoder pitch glottal trace missing</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-verdict-synthetic-surface text-verdict-synthetic-base font-badge-label text-badge-label">
+<span class="material-symbols-outlined text-[14px]">cancel</span> Active Spoof Window
+            </span>
+</div>
+</div>
+</div>
+</div>
+<!-- Standard Footer Disclaimer -->
+<div class="flex flex-col md:flex-row items-center justify-between py-4 px-2 text-waveform-threshold font-body-sm text-body-sm border-t border-border-subtle">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">info</span>
+<span>This is a research prototype. A result is an additional verification signal, not proof.</span>
+</div>
+<div class="flex items-center gap-4 mt-2 md:mt-0 font-label-code text-label-code">
+<span>ISO/IEC 30107-3 COMPLIANT REPORTING</span>
+<span>ENGINE: FoR-2s REALTIME KERNEL</span>
+</div>
+</div>
+</div>
+</div>
+</main></div><script src="/static/stitch-runtime.js?v=20261020-v2auth1"></script></body></html>
+
+
+
+

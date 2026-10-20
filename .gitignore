@@ -1,0 +1,32 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.pytest-tmp-*/
+.venv/
+# Credentials and local state
+.env
+.env.*
+!.env.example
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+
+# User data, research datasets, trained artifacts, and generated outputs
+data/
+LA/
+for-2sec/
+for-norm/
+for-rerec/
+models/
+results/
+*.wav
+*.mp3
+*.flac
+
+# Local tooling state
+.streamlit/secrets.toml
+.vercel/
+*.log
+*.pem
+*.key

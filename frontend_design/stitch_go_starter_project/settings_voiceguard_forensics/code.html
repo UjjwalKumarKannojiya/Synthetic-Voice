@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "verdict-uncertain-base": "#D97706", "on-background": "#0b1c30", "on-tertiary-container": "#c7d6ee", "secondary-fixed-dim": "#bec6e0", "on-primary": "#ffffff", "tertiary-container": "#4f5d71", "primary-container": "#1d4ed8", "surface-container": "#e5eeff", "on-secondary-fixed-variant": "#3f465c", "on-surface-variant": "#434655", "inverse-on-surface": "#eaf1ff", "surface-panel": "#FFFFFF", "error": "#ba1a1a", "on-error-container": "#93000a", "border-subtle": "#E2E8F0", "outline-variant": "#c4c5d7", "background": "#f8f9ff", "tertiary-fixed-dim": "#b9c7df", "primary-fixed": "#dce1ff", "verdict-real-base": "#059669", "surface-dim": "#cbdbf5", "surface-sidebar": "#0F172A", "on-surface": "#0b1c30", "waveform-threshold": "#94A3B8", "verdict-uncertain-border": "#FDE68A", "waveform-active": "#2563EB", "on-primary-fixed": "#001551", "on-error": "#ffffff", "on-secondary-container": "#5c647a", "surface-canvas": "#F8FAFC", "on-primary-fixed-variant": "#0039b5", "secondary-container": "#dae2fd", "tertiary-fixed": "#d5e3fc", "error-container": "#ffdad6", "verdict-synthetic-base": "#DC2626", "verdict-real-border": "#A7F3D0", "surface-container-lowest": "#ffffff", "surface-tint": "#2151da", "surface": "#f8f9ff", "surface-container-highest": "#d3e4fe", "primary": "#0037b0", "primary-fixed-dim": "#b7c4ff", "surface-container-high": "#dce9ff", "on-secondary": "#ffffff", "secondary-fixed": "#dae2fd", "inverse-primary": "#b7c4ff", "surface-variant": "#d3e4fe", "verdict-uncertain-surface": "#FFFBEB", "verdict-synthetic-border": "#FECACA", "outline": "#747686", "tertiary": "#374559", "verdict-real-surface": "#ECFDF5", "on-tertiary": "#ffffff", "on-tertiary-fixed-variant": "#3a485b", "border-strong": "#CBD5E1", "surface-sidebar-hover": "#1E293B", "secondary": "#565e74", "inverse-surface": "#213145", "surface-bright": "#f8f9ff", "verdict-synthetic-surface": "#FEF2F2", "on-tertiary-fixed": "#0d1c2e", "surface-container-low": "eff4ff", "on-secondary-fixed": "#131b2e", "on-primary-container": "#cad3ff" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-sm": "0.5rem", "space-md": "1rem", "gutter": "1.5rem", "space-lg": "1.5rem", "space-xl": "2rem", "margin": "2rem", "space-xs": "0.25rem" }, "fontFamily": { "label-numeric": [ "JetBrains Mono" ], "label-code": [ "JetBrains Mono" ], "headline-lg": [ "Inter" ], "body-lg": [ "Inter" ], "badge-label": [ "Inter" ], "headline-sm": [ "Inter" ], "headline-md": [ "Inter" ], "body-sm": [ "Inter" ], "body-md": [ "Inter" ] }, "fontSize": { "label-numeric": [ "0.875rem", { "lineHeight": "1.25rem", "letterSpacing": "-0.01em", "fontWeight": "500" } ], "label-code": [ "0.75rem", { "lineHeight": "1rem", "fontWeight": "400" } ], "headline-lg": [ "1.75rem", { "lineHeight": "2.25rem", "letterSpacing": "-0.02em", "fontWeight": "600" } ], "body-lg": [ "1rem", { "lineHeight": "1.5rem", "fontWeight": "400" } ], "badge-label": [ "0.75rem", { "lineHeight": "1rem", "letterSpacing": "0.025em", "fontWeight": "600" } ], "headline-sm": [ "1rem", { "lineHeight": "1.5rem", "letterSpacing": "-0.01em", "fontWeight": "600" } ], "headline-md": [ "1.25rem", { "lineHeight": "1.75rem", "letterSpacing": "-0.015em", "fontWeight": "600" } ], "body-sm": [ "0.75rem", { "lineHeight": "1rem", "fontWeight": "400" } ], "body-md": [ "0.875rem", { "lineHeight": "1.25rem", "fontWeight": "400" } ] } } } };</script></head><body class="bg-surface-canvas font-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-full w-[240px] bg-surface-sidebar z-50 flex flex-col justify-between py-6 px-4"><div class="flex flex-col gap-6"><div class="flex flex-col gap-3 px-2"><div class="flex items-center gap-3"><img alt="VoiceGuard Forensics Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1VB-RLDeoXhUydQDzSW3_qWbhu-b4-EBRxuUnVJ13SFGnSmVUagXxlVV0_cVu2Q-jh0fF0R-wgV0IClrej-XbmltkyEOIR5CjJ5sdHgDFO5bzWxy2bHcpU1wDdPfxa--aEoY3G6HW6ke1aQGeG4WQR7ZXXhKG9heKu4qPfsxQZNdpzlEMZOdFqb6w1hLBvdr-qXM6qBqhkIQok-CXYeHtBSAtzNZIaXqx015iymlbz4ALfFR2EL2W-Clw"/><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-surface-panel tracking-tight leading-none">VoiceGuard</span><span class="font-label-code text-label-code text-waveform-threshold tracking-wider uppercase leading-snug">Forensics</span></div></div><div class="inline-flex items-center self-start"><span class="px-2 py-0.5 rounded bg-surface-sidebar-hover text-waveform-threshold font-badge-label text-[10px] tracking-wider uppercase border border-border-strong/20">RESEARCH PROTOTYPE</span></div></div><nav class="flex flex-col gap-1" data-active-classes="bg-primary text-on-primary font-medium shadow-sm"><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-waveform-threshold hover:bg-surface-sidebar-hover hover:text-surface-panel transition-all font-body-md text-body-md" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px]">grid_view</span><span>Dashboard</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-waveform-threshold hover:bg-surface-sidebar-hover hover:text-surface-panel transition-all font-body-md text-body-md" data-path="analyze-file" href="#"><span class="material-symbols-outlined text-[20px]">audio_file</span><span>Analyze File</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-waveform-threshold hover:bg-surface-sidebar-hover hover:text-surface-panel transition-all font-body-md text-body-md" data-path="live-check" href="#"><span class="material-symbols-outlined text-[20px]">mic</span><span>Live Check</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-waveform-threshold hover:bg-surface-sidebar-hover hover:text-surface-panel transition-all font-body-md text-body-md" data-path="call-monitor" href="#"><span class="material-symbols-outlined text-[20px]">phone_in_talk</span><span>Call Monitor</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-waveform-threshold hover:bg-surface-sidebar-hover hover:text-surface-panel transition-all font-body-md text-body-md" data-path="history" href="#"><span class="material-symbols-outlined text-[20px]">history</span><span>History</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-waveform-threshold hover:bg-surface-sidebar-hover hover:text-surface-panel transition-all font-body-md text-body-md" data-path="model-and-evaluation" href="#"><span class="material-symbols-outlined text-[20px]">analytics</span><span>Model &amp; Evaluation</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-waveform-threshold hover:bg-surface-sidebar-hover hover:text-surface-panel transition-all font-body-md text-body-md" data-path="settings" href="#"><span class="material-symbols-outlined text-[20px]">settings</span><span>Settings</span></a></nav></div><div class="px-2 pt-4 border-t border-border-strong/10"><div class="flex items-center justify-between text-waveform-threshold font-label-code text-label-code"><span>KERNEL STATUS</span><span class="font-label-numeric text-label-numeric text-verdict-real-base">ONLINE</span></div></div></aside><div class="pl-[240px]"><header class="fixed top-0 left-[240px] right-0 h-16 bg-surface-panel z-40 border-b border-border-subtle flex items-center justify-between px-8"><div class="flex items-center gap-4"><img alt="VoiceGuard Forensics Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1VB-RLDeoXhUydQDzSW3_qWbhu-b4-EBRxuUnVJ13SFGnSmVUagXxlVV0_cVu2Q-jh0fF0R-wgV0IClrej-XbmltkyEOIR5CjJ5sdHgDFO5bzWxy2bHcpU1wDdPfxa--aEoY3G6HW6ke1aQGeG4WQR7ZXXhKG9heKu4qPfsxQZNdpzlEMZOdFqb6w1hLBvdr-qXM6qBqhkIQok-CXYeHtBSAtzNZIaXqx015iymlbz4ALfFR2EL2W-Clw"/><span class="font-headline-md text-headline-md text-on-surface">VoiceGuard Forensics</span></div><div class="flex items-center gap-6"><div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-canvas border border-border-subtle"><span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-verdict-real-base opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-verdict-real-base"></span></span><span class="font-body-sm text-body-sm text-on-surface font-medium">Model loaded</span><span class="h-3 w-[1px] bg-border-strong mx-1"></span><span class="font-label-code text-label-code text-secondary">v1.4.2 · FoR-2s</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="w-full pt-16 bg-surface-canvas min-h-screen"><div class="flex flex-col w-full">
+<!-- Interactive Script for Settings Updates and Sliders -->
+<script>
+    function updateThreshold(val) {
+      const num = parseFloat(val);
+      document.getElementById('threshold-val').innerText = num.toFixed(2);
+      updateBands();
+    }
+    function updateBandWidth(val) {
+      const num = parseFloat(val);
+      document.getElementById('bandwidth-val').innerText = '±' + num.toFixed(2);
+      updateBands();
+    }
+    function updateBands() {
+      const thresh = parseFloat(document.getElementById('threshold-slider').value);
+      const band = parseFloat(document.getElementById('bandwidth-slider').value);
+      const low = Math.max(0, thresh - band).toFixed(2);
+      const high = Math.min(1, thresh + band).toFixed(2);
+      document.getElementById('band-range-text').innerText = '[' + low + ' – ' + high + ']';
+      
+      const pin = document.getElementById('gauge-pin');
+      pin.style.left = (thresh * 100) + '%';
+      
+      const uncertShade = document.getElementById('uncertain-zone');
+      const startPct = Math.max(0, (thresh - band) * 100);
+      const endPct = Math.min(100, (thresh + band) * 100);
+      uncertShade.style.left = startPct + '%';
+      uncertShade.style.width = (endPct - startPct) + '%';
+    }
+    function toggleSwitch(id) {
+      const el = document.getElementById(id);
+      const thumb = el.querySelector('.toggle-thumb');
+      const isChecked = el.getAttribute('data-checked') === 'true';
+      if (isChecked) {
+        el.setAttribute('data-checked', 'false');
+        el.classList.remove('bg-primary');
+        el.classList.add('bg-outline-variant');
+        thumb.classList.remove('translate-x-5');
+        thumb.classList.add('translate-x-1');
+      } else {
+        el.setAttribute('data-checked', 'true');
+        el.classList.remove('bg-outline-variant');
+        el.classList.add('bg-primary');
+        thumb.classList.remove('translate-x-1');
+        thumb.classList.add('translate-x-5');
+      }
+    }
+    function confirmClearModal() {
+      const modal = document.getElementById('clear-modal');
+      modal.classList.toggle('hidden');
+    }
+    function triggerSaveToast() {
+      const toast = document.getElementById('save-toast');
+      toast.classList.remove('opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'pointer-events-none');
+      }, 2500);
+    }
+  </script>
+<!-- Sticky Confirmation Toast Notification -->
+<div class="fixed top-20 right-8 z-50 transition-opacity duration-300 opacity-0 pointer-events-none flex items-center gap-3 bg-surface-sidebar text-surface-panel px-4 py-3 rounded-lg shadow-xl border border-border-strong/20" id="save-toast">
+<span class="material-symbols-outlined text-verdict-real-base text-[20px]">check_circle</span>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-surface-panel">Configuration Synced</span>
+<span class="font-label-code text-label-code text-waveform-threshold">Runtime buffers and decision bands updated in RAM</span>
+</div>
+</div>
+<!-- Clear History Confirmation Modal -->
+<div class="hidden fixed inset-0 z-50 flex items-center justify-center bg-surface-sidebar/60 backdrop-blur-sm p-4" id="clear-modal">
+<div class="bg-surface-panel max-w-md w-full rounded-xl p-6 shadow-2xl border border-border-subtle flex flex-col gap-4">
+<div class="flex items-center gap-3 text-verdict-synthetic-base">
+<div class="w-10 h-10 rounded-full bg-verdict-synthetic-surface flex items-center justify-center">
+<span class="material-symbols-outlined text-[24px]">delete_forever</span>
+</div>
+<div>
+<h4 class="font-headline-md text-headline-md text-on-surface">Purge Forensic Records?</h4>
+<span class="font-label-code text-label-code text-on-surface-variant">TABLES: SESSIONS, SPECTRAL_CHUNKS, AUDIT_LOG</span>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">
+        This action irrevocably truncates the local SQLite case database. 1,428 analysis sessions, hashes, and per-hop synthetic probability traces will be permanently destroyed.
+      </p>
+<div class="flex items-center justify-end gap-3 pt-2">
+<button class="px-4 py-2 rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md hover:bg-surface-container transition-colors" onclick="confirmClearModal()">
+          Abort
+        </button>
+<button class="px-4 py-2 rounded-lg bg-verdict-synthetic-base text-on-primary font-body-md text-body-md hover:opacity-90 transition-opacity flex items-center gap-2" onclick="confirmClearModal()">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+          Confirm Destructive Purge
+        </button>
+</div>
+</div>
+</div>
+<!-- Workspace Container: Centered max-w-[1280px] with analytical discipline -->
+<div class="max-w-[1280px] w-full mx-auto px-6 py-8 flex flex-col gap-8">
+<!-- Header Section: Breadcrumbs, Title, and Action Controls -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-4 border-b border-border-subtle">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2 font-label-code text-label-code text-on-surface-variant tracking-wider uppercase">
+<span>System Administration</span>
+<span class="text-waveform-threshold">/</span>
+<span class="text-primary font-medium">Engine Configuration</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Settings</h1>
+</div>
+<div class="flex items-center gap-3">
+<button class="h-10 px-4 rounded-lg bg-surface-panel border border-border-subtle hover:bg-surface-canvas hover:border-border-strong text-on-surface font-body-md text-body-md transition-all flex items-center gap-2 shadow-sm" onclick="location.reload()">
+<span class="material-symbols-outlined text-[18px] text-secondary">restart_alt</span>
+<span>Reset to defaults</span>
+</button>
+<button class="h-10 px-5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-body-md text-body-md transition-all flex items-center gap-2 shadow-sm font-medium" onclick="triggerSaveToast()">
+<span class="material-symbols-outlined text-[18px]">save</span>
+<span>Save changes</span>
+</button>
+</div>
+</div>
+<!-- Banner Notice: Live Execution Disclaimer -->
+<div class="w-full rounded-xl bg-surface-container-low border border-border-subtle p-4 flex items-start gap-3.5 shadow-sm">
+<div class="w-8 h-8 rounded-lg bg-primary-fixed flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-primary text-[20px]">info</span>
+</div>
+<div class="flex flex-col gap-0.5">
+<span class="font-headline-sm text-headline-sm text-on-surface">Runtime Hot-Reload Architecture</span>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+          Changes to detection thresholds and streaming buffers take effect immediately on subsequent live windows and uploaded audio analyses. Stored case history is not retroactively altered.
+        </p>
+</div>
+</div>
+<!-- Main Configuration Grid (12-column Analytical Architecture) -->
+<div class="grid grid-cols-12 gap-8 items-start">
+<!-- LEFT COLUMN: Primary Algorithmic Calibrations (8 cols) -->
+<div class="col-span-12 lg:col-span-8 flex flex-col gap-8">
+<!-- GROUP 1: Detection & Decision Boundary Calibration -->
+<div class="bg-surface-panel rounded-xl border border-border-subtle p-6 flex flex-col gap-6 shadow-sm">
+<div class="flex flex-col gap-1 border-b border-border-subtle pb-4">
+<div class="flex items-center justify-between">
+<h2 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[22px]">tune</span>
+                Detection &amp; Decision Boundary Calibration
+              </h2>
+<span class="font-label-code text-label-code px-2 py-0.5 rounded bg-surface-container text-primary font-medium">FoR-2s CORE</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">
+              Configure decision cutoff parameters and classification bands for speech authenticity verdicts.
+            </p>
+</div>
+<!-- Dynamic Verdict Gauge Visualizer -->
+<div class="p-5 rounded-lg bg-surface-canvas border border-border-subtle flex flex-col gap-3">
+<div class="flex items-center justify-between text-xs font-label-code text-on-surface-variant">
+<span class="flex items-center gap-1.5 text-verdict-real-base font-semibold">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                LIKELY REAL (&lt; Threshold - Band)
+              </span>
+<span class="flex items-center gap-1.5 text-verdict-uncertain-base font-semibold">
+<span class="material-symbols-outlined text-[14px]">warning</span>
+                UNCERTAIN BAND
+              </span>
+<span class="flex items-center gap-1.5 text-verdict-synthetic-base font-semibold">
+<span class="material-symbols-outlined text-[14px]">dangerous</span>
+                LIKELY SYNTHETIC (≥ Threshold)
+              </span>
+</div>
+<!-- Gauge Track Bar with Uncertainty Mask -->
+<div class="relative w-full h-4 bg-border-strong/30 rounded-full overflow-hidden my-1">
+<!-- Gradient Base Real to Fake -->
+<div class="absolute inset-0 bg-gradient-to-r from-verdict-real-base/20 via-verdict-uncertain-base/25 to-verdict-synthetic-base/20"></div>
+<!-- Uncertain Shaded Band Window -->
+<div class="absolute top-0 bottom-0 bg-verdict-uncertain-border/70 border-x border-verdict-uncertain-base/50" id="uncertain-zone" style="left: 40%; width: 20%;"></div>
+<!-- Threshold Cutoff Indicator Line -->
+<div class="absolute top-0 bottom-0 w-1 bg-on-surface shadow-md -translate-x-1/2" id="gauge-pin" style="left: 50%;"></div>
+</div>
+<div class="flex justify-between font-label-numeric text-label-code text-secondary">
+<span>0.00 (Pure Human)</span>
+<span class="font-semibold text-on-surface">Decision Boundary</span>
+<span>1.00 (Synthetic Artifacts)</span>
+</div>
+</div>
+<!-- Slider 1: Decision Threshold Slider -->
+<div class="flex flex-col gap-2.5">
+<div class="flex items-center justify-between">
+<label class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-2" for="threshold-slider">
+<span>Decision Threshold Split Point</span>
+<span class="material-symbols-outlined text-outline text-[16px]" title="Determines binary partition point">help_outline</span>
+</label>
+<div class="flex items-center gap-2">
+<span class="font-label-code text-label-code text-secondary">Current Cutoff:</span>
+<span class="font-label-numeric text-label-numeric px-2.5 py-0.5 rounded bg-surface-container font-semibold text-primary" id="threshold-val">0.50</span>
+</div>
+</div>
+<input class="w-full h-2 bg-border-subtle rounded-lg appearance-none cursor-pointer accent-primary" id="threshold-slider" max="1.00" min="0.00" oninput="updateThreshold(this.value)" step="0.01" type="range" value="0.50"/>
+<div class="flex justify-between font-label-code text-[11px] text-waveform-threshold">
+<span>0.00 (High Sensitivity)</span>
+<span class="text-on-surface-variant font-medium">Default: 0.50 (Validated on FoR-2s test set)</span>
+<span>1.00 (High Specificity)</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-normal">
+              Scores at or above this value trigger a "Likely Synthetic" verdict. Lower values increase sensitivity but elevate false alarms.
+            </p>
+</div>
+<!-- Slider 2: Uncertain Band Width Slider -->
+<div class="flex flex-col gap-2.5 pt-2 border-t border-border-subtle/60">
+<div class="flex items-center justify-between">
+<label class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-2" for="bandwidth-slider">
+<span>Uncertain Band Width</span>
+<span class="material-symbols-outlined text-outline text-[16px]">info</span>
+</label>
+<div class="flex items-center gap-2">
+<span class="font-label-code text-label-code text-secondary">Evaluated Window:</span>
+<span class="font-label-numeric text-label-code text-on-surface-variant" id="band-range-text">[0.40 – 0.60]</span>
+<span class="font-label-numeric text-label-numeric px-2.5 py-0.5 rounded bg-surface-container text-on-surface font-semibold" id="bandwidth-val">±0.10</span>
+</div>
+</div>
+<input class="w-full h-2 bg-border-subtle rounded-lg appearance-none cursor-pointer accent-primary" id="bandwidth-slider" max="0.25" min="0.02" oninput="updateBandWidth(this.value)" step="0.01" type="range" value="0.10"/>
+<div class="flex justify-between font-label-code text-[11px] text-waveform-threshold">
+<span>±0.02 (Narrow Ambiguity)</span>
+<span>Default: ±0.10</span>
+<span>±0.25 (Rigorous Review Window)</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-normal">
+              Window probabilities within [Threshold - Band, Threshold + Band] are classified as "Uncertain" and flagged for manual spectral inspection.
+            </p>
+</div>
+<!-- Selector 3: Min Speech Segment Duration -->
+<div class="flex flex-col gap-2 pt-2 border-t border-border-subtle/60">
+<div class="flex items-center justify-between">
+<label class="font-headline-sm text-headline-sm text-on-surface" for="min-speech-dur">
+                Minimum Speech Segment Duration for File Verdict
+              </label>
+<span class="font-label-code text-label-code text-waveform-threshold">VAD FILTER</span>
+</div>
+<div class="grid grid-cols-4 gap-3">
+<button class="flex items-center justify-center py-2.5 px-3 rounded-lg border border-border-subtle bg-surface-panel hover:bg-surface-canvas text-on-surface font-label-numeric text-label-numeric transition-colors">
+                0.5s
+              </button>
+<button class="flex items-center justify-center py-2.5 px-3 rounded-lg border-2 border-primary bg-surface-container-low text-primary font-label-numeric text-label-numeric font-semibold shadow-sm">
+                1.0s (Default)
+              </button>
+<button class="flex items-center justify-center py-2.5 px-3 rounded-lg border border-border-subtle bg-surface-panel hover:bg-surface-canvas text-on-surface font-label-numeric text-label-numeric transition-colors">
+                2.0s
+              </button>
+<button class="flex items-center justify-center py-2.5 px-3 rounded-lg border border-border-subtle bg-surface-panel hover:bg-surface-canvas text-on-surface font-label-numeric text-label-numeric transition-colors">
+                3.0s
+              </button>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-normal">
+              Minimum active human speech duration required before computing aggregate file verdict. Prevents noisy environmental bursts from skewing summary probability.
+            </p>
+</div>
+</div>
+<!-- GROUP 2: Real-time Streaming & Alert Policy -->
+<div class="bg-surface-panel rounded-xl border border-border-subtle p-6 flex flex-col gap-6 shadow-sm">
+<div class="flex flex-col gap-1 border-b border-border-subtle pb-4">
+<div class="flex items-center justify-between">
+<h2 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[22px]">stream</span>
+                Streaming Analysis &amp; Trigger Logic
+              </h2>
+<span class="font-label-code text-label-code px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-medium">LOW LATENCY HOP</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">
+              Tune temporal smoothing, voice-activity detection (VAD), and consecutive anomaly thresholds for live check and call monitoring.
+            </p>
+</div>
+<!-- EMA Smoothing Factor -->
+<div class="flex flex-col gap-2.5">
+<div class="flex items-center justify-between">
+<label class="font-headline-sm text-headline-sm text-on-surface" for="ema-slider">
+                Exponential Moving Average (EMA) Smoothing Factor (α)
+              </label>
+<span class="font-label-numeric text-label-numeric px-2.5 py-0.5 rounded bg-surface-container text-primary font-semibold" id="ema-val">α = 0.35</span>
+</div>
+<input class="w-full h-2 bg-border-subtle rounded-lg appearance-none cursor-pointer accent-primary" id="ema-slider" max="0.80" min="0.10" oninput="document.getElementById('ema-val').innerText = 'α = ' + parseFloat(this.value).toFixed(2)" step="0.05" type="range" value="0.35"/>
+<div class="flex justify-between font-label-code text-[11px] text-waveform-threshold">
+<span>α = 0.10 (Heavy Dampening / High Stability)</span>
+<span>Default: 0.35</span>
+<span>α = 0.80 (Instantaneous Response)</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-normal">
+              Higher values prioritize rapid reaction to synthetic injection; lower values suppress brief transient acoustic spikes and room clicks.
+            </p>
+</div>
+<!-- VAD Sensitivity Options -->
+<div class="flex flex-col gap-2.5 pt-2 border-t border-border-subtle/60">
+<div class="flex items-center justify-between">
+<label class="font-headline-sm text-headline-sm text-on-surface">
+                Silence / Voice Activity Gate (VAD) Sensitivity
+              </label>
+<span class="font-label-code text-label-code text-secondary">RMS ENERGY THRESHOLD</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+<label class="flex flex-col gap-1 p-3.5 rounded-lg border border-border-subtle hover:bg-surface-canvas cursor-pointer transition-colors bg-surface-panel">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-body-md text-on-surface font-semibold">Aggressive Gate</span>
+<input class="accent-primary" name="vad_level" type="radio"/>
+</div>
+<span class="font-label-numeric text-label-code text-secondary">-38 dBFS</span>
+<span class="font-body-sm text-[11px] text-on-surface-variant leading-tight">High noise call centers</span>
+</label>
+<label class="flex flex-col gap-1 p-3.5 rounded-lg border-2 border-primary bg-surface-container-low cursor-pointer shadow-sm">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-body-md text-primary font-semibold">Standard Speech</span>
+<input checked="" class="accent-primary" name="vad_level" type="radio"/>
+</div>
+<span class="font-label-numeric text-label-code text-primary font-medium">-45 dBFS (Default)</span>
+<span class="font-body-sm text-[11px] text-on-surface-variant leading-tight">Clean desktop mic &amp; VoIP</span>
+</label>
+<label class="flex flex-col gap-1 p-3.5 rounded-lg border border-border-subtle hover:bg-surface-canvas cursor-pointer transition-colors bg-surface-panel">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-body-md text-on-surface font-semibold">Sensitive Gate</span>
+<input class="accent-primary" name="vad_level" type="radio"/>
+</div>
+<span class="font-label-numeric text-label-code text-secondary">-52 dBFS</span>
+<span class="font-body-sm text-[11px] text-on-surface-variant leading-tight">Whispered / faint callers</span>
+</label>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-normal">
+              Windows below this RMS audio power are classified as "no speech" and skipped by the inference pipeline to preserve GPU/CPU cycles.
+            </p>
+</div>
+<!-- Consecutive Anomaly Rule & Buffer Policy -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2 border-t border-border-subtle/60">
+<!-- Consecutive Anomaly Stepper -->
+<div class="flex flex-col gap-2">
+<label class="font-headline-sm text-headline-sm text-on-surface" for="consecutive-windows">
+                Consecutive Anomaly Trigger
+              </label>
+<div class="flex items-center gap-3">
+<div class="flex items-center border border-border-strong rounded-lg overflow-hidden bg-surface-panel">
+<button class="px-3 py-2 text-on-surface hover:bg-surface-container transition-colors" onclick="let inp = document.getElementById('consecutive-windows'); if(inp.value &gt; 1) inp.value--">
+<span class="material-symbols-outlined text-[16px]">remove</span>
+</button>
+<input class="w-14 text-center font-label-numeric text-label-numeric font-semibold text-on-surface bg-transparent focus:outline-none" id="consecutive-windows" max="10" min="1" type="number" value="3"/>
+<button class="px-3 py-2 text-on-surface hover:bg-surface-container transition-colors" onclick="let inp = document.getElementById('consecutive-windows'); if(inp.value &lt; 10) inp.value++">
+<span class="material-symbols-outlined text-[16px]">add</span>
+</button>
+</div>
+<span class="font-label-code text-label-code text-on-surface-variant">consecutive windows (1.0s hop)</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-normal">
+                Trigger critical incident alert banner when N consecutive speech windows exceed the synthetic threshold (≥ 0.50).
+              </p>
+</div>
+<!-- Lagging Buffer Drop Policy -->
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<label class="font-headline-sm text-headline-sm text-on-surface">
+                  Lagging Buffer Frame Drop
+                </label>
+<!-- Custom Toggle Switch -->
+<button class="w-11 h-6 bg-primary rounded-full transition-colors relative flex items-center focus:outline-none focus:ring-2 focus:ring-primary/40" data-checked="true" id="toggle-drop-buffer" onclick="toggleSwitch('toggle-drop-buffer')">
+<span class="toggle-thumb w-4 h-4 bg-surface-panel rounded-full shadow-md transition-transform transform translate-x-5"></span>
+</button>
+</div>
+<span class="font-label-code text-label-code text-verdict-real-base font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">bolt</span> ACTIVE: Zero Backpressure Mode
+              </span>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-normal">
+                Drop stale audio frames if engine latency exceeds hop interval (prevents accumulation of live delay during spikes).
+              </p>
+</div>
+</div>
+</div>
+</div>
+<!-- RIGHT COLUMN: Privacy, Database Maintenance & Inspection Telemetry (4 cols) -->
+<div class="col-span-12 lg:col-span-4 flex flex-col gap-8">
+<!-- GROUP 3: Data Privacy & Acoustic Evidence Storage -->
+<div class="bg-surface-panel rounded-xl border border-border-subtle p-6 flex flex-col gap-6 shadow-sm">
+<div class="flex flex-col gap-1 border-b border-border-subtle pb-4">
+<h2 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[22px]">shield_person</span>
+              Data Privacy &amp; Retention
+            </h2>
+<p class="font-body-md text-body-md text-on-surface-variant">
+              Manage local volatile storage and forensic evidence trails.
+            </p>
+</div>
+<!-- Store Raw Audio Files (Privacy Toggle) -->
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-on-surface">Store Raw Audio Files</span>
+<!-- Off by default -->
+<button class="w-11 h-6 bg-outline-variant rounded-full transition-colors relative flex items-center focus:outline-none focus:ring-2 focus:ring-primary/40" data-checked="false" id="toggle-store-raw" onclick="toggleSwitch('toggle-store-raw')">
+<span class="toggle-thumb w-4 h-4 bg-surface-panel rounded-full shadow-md transition-transform transform translate-x-1"></span>
+</button>
+</div>
+<div>
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-verdict-real-surface text-verdict-real-base border border-verdict-real-border font-badge-label text-[11px] font-semibold">
+<span class="material-symbols-outlined text-[14px]">verified</span>
+                RESEARCH PRIVACY SAFE (DEFAULT)
+              </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+              When disabled, raw audio PCM frames are processed strictly in volatile memory and discarded. Only extracted anomaly telemetry, SHA-256 hashes, and per-window scores are recorded.
+            </p>
+</div>
+<!-- Local SQLite Storage Metrics -->
+<div class="flex flex-col gap-3 pt-4 border-t border-border-subtle/60">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-on-surface">Local SQLite Storage</span>
+<span class="font-label-numeric text-label-numeric text-secondary font-medium">34.8 MB</span>
+</div>
+<!-- Storage progress visualizer -->
+<div class="w-full bg-border-subtle rounded-full h-2 overflow-hidden">
+<div class="bg-primary h-2 rounded-full" style="width: 28%"></div>
+</div>
+<div class="flex justify-between font-label-code text-label-code text-on-surface-variant">
+<span>1,428 Analyses Logged</span>
+<span>Retention: 30 Days</span>
+</div>
+<button class="mt-2 w-full py-2.5 px-4 rounded-lg border border-border-strong bg-surface-panel hover:bg-surface-canvas text-on-surface font-body-md text-body-md font-medium transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-secondary">file_download</span>
+              Export Backup (SQLite / JSON)
+            </button>
+</div>
+<!-- Danger Zone: Clear History -->
+<div class="flex flex-col gap-3 pt-4 border-t border-border-subtle/60">
+<div class="p-4 rounded-lg bg-verdict-synthetic-surface border border-verdict-synthetic-border flex flex-col gap-3">
+<div class="flex items-center gap-2 text-verdict-synthetic-base">
+<span class="material-symbols-outlined text-[20px]">warning</span>
+<span class="font-headline-sm text-headline-sm font-semibold">Danger Zone</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                Permanently delete all archived session records, timestamps, and acoustic anomaly timelines. This action cannot be undone.
+              </p>
+<button class="w-full py-2 px-3 rounded-lg border border-verdict-synthetic-base text-verdict-synthetic-base hover:bg-verdict-synthetic-base hover:text-on-primary font-body-md text-body-md font-medium transition-all flex items-center justify-center gap-2" onclick="confirmClearModal()">
+<span class="material-symbols-outlined text-[18px]">delete_sweep</span>
+                Clear All History
+              </button>
+</div>
+</div>
+</div>
+<!-- Telemetry & Diagnostic Card -->
+<div class="bg-surface-panel rounded-xl border border-border-subtle p-5 flex flex-col gap-4 shadow-sm">
+<div class="flex items-center justify-between border-b border-border-subtle pb-3">
+<span class="font-headline-sm text-headline-sm text-on-surface">Execution Context</span>
+<span class="font-label-code text-label-code text-verdict-real-base">STATUS: NOMINAL</span>
+</div>
+<div class="flex flex-col gap-2.5 font-label-code text-label-code text-on-surface-variant">
+<div class="flex justify-between items-center py-1 border-b border-border-subtle/40">
+<span>Model Architecture:</span>
+<span class="font-semibold text-on-surface">FoR-2s (Dual-Stream ResNet)</span>
+</div>
+<div class="flex justify-between items-center py-1 border-b border-border-subtle/40">
+<span>Inference Device:</span>
+<span class="font-semibold text-on-surface">WebAssembly SIMD (12-Thread)</span>
+</div>
+<div class="flex justify-between items-center py-1 border-b border-border-subtle/40">
+<span>Window Hop Interval:</span>
+<span class="font-semibold text-on-surface">1,000 ms</span>
+</div>
+<div class="flex justify-between items-center py-1">
+<span>Entropy Calibration:</span>
+<span class="font-semibold text-on-surface">Platt Scaling v1.02</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Sticky Bottom Persistence Action Bar -->
+<div class="sticky bottom-4 z-30 w-full bg-surface-panel border border-border-strong rounded-xl p-4 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<span class="w-3 h-3 rounded-full bg-verdict-real-base"></span>
+<div class="flex flex-col">
+<span class="font-label-code text-label-code text-on-surface font-semibold tracking-wide">
+            Active Profile: #SEC-STITCH-LOCAL-01
+          </span>
+<span class="font-label-code text-[11px] text-waveform-threshold">
+            Synchronized with <code class="text-secondary font-mono">/api/v1/forensics/settings</code>
+</span>
+</div>
+</div>
+<div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+<button class="h-10 px-4 rounded-lg bg-surface-panel border border-border-subtle hover:bg-surface-canvas text-on-surface font-body-md text-body-md transition-colors flex items-center gap-2" onclick="location.reload()">
+<span>Reset to defaults</span>
+</button>
+<button class="h-10 px-6 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-body-md text-body-md font-medium transition-all shadow-sm flex items-center gap-2" onclick="triggerSaveToast()">
+<span class="material-symbols-outlined text-[18px]">check</span>
+<span>Save changes</span>
+</button>
+</div>
+</div>
+<!-- Standard Muted Forensic Footer Disclaimer -->
+<div class="pb-6 pt-2 flex flex-col items-center justify-center text-center gap-1">
+<p class="font-label-code text-label-code text-waveform-threshold">
+        This is a research prototype. A result is an additional verification signal, not proof. ISO/IEC 30107-3 compliant reporting conventions.
+      </p>
+<span class="font-label-code text-[11px] text-outline-variant">VoiceGuard Forensics Platform · Build ID 2024.11-RC2</span>
+</div>
+</div>
+</div></main></div></body></html>

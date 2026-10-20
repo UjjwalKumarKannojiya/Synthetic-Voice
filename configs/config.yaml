@@ -1,0 +1,30 @@
+seed: 42
+
+paths:
+  raw_data: data/raw
+  manifests: data/manifests
+  features: data/features
+  models: models
+  results: results
+
+audio:
+  sample_rate: 16000
+  mono: true
+  trim_silence: false
+  normalize: false
+  fixed_length_seconds: null
+
+features:
+  mfcc:
+    n_mfcc: 20
+    include_delta: true
+    include_delta_delta: true
+    summary: [mean, std]
+
+data:
+  max_files_per_class: null
+  dataset_path: null
+
+model:
+  score_definition: probability_of_fake
+  threshold_source: validation
