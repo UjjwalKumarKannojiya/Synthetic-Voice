@@ -58,7 +58,7 @@ Additional Preview proof on 2026-10-20: Vercel's request log recorded HTTP 500 f
 
 ## Current verified Preview — 2026-10-20
 
-GitHub-triggered protected Preview deployment `dpl_5pw7UaBXRLbqNYg3qz8YHHFt7iF6` is READY at [voicegaurd-ev9sij6nz](https://voicegaurd-ev9sij6nz-ujjwal21822s-projects.vercel.app). The stable branch alias is [voicegaurd-git-codex-frontend-page](https://voicegaurd-git-codex-frontend-page-63029f-ujjwal21822s-projects.vercel.app). Vercel CLI `/api/health` returned:
+The GitHub-triggered protected Preview for the pushed branch is READY at the stable alias [voicegaurd-git-codex-frontend-page](https://voicegaurd-git-codex-frontend-page-63029f-ujjwal21822s-projects.vercel.app). Vercel CLI `/api/health` returned:
 
 ```json
 {"status":"ok","ready":true,"database_connected":true,"model_loaded":true,"model_version":"classical_for_2sec","profiles":{"legacy_for2sec":true,"asvspoof_la_balanced2500":true}}
@@ -66,7 +66,7 @@ GitHub-triggered protected Preview deployment `dpl_5pw7UaBXRLbqNYg3qz8YHHFt7iF6`
 
 The hosted auth check passed signup (`201`), login (`200`), authenticated `/api/auth/me`, account deletion (`200`), and confirmed the deleted account's session no longer authenticated. A generated 2-second tone from the existing test helper was uploaded through both `legacy_for2sec` and `asvspoof_la_balanced2500`; both returned HTTP `200` with a model window, and History returned two saved `Upload` records. The temporary account and its analyses were deleted. The tone is not speech, so this proves the server-side inference and storage path runs; it is not a model accuracy check.
 
-The latest full local suite returned `66 passed, 2 warnings in 93.34s`; warnings are librosa short-input `n_fft=1024` notices. `node --check app\static\app-runtime.js`, Python compilation, and the no-mock scan passed. Vercel's upload-free dry run included 88 files (749,421 bytes), ignored 86 paths, and included zero sensitive paths; environment files, local notes, virtualenv, data, models, results, and tests were ignored.
+The latest full local suite returned `66 passed, 2 warnings in 93.34s`; warnings are librosa short-input `n_fft=1024` notices. `node --check app\static\app-runtime.js`, Python compilation, and the no-mock scan passed. Vercel's upload-free dry run included 88 files (749,080 bytes), ignored 86 paths, and included zero sensitive paths; environment files, local notes, virtualenv, data, models, results, and tests were ignored.
 
 The temporary cleanup endpoint and its Preview-only token were removed before this clean deployment; a POST to that route returns `404`. The Preview database URL uses a separate limited app role. The database owner password and Supabase API secret shared in chat have not been rotated and must be rotated before Production.
 
