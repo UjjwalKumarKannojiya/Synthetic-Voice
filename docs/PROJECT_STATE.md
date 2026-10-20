@@ -578,3 +578,25 @@ files. The source is visible from the default branch. No dataset, weights, resul
 database, or credentials were added.
 
 A hosted Vercel preview, PostgreSQL connection, and private model-artifact delivery remain unavailable and are required before deployment readiness can be claimed.
+
+
+## V5 local verification follow-up — 2026-10-20
+
+Full local suite: `.venv\Scripts\python.exe -m pytest -q --basetemp .pytest-tmp-r8-acceptance`
+returned `53 passed, 2 warnings in 87.98s`; the warnings are existing librosa short-signal
+`n_fft=1024` warnings. This includes signup/login/session/security and the authenticated live
+WebSocket integration tests. The local running site returned `/api/health` HTTP 200 with both model
+profiles loaded, `/login` HTTP 200, and `/api/auth/me` HTTP 200 with `authenticated=false`.
+
+Both local detector constructors loaded their ignored model weights: legacy threshold
+`0.6786657728693419`; ASVspoof threshold `0.8323956492443629`. `git check-ignore` confirms the
+legacy weight path is ignored. The local SQLite account count is zero; no login credentials were
+created for the student. Create an account through Sign Up on `/login`; locally it persists in
+`data/voiceguard.sqlite3`. Production account persistence requires hosted PostgreSQL.
+
+Deployment checks remain NOT VERIFIED with concrete blockers: `vercel` CLI is not installed,
+`VERCEL` is unset, and `DATABASE_URL` is not configured in this environment. Consequently there is
+no authorized project/database target for a preview deployment or live Postgres test. Model weights
+are present locally but ignored by Git, and no remote artifact delivery is configured; local model
+loading does not prove the Vercel function can receive them. A live Vercel Python WebSocket test also
+requires that preview. Do not treat local integration tests as those hosted checks.
