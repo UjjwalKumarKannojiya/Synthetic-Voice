@@ -100,6 +100,22 @@ def test_unknown_model_profile_is_rejected(tmp_path, monkeypatch) -> None:
         ).status_code == 400
 
 
+def test_vercel_upload_limit_is_disclosed_and_enforced(tmp_path, monkeypatch) -> None:
+    from app.db.database import Database
+
+    monkeypatch.setattr("app.main.DATABASE", Database(tmp_path / "test.sqlite3"))
+    monkeypatch.setattr("app.main.MAX_UPLOAD_BYTES", 4 * 1024 * 1024)
+    with authenticated_client() as client:
+        page = client.get("/analyze-file")
+        assert "Max file size: 4 MB" in page.text
+        response = client.post(
+            "/api/analyze/upload",
+            files={"file": ("oversized.wav", b"x" * (4 * 1024 * 1024 + 1), "audio/wav")},
+        )
+        assert response.status_code == 413
+        assert response.json()["detail"] == "Upload exceeds the 4 MB limit"
+
+
 def test_demo_listing_hides_truth_and_analysis_reveals_it(tmp_path, monkeypatch) -> None:
     monkeypatch.setattr("app.main.DATABASE", __import__("app.db.database", fromlist=["Database"]).Database(tmp_path / "test.sqlite3"))
     with authenticated_client() as client:

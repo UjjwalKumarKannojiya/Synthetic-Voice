@@ -62,7 +62,7 @@ DATABASE_URL = os.environ.get("DATABASE_URL")
 if os.environ.get("VERCEL") == "1" and not DATABASE_URL:
     raise RuntimeError("DATABASE_URL must point to persistent hosted PostgreSQL on Vercel")
 DATABASE = Database(DATABASE_URL or ROOT / "data" / "voiceguard.sqlite3")
-MAX_UPLOAD_BYTES = 10 * 1024 * 1024
+MAX_UPLOAD_BYTES = (4 if os.environ.get("VERCEL") == "1" else 10) * 1024 * 1024
 DEFAULT_SETTINGS = {
     "uncertain_band": 0.05,
     "hop_seconds": 1.0,
@@ -299,6 +299,8 @@ def stitch_page(page: str, request: Request) -> Response:
         return RedirectResponse(url=f"/login?next={destination}", status_code=303)
     page_file = ROOT / "app" / "static" / "stitch" / f"{page}.html"
     html = page_file.read_text(encoding="utf-8-sig")
+    upload_limit_mb = max(1, (MAX_UPLOAD_BYTES + 1024 * 1024 - 1) // (1024 * 1024))
+    html = html.replace("Max file size: 50 MB", f"Max file size: {upload_limit_mb} MB")
     html = html.replace("stitch-runtime.js?v=6", "stitch-runtime.js?v=20261020-v4account1")
     html = html.replace("stitch-runtime.js?v=20261020-v2auth1", "stitch-runtime.js?v=20261020-v4account1")
     html = html.replace("<head>", "<head><style>html{visibility:hidden}.hidden{display:none!important}</style>", 1)
@@ -595,7 +597,8 @@ async def analyze_upload(
             break
         payload.extend(chunk)
         if len(payload) > MAX_UPLOAD_BYTES:
-            raise HTTPException(status_code=413, detail="Upload exceeds the 10 MB limit")
+            limit_mb = max(1, (MAX_UPLOAD_BYTES + 1024 * 1024 - 1) // (1024 * 1024))
+            raise HTTPException(status_code=413, detail=f"Upload exceeds the {limit_mb} MB limit")
     temporary_path: Path | None = None
     try:
         with tempfile.NamedTemporaryFile(suffix=Path(file.filename).suffix, delete=False) as stream:

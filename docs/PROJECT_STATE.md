@@ -522,12 +522,13 @@ SQLAlchemy driver. MongoDB is not compatible with the current relational schema/
 
 Hardened `.gitignore` for credentials, local databases, Vercel state, logs/keys, raw data and all
 known corpus roots. Before pushing, stage only reviewed source/docs/config files and check staged
-names plus secret patterns. The supplied GitHub URL returned no remote refs on read-only inspection;
-local Git has no commits and no configured remote.
+names plus secret patterns. The initial source-only branch and documentation update were pushed to
+GitHub. Default `master` originally contained only starter README commit `09ad99e`; source is now
+merged while preserving that history and pushed as `10bdd9f`, so the landing page includes the project.
 
 NOT VERIFIED: Vercel build/bundle size, Postgres connectivity, cold start, inference artifact delivery,
-upload payload compatibility (the current 10 MB app limit exceeds Vercel's 4.5 MB request limit),
-and Python WebSocket live monitoring. A Vercel deployment still needs hosted Postgres, an approved
+and Python WebSocket live monitoring. Uploads cap at 10 MB locally and 4 MB on Vercel to fit
+within the documented 4.5 MB request-body limit. A Vercel deployment still needs hosted Postgres, an approved
 private delivery path for model plus matching reports/metadata, and a preview project. Do not deploy
 until those inputs are configured and preview checks pass.
 
@@ -553,18 +554,27 @@ The exact staged paths passed the blocked-data path check (125 files; zero match
 high-confidence credential-pattern scan (zero matches). Full staged path output was inspected.
 
 NOT VERIFIED: Vercel build/bundle size, Postgres connectivity, cold start, inference artifact delivery,
-upload payload compatibility (the current 10 MB app limit exceeds Vercel's 4.5 MB request limit),
-and Python WebSocket live monitoring. A Vercel deployment still needs hosted Postgres, an approved
+and Python WebSocket live monitoring. Uploads cap at 10 MB locally and 4 MB on Vercel to fit
+within the documented 4.5 MB request-body limit. A Vercel deployment still needs hosted Postgres, an approved
 private delivery path for model plus matching reports/metadata, and a preview project. Do not deploy
 until those inputs are configured and preview checks pass.
 
 GitHub status: source-only commit `17f11ce` and state update `aed31fe` were pushed to
-`origin/codex/r4-stream-evaluation`. Follow-up inspection found GitHub's default `master` branch
-still had only its original one-line README commit `09ad99e`; this is why the repository landing page
-looked empty. The feature branch is being integrated into `master` while preserving that original
-commit. The reviewed source tree contains 125 source, UI, test, and documentation paths; no local
-database, dataset, model weights, or results were included. The blocked-path check found zero
-matches; the high-confidence credential scan found zero matches.
+`origin/codex/r4-stream-evaluation`. Commit `10bdd9f` integrates the source into default `master`
+while preserving starter commit `09ad99e`. The source tree contains 125 paths and excludes local
+databases, datasets, model weights, results, and credentials. The path and high-confidence secret
+scans were clean.
 
-Next: after the default-branch update, stop at the V5 hosted-preview gate until the student supplies
-Vercel/PostgreSQL configuration and the model artifact delivery choice.
+Next: stop at the V5 hosted-preview gate until the student supplies Vercel/PostgreSQL configuration
+and selects a private model-artifact delivery method.
+
+## V5 follow-up — upload compatibility and default branch (2026-10-20)
+
+The active upload page displays the cap enforced by `/api/analyze/upload`: 10 MB locally and
+4 MB when `VERCEL=1`, leaving multipart overhead below Vercel's 4.5 MB request cap. The focused
+regression test passed (1 passed in 4.79s), covering UI disclosure and HTTP 413 enforcement.
+`py_compile` passed; `scripts/scan_no_mock.py` found no mock patterns in 32 active application
+files. The source is visible from the default branch. No dataset, weights, result artifacts, local
+database, or credentials were added.
+
+A hosted Vercel preview, PostgreSQL connection, and private model-artifact delivery remain unavailable and are required before deployment readiness can be claimed.

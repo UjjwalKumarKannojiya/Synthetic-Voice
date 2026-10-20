@@ -139,5 +139,3 @@ Stage A1 adds verified model metadata and a reusable detector. To inspect one
 Scores are scikit-learn SVM fake-class estimates, not calibrated real-world
 probabilities. See `docs/AUDIT.md` for the measured test and robustness
 limitations before interpreting a result.
-
->>>>>>> codex/r4-stream-evaluation

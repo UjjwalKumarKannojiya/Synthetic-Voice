@@ -102,15 +102,13 @@ gates are implemented. Vercel deployment is not configured.
 6. For deployment, separate static assets from API routing where practical, use only environment
    configuration, and replace local file persistence with hosted Postgres/object storage.
    Keep `.env` and dataset/audio out of git. Evaluate the model artifact and dependency footprint.
-7. Do not assume the live WebSocket is deployable on Vercel. The current app is a FastAPI ASGI app;
-   Vercel's current documentation describes FastAPI/Python support and a 500 MB uncompressed
-   function bundle limit, a 4.5 MB function payload limit, and up to 300 seconds on Hobby with
-   Fluid Compute. Current Vercel docs announce WebSockets in public beta, but the examples are
-   Node.js; compatibility of this Python FastAPI WebSocket endpoint must be proven by a preview
-   spike. If it fails, use Vercel for static frontend and a long-running backend host for FastAPI.
-8. The existing upload cap is 10 MB, above Vercel's 4.5 MB function body limit. Before Vercel,
-   normalize/trim in the browser or upload directly to object storage with a clear duration/size
-   disclosure.
+7. Vercel's current Python runtime supports FastAPI and Python WebSockets, with WebSockets still in
+   public beta and a bounded function duration. Prove this app's authenticated audio socket in a
+   preview; implement reconnect/partial-summary behavior and document plan limits. If the preview
+   fails, use Vercel for the UI and a long-running host for FastAPI.
+8. Vercel rejects request bodies above 4.5 MB. The app caps Vercel uploads at 4 MB to leave room for
+   multipart overhead while retaining the 10 MB local limit. Larger cloud uploads require direct
+   object storage and a preview test.
 
 ## Gates
 
@@ -129,7 +127,9 @@ gates are implemented. Vercel deployment is not configured.
 
 - [Vercel Python runtime and FastAPI guide](https://vercel.com/docs/frameworks/backend/fastapi)
 - [Vercel function limits](https://vercel.com/docs/functions/limitations)
-- [Vercel WebSocket support announcement](https://vercel.com/changelog/websocket-support-is-now-in-public-beta)
+- [Vercel Python runtime entrypoints and bundle size](https://vercel.com/docs/functions/runtimes/python)
+- [Vercel WebSocket support and limits](https://vercel.com/kb/guide/do-vercel-serverless-functions-support-websocket-connections)
+- [Vercel Services and Python WebSocket support](https://vercel.com/blog/vercel-services-run-full-stack-on-vercel)
 
 These platform details can change; recheck them when starting V5.
 
@@ -138,8 +138,7 @@ These platform details can change; recheck them when starting V5.
 GitHub visibility follow-up: the repository's default branch is `master`, which already contained
 commit `09ad99e` with only the `# Synthetic-Voice` README. The source-only root commit `17f11ce` and
 documentation commit `aed31fe` were initially pushed to `codex/r4-stream-evaluation`, so they did
-not appear on the default-branch landing page. The source branch is being merged into `master` while
-preserving `09ad99e` and expanding its README. The reviewed source tree has 125 paths and excludes
+not appear on the default-branch landing page. The source branch was merged into `master` by commit `10bdd9f`, preserving `09ad99e` and expanding its README. The reviewed source tree has 125 paths and excludes
 research data and runtime artifacts; its blocked-path and high-confidence credential scans were
 clean.
 
@@ -166,6 +165,10 @@ The SQLAlchemy adapter accepts provider-style `postgresql://` and `postgres://` 
 through the declared psycopg 3 driver. MongoDB is not a compatible replacement for this app's
 relational schema and Alembic migrations; use PostgreSQL (Neon is suitable) unless the persistence
 layer is deliberately redesigned and revalidated.
+
+The upload page and API now share a server-selected cap: 10 MB locally and 4 MB on Vercel. This
+keeps multipart uploads below Vercel's documented 4.5 MB request-body limit; larger hosted uploads
+need direct object storage. The active upload form displays the effective cap.
 
 Local code checks after this preflight:
 
