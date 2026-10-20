@@ -841,10 +841,16 @@ async def live_socket(websocket: WebSocket) -> None:
                     if float(event["latency_ms"]) > float(settings["hop_seconds"]) * 1000.0:
                         await websocket.send_json({"type": "status", "state": "lagging"})
                 await websocket.send_json(event)
+        for event in session.flush():
+            if event["type"] == "window":
+                status_state = "listening" if event["speech"] else "no_speech"
+                await websocket.send_json({"type": "status", "state": status_state})
+            await websocket.send_json(event)
         summary = _save_stream_session(session, user_id)
         await websocket.send_json(summary)
     except WebSocketDisconnect:
         if session is not None and session.total_samples_received:
+            session.flush()
             if user_id is not None:
                 _save_stream_session(session, user_id, partial=True)
         return
