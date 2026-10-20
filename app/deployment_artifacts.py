@@ -179,4 +179,10 @@ def prepare_runtime_artifacts(project_root: Path, environ: Mapping[str, str] | N
         raise RuntimeError("Deployment requires private model artifacts; set VOICEGUARD_ARTIFACTS_URL")
     if not digest:
         raise RuntimeError("Deployment requires VOICEGUARD_ARTIFACTS_SHA256")
-    return install_runtime_bundle(url, digest, env.get("VOICEGUARD_ARTIFACTS_TOKEN"))
+    token = env.get("VOICEGUARD_ARTIFACTS_TOKEN")
+    hostname = urllib.parse.urlsplit(url).hostname or ""
+    if not token and hostname.endswith(".private.blob.vercel-storage.com"):
+        # Prefer Vercel's short-lived project OIDC token; the connected store's
+        # read-write token is a fallback. Never send either to another host.
+        token = env.get("VERCEL_OIDC_TOKEN") or env.get("BLOB_READ_WRITE_TOKEN")
+    return install_runtime_bundle(url, digest, token)

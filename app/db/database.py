@@ -37,10 +37,33 @@ class CompatRow(Mapping[str, Any]):
 
 
 class CompatResult:
-    def __init__(self, result: Result[Any]):
+    def __init__(self, result: Result[Any], *, returning_id: bool = False):
         self._result = result
-        self.lastrowid = result.lastrowid
+        self._returning_id = returning_id
+        self._lastrowid: int | None = None
+        self._lastrowid_loaded = False
         self.rowcount = result.rowcount
+
+    @property
+    def lastrowid(self) -> int | None:
+        """Expose generated IDs without assuming every DBAPI has lastrowid.
+
+        Psycopg cursors do not implement ``lastrowid``. PostgreSQL inserts that need
+        their generated ID use ``RETURNING id``; SQLite keeps its native behavior.
+        """
+        if self._lastrowid_loaded:
+            return self._lastrowid
+        self._lastrowid_loaded = True
+        if self._returning_id:
+            row = self._result.fetchone()
+            self._lastrowid = int(row[0]) if row is not None else None
+            return self._lastrowid
+        try:
+            value = self._result.lastrowid
+        except AttributeError:
+            value = None
+        self._lastrowid = int(value) if value is not None else None
+        return self._lastrowid
 
     def fetchone(self) -> CompatRow | None:
         row = self._result.fetchone()
@@ -77,7 +100,11 @@ class ConnectionAdapter:
 
     def execute(self, sql: str, values: Sequence[Any] = ()) -> CompatResult:
         statement, parameters = _named_statement(sql, values)
-        return CompatResult(self._connection.execute(statement, parameters))
+        returning_id = bool(re.match(r"^\s*INSERT\b.*\bRETURNING\s+id\b", sql, re.IGNORECASE | re.DOTALL))
+        return CompatResult(
+            self._connection.execute(statement, parameters),
+            returning_id=returning_id,
+        )
 
     def executemany(self, sql: str, rows: Sequence[Sequence[Any]]) -> CompatResult:
         rows = list(rows)
