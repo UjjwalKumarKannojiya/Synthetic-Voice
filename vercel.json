@@ -3,6 +3,7 @@
   "functions": {
     "index.py": {
       "maxDuration": 300,
+      "regions": ["bom1"],
       "includeFiles": "{app/static/**,migrations/**,alembic.ini}",
       "excludeFiles": "{data/**,models/**,results/**,tests/**,scripts/**,.local-notes/**,frontend_design/**,node_modules/**,**/__pycache__/**}"
     }
