@@ -50,6 +50,13 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--train-per-class", type=int, default=5000)
     parser.add_argument("--validation-per-class", type=int, default=1000)
+    parser.add_argument(
+        "--reserve-training-holdout-per-class",
+        type=int,
+        default=0,
+        help="reserve disjoint filename groups from the training split for one final screen",
+    )
+    parser.add_argument("--training-dataset", default="for-norm-clean")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--output-name", default="for_norm_stream_seed42")
     return parser.parse_args()
@@ -99,6 +106,23 @@ def choose_grouped_rows(
             f"Could not select the requested grouped sample; selected labels {dict(counts)}"
         )
     return selected
+
+
+def reserve_grouped_training_holdout(
+    groups: list[list[dict[str, str]]], per_class: int, seed: int
+) -> tuple[list[list[dict[str, str]]], list[dict[str, str]]]:
+    """Remove whole basename groups for a final screen from the training pool."""
+
+    if per_class == 0:
+        return groups, []
+    holdout_rows = choose_grouped_rows(groups, per_class, seed)
+    holdout_names = {Path(row["path"]).name.casefold() for row in holdout_rows}
+    remaining_groups = [
+        group
+        for group in groups
+        if Path(group[0]["path"]).name.casefold() not in holdout_names
+    ]
+    return remaining_groups, holdout_rows
 
 
 def ensure_disjoint_filenames(splits: dict[str, list[dict[str, str]]]) -> None:
@@ -303,6 +327,12 @@ def main() -> None:
     args = parse_args()
     if args.train_per_class < 100 or args.validation_per_class < 50:
         raise SystemExit("sample sizes are too small for a useful candidate screen")
+    if args.reserve_training_holdout_per_class < 0:
+        raise SystemExit("reserve-training-holdout-per-class cannot be negative")
+    if args.reserve_training_holdout_per_class in range(1, 50):
+        raise SystemExit("a reserved holdout must contain at least 50 files per class")
+    if not args.training_dataset.strip():
+        raise SystemExit("training-dataset cannot be empty")
     if not args.output_name or Path(args.output_name).name != args.output_name:
         raise SystemExit("output-name must be a single path component")
 
@@ -314,13 +344,22 @@ def main() -> None:
         )
 
     assigned = assign_filename_groups(args.manifest)
-    train_rows = choose_grouped_rows(
-        assigned["training"], args.train_per_class, args.seed
-    )
+    train_groups = assigned["training"]
+    holdout_rows: list[dict[str, str]] = []
+    test_split_source = "official testing split"
+    if args.reserve_training_holdout_per_class:
+        train_groups, holdout_rows = reserve_grouped_training_holdout(
+            train_groups, args.reserve_training_holdout_per_class, args.seed + 2
+        )
+        test_rows = holdout_rows
+        test_split_source = "reserved filename groups from original training split"
+    else:
+        test_rows = [row for group in assigned["testing"] for row in group]
+
+    train_rows = choose_grouped_rows(train_groups, args.train_per_class, args.seed)
     validation_rows = choose_grouped_rows(
         assigned["validation"], args.validation_per_class, args.seed + 1
     )
-    test_rows = [row for group in assigned["testing"] for row in group]
     split_rows = {
         "training": train_rows,
         "validation": validation_rows,
@@ -391,7 +430,7 @@ def main() -> None:
         "name": args.output_name,
         "model_path": "svm.joblib",
         "model_version": args.output_name,
-        "training_dataset": "for-norm-clean",
+        "training_dataset": args.training_dataset,
         "sample_rate": active.sample_rate,
         "window_seconds": WINDOW_SECONDS,
         "threshold": selected_threshold,
@@ -407,6 +446,8 @@ def main() -> None:
             "training_rows": len(train_rows),
             "validation_rows": len(validation_rows),
             "testing_rows": len(test_rows),
+            "test_split_source": test_split_source,
+            "reserved_training_holdout_per_class": args.reserve_training_holdout_per_class,
             "seed": args.seed,
             "selected_c": float(selected_model.named_steps["classifier"].C),
         },
@@ -421,6 +462,7 @@ def main() -> None:
         "experiment": "isolated_for_norm_stream_candidate",
         "manifest": str(args.manifest.resolve()),
         "grouping": "case-folded basename; test owns shared groups, then validation, then training",
+        "training_dataset": args.training_dataset,
         "demo_holdout_used": False,
         "seed": args.seed,
         "feature": "20 MFCC + delta + delta-delta mean/std; center crop or zero pad to 2 seconds",
@@ -442,6 +484,8 @@ def main() -> None:
             "feature_count": int(train_x.shape[1]),
         },
         "test_stream": {
+            "split_source": test_split_source,
+            "files_by_label": label_counts(test_rows),
             "threshold_frozen_from_validation": selected_threshold,
             **test_result,
         },
