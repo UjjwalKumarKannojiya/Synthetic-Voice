@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Account · VoiceGuard Forensics</title>
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg?v=20261019-1">
+  <link rel="stylesheet" href="/static/account-menu.css?v=20261019-theme2">
+  <style>
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;background:#f8fafc;color:#0b1c30;font:15px/1.5 Inter,"Segoe UI",Arial,sans-serif}
+    .vg-auth-shell{min-height:100vh;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(340px,.95fr)}
+    .vg-auth-aside{display:flex;flex-direction:column;justify-content:space-between;padding:clamp(28px,6vw,84px);background:#0f172a;color:#f8fafc}
+    .vg-auth-brand{display:flex;align-items:center;gap:14px;font-size:19px;font-weight:700;letter-spacing:.01em}
+    .vg-auth-brand img{width:42px;height:42px}
+    .vg-auth-copy{max-width:540px;margin:auto 0}
+    .vg-auth-copy .eyebrow{color:#b7c4ff;font:600 12px/1.4 ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase}
+    .vg-auth-copy h1{max-width:500px;margin:18px 0;font-size:clamp(36px,5vw,64px);line-height:1.04;letter-spacing:-.04em}
+    .vg-auth-copy p{max-width:490px;color:#c7d2e1;font-size:16px}
+    .vg-auth-foot{color:#9eacc0;font-size:12px}
+    .vg-auth-main{display:grid;place-items:center;padding:32px 20px}
+    #vg-auth-card{width:min(100%,440px);min-width:0;padding:clamp(24px,4vw,42px);border:1px solid #e2e8f0;border-radius:20px;background:#fff;box-shadow:0 24px 65px #0b1c3014}
+    .vg-auth-actions{display:flex;justify-content:flex-end;margin-bottom:20px}
+    #vg-auth-card h2{margin:0;font-size:27px;letter-spacing:-.03em}
+    #vg-auth-description{margin:7px 0 22px;color:#667085}
+    #vg-auth-form{display:grid;gap:15px}
+    #vg-auth-form label{display:grid;gap:6px;font-size:13px;font-weight:650}
+    #vg-auth-form input{width:100%;min-height:44px;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font:inherit}
+    #vg-auth-submit{min-height:46px;margin-top:4px;border:0;border-radius:9px;background:#0037b0;color:#fff;font:600 15px Inter,"Segoe UI",Arial,sans-serif;cursor:pointer}
+    #vg-auth-submit:disabled{opacity:.65;cursor:wait}
+    #vg-auth-message{min-height:21px;margin:12px 0 0;color:#b42318;font-size:13px}
+    #vg-auth-switch{padding:0;border:0;background:none;color:#0037b0;font:600 14px Inter,"Segoe UI",Arial,sans-serif;text-decoration:underline;cursor:pointer}
+    .vg-auth-switch-row{margin:18px 0 0;text-align:center;color:#667085;font-size:13px}
+    .vg-auth-back{display:inline-block;margin-top:24px;color:#43516a;font-size:13px;text-decoration:none}
+    .vg-auth-disclaimer{margin:22px 0 0;padding-top:16px;border-top:1px solid #e2e8f0;color:#667085;font-size:12px}
+    #vg-auth-account[hidden],#vg-auth-display-row[hidden]{display:none}
+    #vg-auth-account{margin-top:22px;padding-top:18px;border-top:1px solid #e2e8f0}
+    #vg-account-identity{margin:0 0 16px;color:#475467;overflow-wrap:anywhere}
+    .vg-account-section{margin-top:18px;padding-top:16px;border-top:1px solid #e2e8f0}
+    .vg-account-section h3{margin:0 0 10px;font-size:15px}
+    .vg-account-section form{display:grid;gap:10px}
+    .vg-account-section label{display:grid;gap:5px;font-size:13px;font-weight:600}
+    .vg-account-section input{width:100%;min-height:42px;padding:9px 11px;border:1px solid #cbd5e1;border-radius:8px;font:inherit}
+    .vg-account-section button{min-height:40px;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;background:transparent;color:inherit;font:600 13px Inter,"Segoe UI",Arial,sans-serif;cursor:pointer}
+    #vg-account-delete{color:#b42318;border-color:#fda29b}
+    #vg-account-message{min-height:20px;margin:8px 0 0;color:#475467;font-size:13px}
+    @media(max-width:760px){*{min-width:0}html,body{width:100%;max-width:100vw;overflow-x:hidden}.vg-auth-shell{width:100%;max-width:100vw;grid-template-columns:minmax(0,1fr)}.vg-auth-aside,.vg-auth-main{width:100%;max-width:100vw;min-width:0}.vg-auth-aside{min-height:245px;padding:24px}.vg-auth-copy{width:100%;max-width:100%;margin:42px 0 24px}.vg-auth-copy h1{max-width:100%;font-size:clamp(24px,7vw,32px);overflow-wrap:anywhere}.vg-auth-copy p{max-width:100%}.vg-auth-foot{display:none}.vg-auth-main{padding:24px 16px 36px}#vg-auth-card{width:100%;max-width:100%}}
+  </style>
+  <script>try{if(localStorage.getItem('voiceguard.theme')==='dark')document.documentElement.dataset.theme='dark'}catch{}</script>
+</head>
+<body id="vg-auth-page">
+  <div class="vg-auth-shell">
+    <aside class="vg-auth-aside">
+      <a class="vg-auth-brand" href="/dashboard"><svg viewBox="0 0 128 128" width="42" height="42" aria-hidden="true"><rect width="128" height="128" rx="28" fill="#dce9ff"/><path d="M24 65h23l11-25 17 49 12-25h18" fill="none" stroke="#2151da" stroke-linecap="round" stroke-linejoin="round" stroke-width="9"/></svg><span>VoiceGuard <span style="display:block;color:#aebbd1;font-size:12px;font-weight:500">Forensics</span></span></a>
+      <div class="vg-auth-copy"><span class="eyebrow">VoiceGuard account</span><h1>Keep your workspace on this device.</h1><p>Your new analyses, history, and settings are private to your signed-in account on this installation.</p></div>
+      <div class="vg-auth-foot">Research prototype · Results are estimates, not proof of authenticity.</div>
+    </aside>
+    <main class="vg-auth-main">
+      <section id="vg-auth-card" aria-labelledby="vg-auth-title">
+        <div class="vg-auth-actions"><button id="vg-auth-theme-toggle" class="vg-theme-icon-button" type="button" aria-label="Switch to dark mode" title="Switch to dark mode"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg></button></div>
+        <h2 id="vg-auth-title">Sign in</h2><p id="vg-auth-description">Use your VoiceGuard account.</p>
+        <form id="vg-auth-form" novalidate>
+          <label id="vg-auth-identity-label" for="vg-auth-identity">Email or username<input id="vg-auth-identity" name="identity" autocomplete="username" minlength="3" maxlength="320" required></label>
+          <label id="vg-auth-display-row" for="vg-auth-display-name" hidden>Display name<input id="vg-auth-display-name" name="display_name" autocomplete="name" maxlength="120"></label>
+          <label>Password<input id="vg-auth-password" name="password" type="password" autocomplete="current-password" minlength="10" maxlength="128" required></label>
+          <button id="vg-auth-submit" type="submit">Sign in</button>
+        </form>
+        <p id="vg-auth-message" role="status" aria-live="polite"></p>
+        <p class="vg-auth-switch-row"><span id="vg-auth-switch-prompt">New here?</span> <button id="vg-auth-switch" type="button">Create an account</button></p>
+        <section id="vg-auth-account" hidden aria-label="Account settings">
+          <p id="vg-account-identity"></p>
+          <p id="vg-account-message" role="status" aria-live="polite"></p>
+          <div class="vg-account-section"><h3>Change password</h3><form id="vg-change-password-form">
+            <label>Current password<input name="current_password" type="password" autocomplete="current-password" minlength="1" maxlength="128" required></label>
+            <label>New password<input name="new_password" type="password" autocomplete="new-password" minlength="10" maxlength="128" required></label>
+            <button type="submit">Update password</button>
+          </form></div>
+          <div class="vg-account-section"><h3>Your data</h3><button id="vg-account-export" type="button">Download account data</button>
+            <label>Confirm deletion with your password<input id="vg-account-delete-password" type="password" autocomplete="current-password" minlength="1" maxlength="128"></label>
+            <button id="vg-account-delete" type="button">Delete account and data</button></div>
+          <div class="vg-account-section"><button id="vg-account-signout" type="button">Sign out</button></div>
+        </section>
+        <p class="vg-auth-disclaimer">Passwords are stored as one-way hashes. Existing analyses from before account ownership are not assigned to new accounts. Accounts and data are stored in this installation's database.</p>
+  <a class="vg-auth-back" href="/dashboard" hidden>← Back to VoiceGuard</a>
+      </section>
+    </main>
+  </div>
+  <script src="/static/auth-page.js?v=20261020-v4account1" defer></script>
+  <script src="/static/account-menu.js?v=20261020-v4account1" defer></script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+#vg-user-trigger{cursor:pointer;position:relative;outline-offset:3px}
+#vg-user-trigger:focus-visible{outline:2px solid #60a5fa}
+#vg-user-menu{position:absolute;z-index:80;top:calc(100% + 10px);right:0;width:260px;padding:14px;border:1px solid #d7deea;border-radius:12px;background:#fff;color:#0b1c30;box-shadow:0 16px 40px #0b1c3026;font:14px/1.4 Inter,Segoe UI,Arial,sans-serif}
+#vg-user-menu[hidden]{display:none}
+#vg-user-menu .vg-user-heading{margin:0 0 3px;font-weight:700;overflow-wrap:anywhere}
+#vg-user-menu .vg-user-caption{margin:0 0 12px;color:#667085;font-size:12px}
+#vg-user-menu a,#vg-user-menu button{display:flex;width:100%;align-items:center;justify-content:space-between;gap:10px;padding:9px 10px;border:0;border-radius:8px;background:transparent;color:inherit;text-align:left;text-decoration:none;font:inherit;cursor:pointer}
+#vg-user-menu a:hover,#vg-user-menu button:hover{background:#f1f5f9}
+#vg-user-menu .vg-menu-divider{height:1px;margin:8px 0;background:#e2e8f0}
+.vg-theme-icon-button{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;padding:0;border:1px solid #d7deea;border-radius:50%;background:transparent;color:inherit;cursor:pointer}
+.vg-theme-icon-button:hover{background:#f1f5f9}
+.vg-theme-icon-button:focus-visible{outline:2px solid #2563eb;outline-offset:3px}
+.vg-theme-icon-button svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;stroke-width:1.8}
+#vg-user-menu .vg-theme-icon-button{width:100%;height:auto;min-height:42px;justify-content:flex-start;padding:9px 10px;border-radius:8px}
+html[data-theme="dark"] body{background:#0b1220!important;color:#e5eaf2!important}
+html[data-theme="dark"] aside{background:#080f1c!important}
+html[data-theme="dark"] header,html[data-theme="dark"] .bg-surface-panel,html[data-theme="dark"] .bg-white,html[data-theme="dark"] .bg-surface-canvas,html[data-theme="dark"] .bg-surface-container-lowest,html[data-theme="dark"] .bg-surface-container-low,html[data-theme="dark"] .bg-surface-container{background-color:#111b2b!important}
+html[data-theme="dark"] .text-on-surface,html[data-theme="dark"] .text-on-surface-variant,html[data-theme="dark"] .text-secondary{color:#d7e0ed!important}
+html[data-theme="dark"] .border-border-subtle,html[data-theme="dark"] .border-border-strong,html[data-theme="dark"] .border-outline-variant{border-color:#29384c!important}
+html[data-theme="dark"] input,html[data-theme="dark"] select,html[data-theme="dark"] textarea{background-color:#0b1220!important;color:#e5eaf2!important;border-color:#34445b!important}
+html[data-theme="dark"] table tr,html[data-theme="dark"] table td,html[data-theme="dark"] table th{border-color:#29384c!important}
+html[data-theme="dark"] #vg-user-menu{background:#111b2b;border-color:#34445b;color:#e5eaf2}
+html[data-theme="dark"] #vg-user-menu .vg-user-caption{color:#aab8ca}
+html[data-theme="dark"] #vg-user-menu a:hover,html[data-theme="dark"] #vg-user-menu button:hover{background:#1c2a3e}
+html[data-theme="dark"] #vg-user-menu .vg-menu-divider{background:#34445b}
+html[data-theme="dark"] #vg-auth-page{background:#0b1220;color:#e5eaf2}
+html[data-theme="dark"] #vg-auth-card{background:#111b2b;border-color:#29384c}
+html[data-theme="dark"] #vg-auth-card input{background:#0b1220;color:#e5eaf2;border-color:#34445b}
+@media(max-width:480px){#vg-user-menu{right:-4px;width:min(260px,calc(100vw - 24px))}}
