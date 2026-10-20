@@ -20,14 +20,23 @@ def authenticated_client():
         yield client
 
 
-def wav_bytes(amplitude: float = 0.15) -> bytes:
-    samples = (amplitude * np.sin(2.0 * np.pi * 220.0 * np.arange(32000) / 16000.0) * 32767).astype("<i2")
+def pcm16_bytes(amplitude: float = 0.15, duration_seconds: float = 2.0) -> bytes:
+    sample_count = round(16000 * duration_seconds)
+    samples = (
+        amplitude
+        * np.sin(2.0 * np.pi * 220.0 * np.arange(sample_count) / 16000.0)
+        * 32767
+    ).astype("<i2")
+    return samples.tobytes()
+
+
+def wav_bytes(amplitude: float = 0.15, duration_seconds: float = 2.0) -> bytes:
     output = io.BytesIO()
     with wave.open(output, "wb") as stream:
         stream.setnchannels(1)
         stream.setsampwidth(2)
         stream.setframerate(16000)
-        stream.writeframes(samples.tobytes())
+        stream.writeframes(pcm16_bytes(amplitude, duration_seconds))
     return output.getvalue()
 
 
@@ -158,6 +167,33 @@ def test_live_websocket_returns_window_and_summary(tmp_path, monkeypatch) -> Non
             assert summary["session_id"] > 0
             assert summary["duration_s"] >= 2.0
             assert summary["latency_ms"] >= 0.0
+
+
+def test_live_websocket_flushes_a_short_audio_tail_on_stop(tmp_path, monkeypatch) -> None:
+    monkeypatch.setattr("app.main.DATABASE", __import__("app.db.database", fromlist=["Database"]).Database(tmp_path / "test.sqlite3"))
+    with authenticated_client() as client:
+        with client.websocket_connect("/ws/live") as websocket:
+            ticket = client.post("/api/auth/ws-ticket", json={}, headers={"Origin": "http://testserver"}).json()["ticket"]
+            websocket.send_json({"type": "auth", "ticket": ticket})
+            assert websocket.receive_json()["type"] == "authenticated"
+            websocket.send_json({"mode": "mic", "source": "mic", "sample_rate": 16000})
+            status = websocket.receive_json()
+            while status.get("type") != "status":
+                status = websocket.receive_json()
+
+            websocket.send_bytes(pcm16_bytes(duration_seconds=1.5))
+            websocket.send_json({"type": "stop"})
+            event = websocket.receive_json()
+            while event.get("type") != "window":
+                event = websocket.receive_json()
+            assert event["speech"] is True
+            assert event["prob"] is not None
+
+            summary = websocket.receive_json()
+            assert summary["type"] == "summary"
+            assert summary["duration_s"] >= 1.5
+            assert summary["mean_prob"] is not None
+            assert summary["windows"]
 
 
 def test_frontend_and_profile_metrics_are_real_routes(tmp_path, monkeypatch) -> None:

@@ -73,6 +73,7 @@ def replay_file(
     started = perf_counter()
     for offset in range(0, audio.size, frame_samples):
         events.extend(session.add_frame(audio[offset : offset + frame_samples]))
+    events.extend(session.flush())
     elapsed_ms = (perf_counter() - started) * 1000.0
     return (
         session.summary(),
