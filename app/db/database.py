@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import re
 from collections.abc import Iterator, Mapping, Sequence
 from contextlib import contextmanager
@@ -118,7 +119,14 @@ class Database:
             url = URL.create("sqlite", database=str(path))
             connect_args = {"check_same_thread": False, "timeout": 30}
         self.url = url
-        self.engine: Engine = sa.create_engine(url, connect_args=connect_args, pool_pre_ping=True)
+        if os.environ.get("VERCEL") == "1" and url.get_backend_name() != "postgresql":
+            raise RuntimeError("Vercel deployments require persistent PostgreSQL; SQLite files are not durable")
+        pool_options = (
+            {"pool_size": 1, "max_overflow": 0, "pool_recycle": 300}
+            if os.environ.get("VERCEL") == "1" and url.get_backend_name() == "postgresql"
+            else {}
+        )
+        self.engine: Engine = sa.create_engine(url, connect_args=connect_args, pool_pre_ping=True, **pool_options)
         if url.get_backend_name() == "sqlite":
             @sa.event.listens_for(self.engine, "connect")
             def _enable_foreign_keys(connection: Any, _: Any) -> None:
@@ -133,11 +141,20 @@ class Database:
         project_root = Path(__file__).resolve().parents[2]
         config = Config(str(project_root / "alembic.ini"))
         config.set_main_option("script_location", str(project_root / "migrations"))
-        config.attributes["connection"] = self.engine.connect()
+        connection = self.engine.connect()
+        postgres_lock = self.url.get_backend_name() == "postgresql"
+        config.attributes["connection"] = connection
         try:
-            command.upgrade(config, "head")
+            if postgres_lock:
+                # Serverless instances can cold-start together. Keep a transaction-scoped
+                # advisory lock and the Alembic upgrade on the same connection.
+                with connection.begin():
+                    connection.execute(sa.text("SELECT pg_advisory_xact_lock(741935120)"))
+                    command.upgrade(config, "head")
+            else:
+                command.upgrade(config, "head")
         finally:
-            config.attributes["connection"].close()
+            connection.close()
 
     @contextmanager
     def transaction(self) -> Iterator[ConnectionAdapter]:

@@ -1,0 +1,15 @@
+.venv
+data
+models
+results
+LA
+for-2sec
+for-norm
+for-rerec
+.local-notes
+tests
+scripts
+frontend_design
+*.wav
+*.mp3
+*.flac

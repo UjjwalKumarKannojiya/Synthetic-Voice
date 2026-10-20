@@ -55,6 +55,7 @@ from .db.crud import (
     write_settings,
 )
 from .db.database import Database
+from .deployment_artifacts import prepare_runtime_artifacts
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -82,7 +83,30 @@ MODEL_PROFILES = {
         "kind": "clip",
     },
 }
+RUNTIME_MANIFEST = ROOT / "runtime_manifest.json"
 DEMO_MANIFEST = ROOT / "data" / "manifests" / "asvspoof_la_demo_holdout.csv"
+
+
+def configure_artifact_root(artifact_root: Path) -> None:
+    """Point model/report reads at verified writable storage on Vercel."""
+
+    global MODEL_PROFILES, RUNTIME_MANIFEST
+    MODEL_PROFILES = {
+        "legacy_for2sec": {
+            "meta": artifact_root / "models" / "model_meta.json",
+            "report": artifact_root / "results" / "classical_for_2sec.json",
+            "kind": "windowed",
+        },
+        "asvspoof_la_balanced2500": {
+            "meta": artifact_root / "models" / "asvspoof_la_svm_balanced2500" / "model_meta.json",
+            "report": artifact_root / "results" / "asvspoof_la_svm_balanced2500.json",
+            "kind": "clip",
+        },
+    }
+    RUNTIME_MANIFEST = artifact_root / "runtime_manifest.json"
+    training_count.cache_clear()
+    _load_legacy_detector.cache_clear()
+    _load_asvspoof_detector.cache_clear()
 
 
 class SettingsPayload(BaseModel):
@@ -124,6 +148,11 @@ class DeleteAccountPayload(BaseModel):
 
 @lru_cache(maxsize=None)
 def training_count(profile: str) -> int:
+    if RUNTIME_MANIFEST.is_file():
+        manifest = json.loads(RUNTIME_MANIFEST.read_text(encoding="utf-8"))
+        count = manifest.get("training_counts", {}).get(profile)
+        if isinstance(count, int) and count >= 0:
+            return count
     if profile == "asvspoof_la_balanced2500":
         report = json.loads(MODEL_PROFILES[profile]["report"].read_text(encoding="utf-8"))
         return int(report["max_files_per_class"]) * 2
@@ -147,6 +176,7 @@ def current_settings(profile: str = "legacy_for2sec", user_id: int | None = None
 def build_detector(user_id: int | None = None) -> Detector:
     settings = current_settings("legacy_for2sec", user_id)
     return _load_legacy_detector(
+        str(MODEL_PROFILES["legacy_for2sec"]["meta"]),
         float(settings["hop_seconds"]),
         float(settings["uncertain_band"]),
         float(settings["vad_threshold"]),
@@ -155,8 +185,8 @@ def build_detector(user_id: int | None = None) -> Detector:
 
 
 @lru_cache(maxsize=8)
-def _load_legacy_detector(hop_seconds: float, uncertain_band: float, vad_threshold: float, threshold: float) -> Detector:
-    return Detector(config=DetectorConfig(
+def _load_legacy_detector(meta_path: str, hop_seconds: float, uncertain_band: float, vad_threshold: float, threshold: float) -> Detector:
+    return Detector(meta_path=meta_path, config=DetectorConfig(
         hop_seconds=hop_seconds,
         uncertain_band=uncertain_band,
         vad_threshold=vad_threshold,
@@ -165,8 +195,8 @@ def _load_legacy_detector(hop_seconds: float, uncertain_band: float, vad_thresho
 
 
 @lru_cache(maxsize=8)
-def _load_asvspoof_detector(uncertain_band: float, threshold: float) -> ASVspoofDetector:
-    return ASVspoofDetector(uncertain_band=uncertain_band, threshold=threshold)
+def _load_asvspoof_detector(meta_path: str, uncertain_band: float, threshold: float) -> ASVspoofDetector:
+    return ASVspoofDetector(meta_path=meta_path, uncertain_band=uncertain_band, threshold=threshold)
 
 
 def build_profile_detector(profile: str, user_id: int | None = None) -> Detector | ASVspoofDetector:
@@ -174,7 +204,11 @@ def build_profile_detector(profile: str, user_id: int | None = None) -> Detector
         return build_detector(user_id)
     if profile == "asvspoof_la_balanced2500":
         settings = current_settings(profile, user_id)
-        return _load_asvspoof_detector(float(settings["uncertain_band"]), float(settings["threshold"]))
+        return _load_asvspoof_detector(
+            str(MODEL_PROFILES[profile]["meta"]),
+            float(settings["uncertain_band"]),
+            float(settings["threshold"]),
+        )
     raise HTTPException(status_code=400, detail=f"Unknown model profile: {profile}")
 
 
@@ -254,6 +288,7 @@ def demo_row(sample_id: str) -> dict[str, str]:
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
+    configure_artifact_root(prepare_runtime_artifacts(ROOT))
     DATABASE.initialize()
     if not read_settings(DATABASE):
         write_settings(DATABASE, DEFAULT_SETTINGS)
@@ -337,7 +372,7 @@ def health() -> dict[str, Any]:
         model_path = Path(metadata["model_path"])
         if not model_path.is_absolute():
             model_path = meta_path.parent / model_path
-        return model_path.is_file()
+        return model_path.is_file() and details["report"].is_file()
 
     profiles = {profile: model_available(details) for profile, details in MODEL_PROFILES.items()}
     legacy_meta_path = MODEL_PROFILES["legacy_for2sec"]["meta"]
@@ -348,8 +383,16 @@ def health() -> dict[str, Any]:
         except (OSError, json.JSONDecodeError):
             legacy_meta = {}
     model_loaded = profiles["legacy_for2sec"]
+    try:
+        with DATABASE.connect() as connection:
+            database_ready = connection.execute("SELECT 1").fetchone() is not None
+    except Exception:
+        database_ready = False
+    ready = model_loaded and database_ready
     return {
-        "status": "ok" if model_loaded else "degraded",
+        "status": "ok" if ready else "degraded",
+        "ready": ready,
+        "database_connected": database_ready,
         "model_loaded": model_loaded,
         "model_version": legacy_meta.get("model_version"),
         "profiles": profiles,
@@ -538,13 +581,14 @@ def model_info(request: Request, profile: str = Query(default="legacy_for2sec"))
     details = MODEL_PROFILES["legacy_for2sec"]
     if not details["meta"].is_file() or not details["report"].is_file():
         raise HTTPException(status_code=503, detail="Model metadata or evaluation report is unavailable for the selected profile")
-    meta = json.loads((ROOT / "models" / "model_meta.json").read_text(encoding="utf-8"))
+    meta_path = details["meta"]
+    meta = json.loads(meta_path.read_text(encoding="utf-8"))
     settings = current_settings("legacy_for2sec", int(user["id"]))
-    report = json.loads((ROOT / "results" / "classical_for_2sec.json").read_text(encoding="utf-8"))
+    report = json.loads(details["report"].read_text(encoding="utf-8"))
     validation_count = report["models"]["svm"]["validation"]["count"]
     test_count = report["models"]["svm"]["test"]["count"]
     train_count = training_count("legacy_for2sec")
-    model_file = ROOT / "models" / meta["model_path"]
+    model_file = meta_path.parent / meta["model_path"]
     if not model_file.is_file():
         raise HTTPException(status_code=503, detail="Model weights are unavailable for the selected profile")
     return {
@@ -650,6 +694,7 @@ def analyze_demo(sample_id: str, request: Request) -> dict[str, Any]:
         audio, sample_rate = decode_audio_file(path)
         settings = current_settings("asvspoof_la_balanced2500", int(user["id"]))
         result = _load_asvspoof_detector(
+            str(MODEL_PROFILES["asvspoof_la_balanced2500"]["meta"]),
             float(settings["uncertain_band"]),
             float(settings["threshold"]),
         ).analyze_array(

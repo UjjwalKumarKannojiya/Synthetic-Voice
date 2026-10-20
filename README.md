@@ -4,7 +4,7 @@ CPU-oriented research prototype for estimating whether speech is real or synthet
 
 ## Run locally
 
-Use Python 3.10 or newer. Install the declared dependencies with `python -m pip install -r requirements.txt`, then start the app from the repository root:
+Use Python 3.14. Install the runtime dependencies with `python -m pip install -r requirements.txt`, then start the app from the repository root:
 
 ```powershell
 python -m pip install -r requirements.txt
@@ -14,6 +14,8 @@ python scripts/run_app.py
 Open <http://127.0.0.1:8000/>. Create an account from the sign-in page. Local accounts, settings, and saved analyses use SQLite under the ignored `data/` directory. Passwords are hashed; credentials and the database are not part of this repository.
 
 The source repository does not include datasets, trained model files, evaluation reports, or demo audio. Real scoring requires the matching local artifacts described in [Project status](docs/PROJECT_STATE.md). Without them, the app cannot provide model inference. Do not replace missing artifacts with sample scores.
+
+Tests and research/training scripts also use development dependencies: install those with `python -m pip install -r requirements-dev.txt`.
 
 ## What is included
 
@@ -51,6 +53,7 @@ node --check app/static/app-runtime.js
 - [Dataset protocol notes](docs/DATASET_NOTES.md)
 - [Authentication and deployment requirements](docs/AUTH_DEPLOY_PLAN.md)
 - [Local presentation/demo steps](docs/DEMO_GUIDE.md)
+- [Vercel deployment runbook](docs/VERCEL_DEPLOY.md)
 
 ## Deployment status
 
