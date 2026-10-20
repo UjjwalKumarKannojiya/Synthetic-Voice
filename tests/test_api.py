@@ -172,10 +172,10 @@ def test_frontend_and_profile_metrics_are_real_routes(tmp_path, monkeypatch) -> 
         page_route = client.get("/dashboard")
         assert page_route.status_code == 200
         assert "Forensic Dashboard" in page_route.text
-        assert "/static/stitch-runtime.js" in page_route.text
+        assert "/static/app-runtime.js" in page_route.text
         assert client.get("/live-check").status_code == 200
         assert client.get("/call-monitor").status_code == 200
-        assert client.get("/static/stitch/dashboard.html").status_code == 404
+        assert client.get("/static/pages/dashboard.html").status_code == 404
         assert client.get("/api/model/metrics?profile=asvspoof_la_balanced2500").json()["results"]["test"]["count"] > 0
 
 

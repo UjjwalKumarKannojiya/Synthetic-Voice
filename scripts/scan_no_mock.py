@@ -1,6 +1,6 @@
 """Reject mock-like values in the active, served application surface.
 
-The Stitch HTML design templates are served through the page routes and hydrated
+The HTML page templates are served through authenticated page routes and hydrated
 by the runtime. Direct static template URLs are blocked. The scan covers active
 backend, frontend, and page-template sources.
 """
@@ -16,7 +16,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 APP = ROOT / "app"
-STITCH = APP / "static" / "stitch"
+PAGES = APP / "static" / "pages"
 ACTIVE_FRONTEND = (
     APP / "static" / "index.html",
     APP / "static" / "app.js",
@@ -101,8 +101,8 @@ def main() -> int:
     paths += sorted((APP / "core").glob("*.py"))
     paths += sorted((APP / "db").glob("*.py"))
     paths.append(APP / "main.py")
-    paths += sorted(STITCH.glob("*.html"))
-    paths.append(APP / "static" / "stitch-runtime.js")
+    paths += sorted(PAGES.glob("*.html"))
+    paths.append(APP / "static" / "app-runtime.js")
     errors: list[str] = []
     for path in paths:
         text = path.read_text(encoding="utf-8")
@@ -125,7 +125,7 @@ def main() -> int:
         print("\n".join(errors), file=sys.stderr)
         return 1
     print(f"No mock data patterns found in {len(paths)} active application files.")
-    print("Stitch design templates are served on page routes; direct static template URLs remain blocked.")
+    print("Page templates are served through authenticated routes; direct static template URLs remain blocked.")
     return 0
 
 

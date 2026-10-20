@@ -7,8 +7,8 @@ Last updated: 2026-10-20. This page is the short, current handoff; older working
 - FastAPI app and seven primary views are in the repository. Account sign-up/login, session handling, per-account data authorization, local SQLite, and PostgreSQL URL support are implemented.
 - File analysis supports the legacy FoR window model and the ASVspoof complete-clip model. Live Check and Call Monitor use the FoR window model over a browser audio stream.
 - Model weights, evaluation reports, dataset audio, and demo audio are intentionally excluded from Git. A checkout without matching local artifacts cannot perform detector inference.
-- Local checks on 2026-10-20: `.venv\Scripts\python.exe -m pytest -q --basetemp .pytest-tmp-r8-final` returned `53 passed, 2 warnings in 93.10s`; both warnings are librosa short-input `n_fft=1024` warnings. `node --check app\static\stitch-runtime.js` exited 0. `.venv\Scripts\python.exe scripts\scan_no_mock.py` printed `No mock data patterns found in 32 active application files.`
-- The latest HTML/runtime cleanup was covered by syntax and no-mock checks. A new browser interaction/visual sweep after those exact edits is **NOT VERIFIED**.
+- Before the page-folder rename, `.venv\Scripts\python.exe -m pytest -q --basetemp .pytest-tmp-r8-final` returned `53 passed, 2 warnings in 93.10s`; both warnings were librosa short-input `n_fft=1024` warnings. After the rename, the full suite returned `53 passed, 2 warnings in 66.31s`; details and browser acceptance are recorded below.
+- Post-rename Edge acceptance covered all seven routes plus upload, live fake-audio stream, call-monitor demo replay, history source filter, settings save, account menu, and theme. Physical microphone, shared-tab/system audio, and additional viewport sizes remain **NOT VERIFIED**.
 
 ## Research limits
 
@@ -43,11 +43,11 @@ the selected profile's `/api/health` readiness instead of always showing `ONLINE
 Local proof:
 
 ```text
-node --check app\static\stitch-runtime.js
+node --check app\static\app-runtime.js
 exit 0
 .venv\Scripts\python.exe scripts\scan_no_mock.py
 No mock data patterns found in 32 active application files.
-Stitch design templates are served on page routes; direct static template URLs remain blocked.
+Page templates are served through authenticated routes; direct static template URLs remain blocked.
 .venv\Scripts\python.exe -m pytest -q --basetemp .pytest-tmp-r8-browser-audit
 53 passed, 2 warnings in 81.66s
 ```
@@ -67,3 +67,18 @@ Although the earlier R7 acceptance recorded a successful Edge fake-audio stream,
 the user's interactive Chrome/Edge browser before claiming current live capture acceptance. System/tab
 audio, demo replay, mobile widths beyond the measured 360 px headless viewport, API-down rendering,
 offline use, and Vercel/PostgreSQL remain **NOT VERIFIED**.
+
+## Frontend naming and repository artifact check — 2026-10-20
+
+- Renamed active templates from `app/static/stitch/` to `app/static/pages/` and the runtime from `stitch-runtime.js` to `app-runtime.js`. Updated the FastAPI page route, direct-template protection, no-mock scanner, route test, and setup/wiring references. All seven page files remain; no UI content was intentionally removed.
+- `.venv\Scripts\python.exe -m py_compile app\main.py scripts\scan_no_mock.py tests\test_api.py` exited 0. `node --check app\static\app-runtime.js` exited 0. `.venv\Scripts\python.exe scripts\scan_no_mock.py` printed `No mock data patterns found in 32 active application files.` and `Page templates are served through authenticated routes; direct static template URLs remain blocked.`
+- `git ls-files -- data models results` returned no paths (`Tracked research artifacts: 0`). `git check-ignore -v data models results` confirmed all three roots are ignored. Local files were left untouched.
+
+## Post-rename route and browser acceptance — 2026-10-20
+
+- `.venv\Scripts\python.exe -m pytest -vv -q tests\test_api.py::test_frontend_and_profile_metrics_are_real_routes --basetemp .pytest-tmp-r8-route-acceptance` returned `1 passed in 1.94s`. `.venv\Scripts\python.exe -m pytest -q --basetemp .pytest-tmp-r8-pages-full` returned `53 passed, 2 warnings in 66.31s`; both warnings are librosa short-input `n_fft=1024` warnings.
+- Local site after restart: `/api/health` returned HTTP 200 with `model_loaded: true`; `/static/app-runtime.js` returned HTTP 200 (97,204 bytes); direct `/static/pages/dashboard.html` returned HTTP 404; unauthenticated `/dashboard` returned HTTP 303 to login.
+- Headless Edge opened all seven authenticated routes without backend error panels or JS exceptions. A file upload returned a measured FoR result and persisted history; the Upload filter kept its record; Settings Save displayed its API-backed success toast; account menu and theme toggles worked.
+- A fake-audio browser stream completed Live Check, produced model windows, and persisted history. Call Monitor demo replay completed a 3.9 second clip, produced two live FoR windows, saved history, and revealed the separate ASVspoof complete-clip result afterward. Disposable test accounts were deleted (HTTP 200).
+- Physical microphone and shared-tab/system audio are still **NOT VERIFIED**. The app is running locally at `http://127.0.0.1:8000/`; this does not clear the Vercel deployment gate.
+- This later acceptance supersedes the earlier headless microphone-start failure recorded above: fake-audio Live Check succeeded in the later run. Physical devices still need interactive-browser verification.

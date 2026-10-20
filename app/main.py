@@ -291,18 +291,16 @@ def favicon() -> FileResponse:
 
 
 @app.get("/{page}", include_in_schema=False)
-def stitch_page(page: str, request: Request) -> Response:
+def page_view(page: str, request: Request) -> Response:
     if page not in PAGE_NAMES:
         raise HTTPException(status_code=404, detail="Page not found")
     if session_user(DATABASE, request.cookies.get("voiceguard_session")) is None:
         destination = quote(f"/{page}", safe="/")
         return RedirectResponse(url=f"/login?next={destination}", status_code=303)
-    page_file = ROOT / "app" / "static" / "stitch" / f"{page}.html"
+    page_file = ROOT / "app" / "static" / "pages" / f"{page}.html"
     html = page_file.read_text(encoding="utf-8-sig")
     upload_limit_mb = max(1, (MAX_UPLOAD_BYTES + 1024 * 1024 - 1) // (1024 * 1024))
     html = html.replace("Max file size: 50 MB", f"Max file size: {upload_limit_mb} MB")
-    html = html.replace("stitch-runtime.js?v=6", "stitch-runtime.js?v=20261020-v4account1")
-    html = html.replace("stitch-runtime.js?v=20261020-v2auth1", "stitch-runtime.js?v=20261020-v4account1")
     html = html.replace("<head>", "<head><style>html{visibility:hidden}.hidden{display:none!important}</style>", 1)
     html = html.replace(
         "</head>",
@@ -317,8 +315,8 @@ def stitch_page(page: str, request: Request) -> Response:
 
 @app.get("/static/{asset:path}", include_in_schema=False)
 def static_asset(asset: str) -> FileResponse:
-    if asset == "stitch" or asset.startswith("stitch/"):
-        raise HTTPException(status_code=404, detail="Legacy design export is not an active application page")
+    if asset == "pages" or asset.startswith("pages/"):
+        raise HTTPException(status_code=404, detail="Page templates are served through authenticated routes")
     path = (ROOT / "app" / "static" / asset).resolve()
     static_root = (ROOT / "app" / "static").resolve()
     if static_root not in path.parents or not path.is_file():

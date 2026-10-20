@@ -31,7 +31,7 @@ Run from the repository root:
 ```powershell
 python -m pytest -q
 python scripts/scan_no_mock.py
-node --check app/static/stitch-runtime.js
+node --check app/static/app-runtime.js
 ```
 
 ## Read next
