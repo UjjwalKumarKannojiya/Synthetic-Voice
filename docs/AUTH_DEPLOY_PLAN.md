@@ -136,9 +136,10 @@ These platform details can change; recheck them when starting V5.
 ## V5 preflight — local preparation (2026-10-20)
 
 GitHub preflight: the supplied repository URL was reachable with `git ls-remote`; it returned no
-refs, so the remote currently has no branch HEAD. The local workspace also has no commits or
-configured remote. The eventual first push must be explicit and must exclude research data and
-runtime artifacts.
+refs, so the remote had no branch HEAD before the initial push. The reviewed source-only root commit
+`17f11ce` was pushed to `codex/r4-stream-evaluation` without force. The staged set contained 125
+files and passed the blocked-path and high-confidence credential-pattern checks. It excludes
+research data and runtime artifacts.
 
 Added root `index.py`, which exports the existing `app.main:app` instance through a documented
 FastAPI entrypoint. Vercel's current official FastAPI guide supports `index.py` and Python FastAPI
@@ -178,3 +179,11 @@ No mock data patterns found in 32 active application files.
 The full suite had to run outside the restricted sandbox because Windows asyncio's loopback socket
 pair creation blocked Starlette TestClient startup inside it. Warnings are existing short-signal
 librosa `n_fft=1024` warnings.
+
+Git push output:
+
+```text
+To https://github.com/UjjwalKumarKannojiya/Synthetic-Voice.git
+ * [new branch]      codex/r4-stream-evaluation -> codex/r4-stream-evaluation
+branch 'codex/r4-stream-evaluation' set up to track 'origin/codex/r4-stream-evaluation'.
+```

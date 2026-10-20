@@ -558,5 +558,11 @@ and Python WebSocket live monitoring. A Vercel deployment still needs hosted Pos
 private delivery path for model plus matching reports/metadata, and a preview project. Do not deploy
 until those inputs are configured and preview checks pass.
 
-Next: source-only GitHub push, then stop at the V5 hosted-preview gate until the student supplies
-Vercel/PostgreSQL configuration and the model artifact delivery choice.
+GitHub status: source-only commit `17f11ce` was pushed to
+`origin/codex/r4-stream-evaluation` at the supplied repository. The reviewed commit contains 125
+source, UI, test, and documentation paths; no local DB, dataset, model weights, or results were
+included. The credential-path check found zero blocked paths, and the high-confidence credential
+scan found zero matches.
+
+Next: stop at the V5 hosted-preview gate until the student supplies Vercel/PostgreSQL configuration
+and the model artifact delivery choice.
