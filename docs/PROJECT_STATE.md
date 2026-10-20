@@ -21,7 +21,7 @@ Last updated: 2026-10-20. This page is the short, current handoff; older working
 
 **Vercel Production is live** at [voicegaurd-delta.vercel.app](https://voicegaurd-delta.vercel.app); the protected branch Preview remains at [voicegaurd-git-codex-frontend-page](https://voicegaurd-git-codex-frontend-page-63029f-ujjwal21822s-projects.vercel.app). Production health reports the database connected, model loaded, and both profiles available. Its login page, browser assets, and expected anonymous redirects have been checked. Preview signup/login/session deletion and upload inference through both profiles passed; the generated test tone validates the pipeline and persistence, not accuracy on speech. See the latest Production evidence below.
 
-Production signup and login now pass with a disposable account; it was deleted after the check. Production audio upload and saved History, authenticated live WebSocket streaming, physical microphone/shared-tab capture, and hosted Demo Replay remain **NOT VERIFIED**. The Production database uses the limited `voiceguard_app` role. The database owner password and Supabase API secret pasted into chat still need rotation. See [VERCEL_DEPLOY.md](VERCEL_DEPLOY.md). Local SQLite is not durable serverless storage.
+Production signup and login pass with disposable accounts, which were deleted after checks. In Production, generated-tone uploads through both model profiles returned scores and saved History; an authenticated WebSocket generated one scored window and saved its session. These checks prove the pipeline, not accuracy on speech. Physical microphone/shared-tab capture and hosted Demo Replay remain **NOT VERIFIED**. The Production database uses the limited `voiceguard_app` role. The database owner password and Supabase API secret pasted into chat still need rotation. See [VERCEL_DEPLOY.md](VERCEL_DEPLOY.md). Local SQLite is not durable serverless storage.
 
 The local app is started with `python scripts/run_app.py` and opened at `http://127.0.0.1:8000/`. Read [README.md](../README.md) for setup and [AUTH_DEPLOY_PLAN.md](AUTH_DEPLOY_PLAN.md) for the deployment gate.
 
@@ -109,7 +109,7 @@ offline use, and Vercel/PostgreSQL remain **NOT VERIFIED**.
 
 ## Remaining gate / next phase
 
-Remaining checks are Production upload inference with History persistence, Vercel `/ws/live` ticket-authenticated audio streaming and session save, physical microphone/shared-tab behavior in the user's interactive browser, and hosted Demo Replay. Rotate the database owner password and Supabase API secret shared in chat. The weak held-out FoR metric remains a research limitation regardless of deployment status.
+Remaining checks are Production inference using representative speech and its accuracy, physical microphone/shared-tab behavior in the user's interactive browser, and Demo Replay using a separately approved non-holdout clip set. Generated-tone Production checks prove upload/stream scoring and persistence only. Rotate the database owner password and Supabase API secret shared in chat. The weak held-out FoR metric remains a research limitation regardless of deployment status.
 
 ## Initial deployment investigation (historical) — 2026-10-20
 
@@ -176,7 +176,19 @@ Remaining checks are Production upload inference with History persistence, Verce
 - Authenticated `vercel curl https://voicegaurd-delta.vercel.app/api/health` returned HTTP `200` with `ready: true`, `database_connected: true`, `model_loaded: true`, model version `classical_for_2sec`, and both profiles (`legacy_for2sec`, `asvspoof_la_balanced2500`) available.
 - Public route checks: `/login` returned `200`; `/` followed its redirect to `/login?next=/dashboard` and returned `200`; anonymous `/dashboard` and `/call-monitor` returned `303` to login. The login JavaScript/CSS, app JavaScript/CSS, and favicon each returned `200`. `https://voicegaurd.vercel.app/login` still returns `404`; that short URL is not attached to this team's project. Use `https://voicegaurd-delta.vercel.app`.
 - Production auth acceptance with a disposable account returned signup `201`, login `200`, `/api/auth/me` authenticated `true`, account deletion `200`, and post-delete `/api/auth/me` authenticated `false`. No test account remains.
-- **NOT VERIFIED on Production:** uploaded-audio inference with a saved History result, authenticated live WebSocket streaming/session save, physical microphone capture, and Demo Replay. Health confirms model loading, not scoring accuracy. The Preview upload smoke test above does not substitute for Production inference verification.
+- Production smoke command: a PowerShell here-string acceptance harness piped to `.\.venv\Scripts\python.exe -`; it used `urllib` and `websockets` already installed in the project environment, a generated 2-second in-memory 220 Hz PCM tone, and a disposable account. Output:
+
+  ```text
+  signup_http=201
+  upload_legacy_for2sec_http=200 model=classical_for_2sec score_returned=True windows=1
+  upload_asvspoof_la_balanced2500_http=200 model=asvspoof_la_mfcc_svm_balanced2500_seed42 score_returned=True windows=1
+  ws_authenticated=true listening=True scored_windows=1 summary_received=True
+  history_http=200 saved_records=3
+  cleanup_http=200
+  session_after_cleanup_authenticated=False
+  ```
+
+  The account and its three records were deleted. This proves the hosted processing path only, not correct classification of real speech. **NOT VERIFIED:** physical microphone/shared-tab capture, representative Production speech performance, and Demo Replay.
 - Security risk remains: the PostgreSQL owner password and Supabase secret API key pasted into chat have not been rotated. Production and Preview now use the restricted `voiceguard_app` role; the owner password is no longer the app runtime credential. The Supabase API key was not used. No credential values were committed or printed by the deployment commands.
 - Auth 500 follow-up: Vercel's runtime log for the previous Production deployment recorded a Python cold start in `sfo1` failing during `uv sync`; extraction of NumPy/SciPy ended with `No space left on device`. This confirms a dependency-install startup failure occurred, though that log did not identify a matching sign-up/login POST request. Live health and a disposable auth check still succeeded in the same time window.
 - Pinned the Python function to `bom1` in `vercel.json`, where the previous deployment had successfully initialized. Redeployed Production as `dpl_Gc5EBJhwzZcZqkekP2uyS19n9C8t`; `vercel inspect` reports `fastapi (61.62MB) [bom1]`. The deployment is READY and the Production alias remains `https://voicegaurd-delta.vercel.app`.
