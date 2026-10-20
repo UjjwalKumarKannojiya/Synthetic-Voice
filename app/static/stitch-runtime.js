@@ -137,12 +137,25 @@
       const response = await fetch("/api/health");
       if (!response.ok) return;
       const health = await response.json();
-      replaceText("Model loaded", health.profiles?.[activeProfile] ? "Model loaded" : "Model unavailable");
+      const profileReady = Boolean(health.profiles?.[activeProfile]);
+      replaceText("Model loaded", profileReady ? "Model loaded" : "Model unavailable");
       document.querySelectorAll("[data-model-status]").forEach((element) => {
-        element.textContent = health.model_loaded ? "Model loaded" : "Model unavailable";
+        element.textContent = profileReady ? "Model loaded" : "Model unavailable";
       });
+      const kernelStatus = textNodes().find((node) => node.nodeValue.trim() === "ONLINE");
+      if (kernelStatus) {
+        kernelStatus.nodeValue = profileReady ? "READY" : "UNAVAILABLE";
+        kernelStatus.parentElement.classList.toggle("text-verdict-real-base", profileReady);
+        kernelStatus.parentElement.classList.toggle("text-verdict-synthetic-base", !profileReady);
+      }
     } catch {
       replaceText("Model loaded", "Backend unavailable");
+      const kernelStatus = textNodes().find((node) => node.nodeValue.trim() === "ONLINE");
+      if (kernelStatus) {
+        kernelStatus.nodeValue = "UNAVAILABLE";
+        kernelStatus.parentElement.classList.remove("text-verdict-real-base");
+        kernelStatus.parentElement.classList.add("text-verdict-synthetic-base");
+      }
     }
   }
 
@@ -1192,7 +1205,8 @@
       }
       const drawRows = () => {
         const query = search?.value.trim().toLowerCase() || "";
-        const verdict = verdictFilter?.value || "";
+        const selectedVerdict = verdictFilter?.value || "";
+        const verdict = selectedVerdict === "All Verdicts" ? "" : selectedVerdict;
         const source = sourceFilter?.value || "";
         const rows = history.filter((row) => (!source || row.source === source) && (!verdict || row.verdict === verdict) && (!query || `${row.id} ${row.name} ${row.source}`.toLowerCase().includes(query)));
         historyTable.querySelector("tbody").innerHTML = rows.length ? rows.map((row) => `<tr class="hover:bg-surface-canvas/60 transition-colors"><td class="py-3.5 px-4 font-label-numeric text-label-numeric text-secondary whitespace-nowrap">${escapeHtml(new Date(row.created_at).toLocaleString())}</td><td class="py-3.5 px-4">${escapeHtml(row.source)}</td><td class="py-3.5 px-4 font-medium">${escapeHtml(row.name)} <span class="text-secondary">#${Number(row.id)}</span></td><td class="py-3.5 px-3 text-right">${Number(row.duration_s).toFixed(2)}s</td><td class="py-3.5 px-4">${escapeHtml(row.verdict)}</td><td class="py-3.5 px-3 text-right">${row.mean_prob == null ? "—" : Number(row.mean_prob).toFixed(3)}</td><td class="py-3.5 px-3 text-right">${row.max_prob == null ? "—" : Number(row.max_prob).toFixed(3)}</td><td class="py-3.5 px-3 text-right">${Number(row.latency_ms).toFixed(1)} ms</td><td class="py-3.5 px-3 text-center"><button type="button" data-analysis-detail="${Number(row.id)}" class="text-primary">Details</button></td></tr>`).join("") : '<tr><td colspan="9" class="py-8 px-4 text-center text-secondary">No analyses match these filters.</td></tr>';

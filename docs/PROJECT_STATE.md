@@ -31,4 +31,39 @@ The local app is started with `python scripts/run_app.py` and opened at `http://
 - Removed the fake analysis telemetry export and nonfunctional batch/calibration controls from the upload view.
 - Preserved original long-form status notes locally before shortening this document. No data, split, model, or result artifact was changed.
 
-These specific latest UI changes have not had a browser-based click/visual acceptance pass yet.
+At the initial code-cleanup gate, these UI changes had not yet had a browser click/visual acceptance
+pass; the follow-up below records the browser checks and remaining live-capture limitation.
+
+## R8 browser follow-up — 2026-10-20
+
+Fixed two issues found during the authenticated browser pass: History's `All Verdicts` option now
+has an empty value so it does not filter out every record, and the sidebar model status now follows
+the selected profile's `/api/health` readiness instead of always showing `ONLINE`.
+
+Local proof:
+
+```text
+node --check app\static\stitch-runtime.js
+exit 0
+.venv\Scripts\python.exe scripts\scan_no_mock.py
+No mock data patterns found in 32 active application files.
+Stitch design templates are served on page routes; direct static template URLs remain blocked.
+.venv\Scripts\python.exe -m pytest -q --basetemp .pytest-tmp-r8-browser-audit
+53 passed, 2 warnings in 81.66s
+```
+
+Headless Edge acceptance used `.local-notes\browser_acceptance_r8.py` and a disposable account; the
+account plus its temporary records were deleted (cleanup returned HTTP 200). All seven authenticated
+routes rendered without a `Backend unavailable` panel, and the browser reported `Browser JS
+exceptions: []`. The dashboard showed `READY` from health. Uploading one existing local training WAV
+produced an API-backed result and one saved `Upload` history row; the source filter kept that row.
+Settings save returned the real `Settings saved` toast. User menu open/Escape close and both dashboard
+and login theme toggles changed state. No seeded voicemail telemetry was present.
+
+Live capture is **NOT VERIFIED in this headless run**: consent correctly kept Start disabled until
+checked, but Edge's fake microphone attempt returned `Microphone could not be started: Not supported`
+and saved no live session. The device does not expose physical mic/system-tab capture to this run.
+Although the earlier R7 acceptance recorded a successful Edge fake-audio stream, repeat that test in
+the user's interactive Chrome/Edge browser before claiming current live capture acceptance. System/tab
+audio, demo replay, mobile widths beyond the measured 360 px headless viewport, API-down rendering,
+offline use, and Vercel/PostgreSQL remain **NOT VERIFIED**.
