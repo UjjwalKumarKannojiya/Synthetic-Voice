@@ -12,16 +12,27 @@ From the repository root, with the local trained model and result artifacts pres
 
 The script writes `.local-notes/deployment/voiceguard-runtime.zip`, prints the SHA-256 digest, and refuses to overwrite an existing bundle. The archive contains only the two active SVM models, their metadata, their evaluation JSON files, and counts derived from the local training manifest. It does not contain audio, dataset manifests, split rows, feature caches, or training score CSVs. Keep this file out of Git.
 
-Upload that archive to private HTTPS object storage. Configure the Vercel project with:
+Upload that archive to private HTTPS object storage. Vercel Blob is supported directly: link the correct Vercel project, create a private store, and upload the ignored archive:
+
+```powershell
+npx --yes vercel@latest blob create-store voiceguard-models --access private --yes
+npx --yes vercel@latest blob put .local-notes\deployment\voiceguard-runtime-r8.zip --access private
+```
+
+Keep the private URL printed by `blob put` for `VOICEGUARD_ARTIFACTS_URL`. When a private Blob store is connected to the Vercel project, the app prefers Vercel's short-lived OIDC token and falls back to the store's `BLOB_READ_WRITE_TOKEN`; either token is sent only to `*.private.blob.vercel-storage.com`. See Vercel's [private Blob authentication guide](https://vercel.com/docs/vercel-blob/private-storage).
+
+Configure the Vercel project with:
 
 | Variable | Value |
 |---|---|
-| `DATABASE_URL` | PostgreSQL connection URL. For Supabase, use Dashboard → Connect → Transaction pooler (port 6543) and include `sslmode=require`. The runtime selects SQLAlchemy `NullPool` and disables Psycopg auto-prepared statements for this port. |
+| `DATABASE_URL` | PostgreSQL connection URL. For Supabase, use Dashboard → Connect → Transaction pooler (port 6543) and include `sslmode=require`. Percent-encode reserved characters in the username or password (`@` as `%40`, `#` as `%23`). The runtime selects SQLAlchemy `NullPool` and disables Psycopg auto-prepared statements for this port. |
 | `VOICEGUARD_ARTIFACTS_URL` | Private HTTPS download URL for the ZIP. Do not use a public bucket URL. |
 | `VOICEGUARD_ARTIFACTS_SHA256` | The digest printed by the packaging command. |
-| `VOICEGUARD_ARTIFACTS_TOKEN` | Optional bearer token if the private object endpoint requires one. |
+| `VOICEGUARD_ARTIFACTS_TOKEN` | Optional bearer token for other private HTTPS storage. Private Vercel Blob uses project OIDC or its connected Blob token automatically. |
 
 Set these as Vercel environment variables for Preview and Production. Do not put the values in Git or expose the bundle URL in application logs. The app downloads the bundle into Vercel's writable `/tmp`, validates the checksum and exact allowed file list, then loads model weights from that directory. A missing URL, invalid digest, bad archive, or missing PostgreSQL URL fails startup clearly instead of serving unscored results.
+
+Treat database passwords as secrets: enter them only in Supabase/Vercel settings, never in Git or chat. If a password has been shared, rotate it before using the database for Production.
 
 Supabase is supported because it provides PostgreSQL. Its [connection guide](https://supabase.com/docs/guides/database/connecting-to-postgres) recommends the IPv4 shared transaction pooler for serverless functions; copy the exact host and username from the Supabase dashboard rather than constructing them. The app follows Supabase's [SQLAlchemy guidance](https://supabase.com/docs/guides/troubleshooting/using-sqlalchemy-with-supabase-FUqebT) by using `NullPool` and disabling Psycopg auto-prepared statements on port 6543. The app keeps Alembic's migration and its transaction-scoped advisory lock within one transaction. Verify startup migrations against the Preview database: Supabase recommends direct connections for migration tools, so if the transaction pooler rejects startup migrations, switch `DATABASE_URL` to Supabase's session pooler and monitor the database connection limits.
 
@@ -41,4 +52,4 @@ The public repository excludes demo audio and manifests, so Demo Replay has no h
 
 ## Deployment status
 
-**Prepared for configuration; not yet deployment-verified.** This repository has no linked Vercel project, PostgreSQL URL, private object-store URL/token, or Preview URL. A successful `vercel build`/Preview and the checks above are still required before calling the deployment ready. Login has no email verification or password-reset flow.
+**Preview is deployed but not runtime-ready.** The Vercel build completed and the protected Preview returned `FUNCTION_INVOCATION_FAILED` for `/api/health`. Runtime logs showed PostgreSQL could not resolve the host parsed from the configured connection URL; reserved credential characters must be URL-encoded. Rotate the database password that was shared during setup, update `DATABASE_URL` in Vercel for Preview and Production, then redeploy and repeat the readiness, upload/history, and live-streaming checks above. Production has not been promoted. Login has no email verification or password-reset flow.

@@ -114,6 +114,15 @@ def test_vercel_supabase_transaction_pooler_disables_client_pool_and_prepares(mo
     assert "pool_size" not in captured
 
 
+def test_postgres_url_decodes_percent_encoded_reserved_password_characters() -> None:
+    parsed = database_module.make_url(
+        "postgresql://db-user:fixture%40password%23@aws-0-test.pooler.supabase.com:6543/postgres"
+    )
+
+    assert parsed.host == "aws-0-test.pooler.supabase.com"
+    assert parsed.password == "fixture@password#"
+
+
 def test_vercel_download_verifies_and_caches_private_bundle(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     archive_path = tmp_path / "source.zip"
     digest = _write_bundle(archive_path, _valid_members())
@@ -172,3 +181,35 @@ def test_download_errors_do_not_expose_signed_url(tmp_path: Path, monkeypatch: p
 
     assert "do-not-log" not in str(error.value)
     assert error.value.__suppress_context__ is True
+
+
+def test_vercel_oidc_token_is_scoped_to_private_blob_hosts(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    calls = []
+
+    def capture_install(url, digest, token=None):
+        calls.append((url, digest, token))
+        return tmp_path
+
+    monkeypatch.setattr(deployment_artifacts, "install_runtime_bundle", capture_install)
+    common = {
+        "VERCEL": "1",
+        "VOICEGUARD_ARTIFACTS_SHA256": "a" * 64,
+        "VERCEL_OIDC_TOKEN": "short-lived-test-token",
+        "BLOB_READ_WRITE_TOKEN": "private-blob-test-token",
+    }
+    blob_url = "https://store.private.blob.vercel-storage.com/runtime.zip"
+    static_blob_url = "https://store.private.blob.vercel-storage.com/runtime-static-token.zip"
+    other_url = "https://private.invalid/runtime.zip"
+
+    prepare_runtime_artifacts(tmp_path, {**common, "VOICEGUARD_ARTIFACTS_URL": blob_url})
+    prepare_runtime_artifacts(
+        tmp_path,
+        {**common, "VOICEGUARD_ARTIFACTS_URL": static_blob_url, "VERCEL_OIDC_TOKEN": ""},
+    )
+    prepare_runtime_artifacts(tmp_path, {**common, "VOICEGUARD_ARTIFACTS_URL": other_url})
+
+    assert calls == [
+        (blob_url, "a" * 64, "short-lived-test-token"),
+        (static_blob_url, "a" * 64, "private-blob-test-token"),
+        (other_url, "a" * 64, None),
+    ]
