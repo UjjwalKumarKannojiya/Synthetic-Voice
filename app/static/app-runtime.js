@@ -650,18 +650,42 @@
       demoSelect.id = "voiceguard-demo-sample";
       demoSelect.className = "mt-2 rounded-lg border border-border-subtle bg-surface-panel p-2 text-sm";
       demoSelect.hidden = true;
-      demoSelect.innerHTML = '<option value="">Loading locked demo clips…</option>';
+      demoSelect.setAttribute("aria-label", "Choose a demo audio clip");
+      demoSelect.innerHTML = '<option value="">Loading demo clips…</option>';
       sourceButtons[0]?.parentElement?.after(demoSelect);
-      fetch("/api/demo/samples").then((response) => response.json()).then((samples) => {
+      const demoNotice = document.createElement("p");
+      demoNotice.className = "mt-2 max-w-3xl text-xs text-secondary";
+      demoNotice.id = "voiceguard-demo-attribution";
+      demoNotice.hidden = true;
+      demoSelect.setAttribute("aria-describedby", demoNotice.id);
+      demoNotice.innerHTML = 'Examples are from the <a class="text-primary underline" href="https://datashare.ed.ac.uk/handle/10283/3336" target="_blank" rel="noopener noreferrer">ASVspoof 2019 LA development set</a> (licensed under <a class="text-primary underline" href="https://opendatacommons.org/licenses/by/1-0/" target="_blank" rel="noopener noreferrer">ODC-By 1.0</a>) and use CSTR <a class="text-primary underline" href="https://doi.org/10.7488/ds/2645" target="_blank" rel="noopener noreferrer">VCTK source speech</a> (<a class="text-primary underline" href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>). This development set also informed threshold selection, so replays are demonstrations, not independent accuracy evidence. Scores are estimates, not proof.';
+      demoSelect.after(demoNotice);
+      const replayButton = sourceButtons[2];
+      fetch("/api/demo/samples").then((response) => {
+        if (!response.ok) throw new Error("Demo sample list is unavailable");
+        return response.json();
+      }).then((samples) => {
+        if (!Array.isArray(samples)) throw new Error("Demo sample response is invalid");
         demoSelect.innerHTML = samples.map((sample) => `<option value="${escapeHtml(sample.id)}">${escapeHtml(sample.name)} · ${Number(sample.duration_s).toFixed(2)} s</option>`).join("");
         if (!samples.length) demoSelect.innerHTML = '<option value="">No demo clips available</option>';
-      }).catch(() => { demoSelect.innerHTML = '<option value="">Demo clips unavailable</option>'; });
+        if (replayButton) {
+          replayButton.disabled = samples.length === 0;
+          replayButton.title = samples.length ? "Replay an example audio clip" : "Demo clips are not provisioned";
+        }
+      }).catch(() => {
+        demoSelect.innerHTML = '<option value="">Demo clips unavailable</option>';
+        if (replayButton) {
+          replayButton.disabled = true;
+          replayButton.title = "Demo clips are not provisioned";
+        }
+      });
       sourceButtons.forEach((item, index) => item.addEventListener("click", () => {
         if (activeSession || starting) return;
         sourceName = ["mic", "system", "replay"][index] || "mic";
         const deviceWrap = document.querySelector("#voiceguard-mic-device-wrap");
         if (deviceWrap) deviceWrap.hidden = sourceName !== "mic";
         demoSelect.hidden = sourceName !== "replay";
+        demoNotice.hidden = sourceName !== "replay";
         sourceButtons.forEach((candidate, candidateIndex) => {
           candidate.classList.toggle("bg-surface-panel", candidateIndex === index);
           candidate.classList.toggle("text-primary", candidateIndex === index);

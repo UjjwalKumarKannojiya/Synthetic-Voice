@@ -10,13 +10,12 @@ From the repository root, with the local trained model and result artifacts pres
 .venv\Scripts\python.exe scripts\package_runtime_artifacts.py
 ```
 
-The script writes `.local-notes/deployment/voiceguard-runtime.zip`, prints the SHA-256 digest, and refuses to overwrite an existing bundle. The archive contains only the two active SVM models, their metadata, their evaluation JSON files, and counts derived from the local training manifest. It does not contain audio, dataset manifests, split rows, feature caches, or training score CSVs. Keep this file out of Git.
+The script writes `.local-notes/deployment/voiceguard-runtime-r9-demo.zip`, prints its SHA-256 digest, and refuses to overwrite an existing bundle. It contains the two active SVM models, metadata, evaluation JSON, training counts, and—when the ignored local `.local-notes/demo-assets-r9` set exists—eight balanced, attributed validation-partition replay clips. It never includes the locked evaluation holdout, full dataset audio, dataset manifests, split rows, feature caches, or training score CSVs. Keep the ZIP and source clips out of Git.
 
-Upload that archive to private HTTPS object storage. Vercel Blob is supported directly: link the correct Vercel project, create a private store, and upload the ignored archive:
+Upload the archive to private HTTPS object storage. The current Vercel project uses a private Blob store; upload the ignored archive with the authenticated Vercel CLI:
 
 ```powershell
-npx --yes vercel@latest blob create-store voiceguard-models --access private --yes
-npx --yes vercel@latest blob put .local-notes\deployment\voiceguard-runtime-r8.zip --access private
+npx --yes --package vercel@64.7.0 vercel --global-config .local-notes/vercel-cli blob put .local-notes/deployment/voiceguard-runtime-r9-demo.zip --access private --pathname voiceguard/runtime-r9-demo.zip
 ```
 
 Keep the private URL printed by `blob put` for `VOICEGUARD_ARTIFACTS_URL`. When a private Blob store is connected to the Vercel project, the app prefers Vercel's short-lived OIDC token and falls back to the store's `BLOB_READ_WRITE_TOKEN`; either token is sent only to `*.private.blob.vercel-storage.com`. See Vercel's [private Blob authentication guide](https://vercel.com/docs/vercel-blob/private-storage).
@@ -30,7 +29,7 @@ Configure the Vercel project with:
 | `VOICEGUARD_ARTIFACTS_SHA256` | The digest printed by the packaging command. |
 | `VOICEGUARD_ARTIFACTS_TOKEN` | Optional bearer token for other private HTTPS storage. Private Vercel Blob uses project OIDC or its connected Blob token automatically. |
 
-Set these as Vercel environment variables for Preview and Production. Do not put the values in Git or expose the bundle URL in application logs. The app downloads the bundle into Vercel's writable `/tmp`, validates the checksum and exact allowed file list, then loads model weights from that directory. A missing URL, invalid digest, bad archive, or missing PostgreSQL URL fails startup clearly instead of serving unscored results.
+Set the variables only in the environment you intend to update. For a Preview-only update, keep the existing Production variables on their current artifact and add the new URL and digest to Preview scope only. Do not put values in Git or expose the private bundle URL in application logs. The app downloads the bundle into Vercel's writable `/tmp`, validates the checksum, file list, labels, attribution, and every replay clip hash, then loads the models and demo audio from that directory. A missing URL, invalid digest, bad archive, or missing PostgreSQL URL fails startup clearly instead of serving unscored results.
 
 Treat database passwords and Supabase secret API keys as secrets: enter them only in Supabase/Vercel settings, never in Git or chat. If either was shared, rotate it before using the project for Production. A Supabase `sb_secret_...` key grants elevated project data access; it is not a PostgreSQL connection string or a Supabase Management API token, and must never be stored in this app.
 
@@ -48,7 +47,7 @@ After Vercel has built a Preview deployment, visit `/api/health`. It must return
 
 Live Check and Call Monitor use the FastAPI `/ws/live` endpoint. Vercel's WebSocket knowledge-base article says Functions natively support WebSockets, while its Limits page still says Functions cannot act as a WebSocket server. A Preview must prove microphone streaming, scoring windows, session save, and reconnect/stop behavior before relying on those pages. If the Preview does not upgrade `/ws/live`, host the FastAPI service on a WebSocket-capable Python host; this source cannot honestly promise live streaming without that test.
 
-The public repository excludes demo audio and manifests, so Demo Replay has no hosted samples until separately provisioned. Microphone live monitoring and uploaded-file analysis use the bundled model artifacts and do not require the training dataset.
+The public repository excludes demo audio and manifests. The replay picker is enabled only when the verified private bundle contains its attributed development clips; otherwise the API returns a clear unavailable response and the UI disables replay. These examples also informed threshold selection, so they are not independent accuracy evidence. Microphone live monitoring and uploaded-file analysis use the bundled model artifacts and do not require the training dataset.
 
 ## Earlier Preview failure notes (superseded by the current status below)
 

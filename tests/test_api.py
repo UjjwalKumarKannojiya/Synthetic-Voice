@@ -1,10 +1,13 @@
 import io
+import csv
+import hashlib
 import wave
 from contextlib import contextmanager
 
 import numpy as np
 from fastapi.testclient import TestClient
 
+from app import main as app_module
 from app.main import app
 
 
@@ -127,18 +130,111 @@ def test_vercel_upload_limit_is_disclosed_and_enforced(tmp_path, monkeypatch) ->
 
 def test_demo_listing_hides_truth_and_analysis_reveals_it(tmp_path, monkeypatch) -> None:
     monkeypatch.setattr("app.main.DATABASE", __import__("app.db.database", fromlist=["Database"]).Database(tmp_path / "test.sqlite3"))
+    demo_root = tmp_path / "demo-assets"
+    audio_root = demo_root / "audio"
+    audio_root.mkdir(parents=True)
+    audio = wav_bytes(duration_seconds=2.5)
+    sample_id = hashlib.sha1(audio).hexdigest()
+    name = "LA_D_fixture.wav"
+    (audio_root / name).write_bytes(audio)
+    manifest = demo_root / "manifest.csv"
+    with manifest.open("w", encoding="utf-8", newline="") as stream:
+        writer = csv.DictWriter(
+            stream,
+            fieldnames=("path", "label", "split", "speaker", "attack_id", "sr", "duration_s", "sha1", "name"),
+        )
+        writer.writeheader()
+        writer.writerow({
+            "path": f"audio/{name}",
+            "label": "1",
+            "split": "val",
+            "speaker": "fixture-speaker",
+            "attack_id": "A03",
+            "sr": "16000",
+            "duration_s": "2.5",
+            "sha1": sample_id,
+            "name": name,
+        })
     with authenticated_client() as client:
+        monkeypatch.setattr("app.main.DEMO_MANIFEST", manifest)
+        monkeypatch.setattr("app.main.DEMO_AUDIO_ROOT", demo_root)
         response = client.get("/api/demo/samples")
         assert response.status_code == 200
         sample = response.json()[0]
         assert {"id", "name", "duration_s"} == set(sample)
         assert "label" not in sample
+        assert sample["id"] == sample_id
+        assert sample["name"] == name
+        audio_response = client.get(f"/api/demo/audio/{sample_id}")
+        assert audio_response.status_code == 200
+        assert "audio" in audio_response.headers["content-type"]
+        assert audio_response.content == audio
         result = client.post(f"/api/demo/analyze/{sample['id']}")
         assert result.status_code == 200, result.text
         payload = result.json()
         assert payload["source"] == "Demo"
-        assert payload["ground_truth_label"] in {0, 1}
-        assert payload["attack_id"] == "-"
+        assert payload["ground_truth_label"] == 1
+        assert payload["attack_id"] == "A03"
+        assert payload["name"] == name
+        assert client.get("/api/history").json()[0]["source"] == "Demo"
+
+
+def test_artifact_root_uses_packaged_demo_manifest_and_audio(tmp_path, monkeypatch) -> None:
+    from app.db.database import Database
+
+    monkeypatch.setattr(app_module, "DATABASE", Database(tmp_path / "test.sqlite3"))
+    artifact_root = tmp_path / "runtime-bundle"
+    demo_root = artifact_root / "demo"
+    audio_root = demo_root / "audio"
+    audio_root.mkdir(parents=True)
+    audio = wav_bytes(duration_seconds=2.0)
+    sample_id = hashlib.sha1(audio).hexdigest()
+    audio_name = "LA_D_packaged-fixture.wav"
+    (audio_root / audio_name).write_bytes(audio)
+    with (demo_root / "manifest.csv").open("w", encoding="utf-8", newline="") as stream:
+        writer = csv.DictWriter(
+            stream,
+            fieldnames=("path", "label", "split", "speaker", "attack_id", "sr", "duration_s", "sha1", "name"),
+        )
+        writer.writeheader()
+        writer.writerow({
+            "path": f"audio/{audio_name}", "label": "0", "split": "val", "speaker": "fixture-speaker",
+            "attack_id": "-", "sr": "16000", "duration_s": "2.0", "sha1": sample_id, "name": audio_name,
+        })
+
+    with authenticated_client() as client:
+        app_module.configure_artifact_root(artifact_root)
+        try:
+            listing = client.get("/api/demo/samples")
+            assert listing.status_code == 200
+            assert listing.json() == [{"id": sample_id, "name": audio_name, "duration_s": 2.0}]
+            playback = client.get(f"/api/demo/audio/{sample_id}")
+            assert playback.status_code == 200
+            assert playback.content == audio
+        finally:
+            app_module.configure_artifact_root(app_module.ROOT)
+
+
+def test_demo_audio_path_cannot_escape_configured_root(tmp_path, monkeypatch) -> None:
+    from app.db.database import Database
+
+    monkeypatch.setattr("app.main.DATABASE", Database(tmp_path / "test.sqlite3"))
+    demo_root = tmp_path / "demo-assets"
+    demo_root.mkdir()
+    manifest = demo_root / "manifest.csv"
+    sample_id = "a" * 40
+    with manifest.open("w", encoding="utf-8", newline="") as stream:
+        writer = csv.DictWriter(stream, fieldnames=("path", "label", "split", "speaker", "attack_id", "sr", "duration_s", "sha1"))
+        writer.writeheader()
+        writer.writerow({
+            "path": "../outside.wav", "label": "0", "split": "val", "speaker": "speaker",
+            "attack_id": "-", "sr": "16000", "duration_s": "2", "sha1": sample_id,
+        })
+    with authenticated_client() as client:
+        monkeypatch.setattr("app.main.DEMO_MANIFEST", manifest)
+        monkeypatch.setattr("app.main.DEMO_AUDIO_ROOT", demo_root)
+        response = client.get(f"/api/demo/audio/{sample_id}")
+        assert response.status_code == 503
 
 
 def test_live_websocket_returns_window_and_summary(tmp_path, monkeypatch) -> None:

@@ -7,8 +7,8 @@ Last updated: 2026-10-21. This page is the short, current handoff; older working
 - FastAPI app and seven primary views are in the repository. Account sign-up/login, session handling, per-account data authorization, local SQLite, and PostgreSQL URL support are implemented.
 - File analysis supports the legacy FoR window model and the ASVspoof complete-clip model. Live Check and Call Monitor use the FoR window model over a browser audio stream.
 - Model weights, evaluation reports, dataset audio, and demo audio are intentionally excluded from Git. A checkout without matching local artifacts cannot perform detector inference.
-- Latest regression run: `.venv\Scripts\python.exe -m pytest -q --basetemp .pytest-tmp-finish-all-20261021` returned `72 passed, 2 warnings in 84.25s`; both warnings are librosa short-input `n_fft=1024` warnings.
-- Post-rename Edge acceptance covered all seven routes plus upload, live fake-audio stream, call-monitor demo replay, history source filter, settings save, account menu, and theme. Physical microphone and shared-tab/system audio remain **NOT VERIFIED**.
+- Latest regression run: `.venv\Scripts\python.exe -m pytest -q --basetemp .pytest-tmp-demo-r9-final-20261021-02` returned `78 passed, 2 warnings in 82.28s`; both warnings are librosa short-input `n_fft=1024` warnings.
+- Edge acceptance covered the seven app routes plus file analysis, a live fake-audio stream, the Call Monitor demo replay, History filtering, Settings save, account menu, and theme. Physical microphone and shared-tab/system audio remain **NOT VERIFIED**.
 
 ## Research limits
 
@@ -25,6 +25,15 @@ The last successful Vercel control-plane snapshot reported Production `READY` on
 Production signup and login pass with disposable accounts, which were deleted after checks. In Production, generated-tone uploads through both model profiles returned scores and saved History; an authenticated WebSocket generated one scored window and saved its session. These checks prove the pipeline, not accuracy on speech. Physical microphone/shared-tab capture and hosted Demo Replay remain **NOT VERIFIED**. The Production database uses the limited `voiceguard_app` role. The database owner password and Supabase API secret pasted into chat still need rotation. This workspace has no Supabase CLI or project-management session/token; Vercel credentials do not grant Supabase administration. See [VERCEL_DEPLOY.md](VERCEL_DEPLOY.md). Local SQLite is not durable serverless storage.
 
 The local app is started with `python scripts/run_app.py` and opened at `http://127.0.0.1:8000/`. Read [README.md](../README.md) for setup and [AUTH_DEPLOY_PLAN.md](AUTH_DEPLOY_PLAN.md) for the deployment gate.
+
+## Demo Replay R9 — 2026-10-21
+
+- `python scripts/prepare_demo_assets.py` prepared eight unchanged audio clips from the ASVspoof LA validation partition: four bona fide, four spoof, eight distinct speakers, and multiple spoof systems. It reports `locked_demo_holdout_used=false`. Audio and the source manifest remain under ignored `.local-notes/`; no dataset/model/evaluation artifact was changed.
+- `.venv\Scripts\python.exe scripts\package_runtime_artifacts.py` produced a 2,748,781-byte private runtime ZIP. It contains the two existing model profiles plus the eight replay clips and attribution notice. Full dataset audio and dataset manifests are absent. The ZIP checksum, sample hashes, balanced labels, validation split, and exact archive member list passed `app.deployment_artifacts._validate_bundle`; extracted manifest counts were 4 and 4.
+- Focused demo regressions returned `18 passed in 4.04s`. The authenticated temporary-database API acceptance returned signup `201`, sample list `200` with eight entries and no labels, audio `200` as `audio/x-flac`, demo analysis `200` with one model window, and one saved History row. Labels were exposed only after analysis.
+- Full regression: `78 passed, 2 warnings in 82.28s`. `scripts\scan_no_mock.py` found no mock patterns in 32 active application files; JavaScript syntax check, Python compilation, and `git diff --check` passed.
+- Headless Edge Call Monitor acceptance selected a replay clip, delivered it to `/ws/live`, displayed two measured streaming windows, saved the 2.9-second session, then posted the clip to the ASVspoof complete-clip detector and showed its output and label after replay. The disposable QA account was deleted (`200`); browser JS exceptions were empty. This verifies UI and processing flow, not detector accuracy.
+- The ZIP was uploaded to the existing private Vercel Blob store. Vercel environment metadata confirms the new artifact URL and digest are scoped to Preview only; Production artifact settings remain Production-only. **NOT VERIFIED:** the new protected Preview deployment and its hosted replay routes; Production was not changed. Physical-device capture and real-world detector accuracy remain **NOT VERIFIED**.
 
 ## Current code changes in R8 hardening
 

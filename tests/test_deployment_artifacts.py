@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import io
+import csv
 import json
 import urllib.error
 import zipfile
@@ -42,6 +43,40 @@ def _write_bundle(path: Path, members: dict[str, bytes]) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def _with_demo_members(members: dict[str, bytes]) -> dict[str, bytes]:
+    rows = []
+    speakers = ("speaker-a", "speaker-b", "speaker-c", "speaker-d")
+    labels = ("0", "0", "1", "1")
+    for index, (speaker, label) in enumerate(zip(speakers, labels, strict=True)):
+        audio = f"licensed-demo-fixture-{index}".encode()
+        sample_id = hashlib.sha1(audio).hexdigest()
+        name = f"LA_D_fixture{index}.flac"
+        rows.append({
+            "path": f"audio/{sample_id}.flac",
+            "label": label,
+            "split": "val",
+            "speaker": speaker,
+            "attack_id": "-" if label == "0" else f"A0{index}",
+            "sr": "16000",
+            "duration_s": "2.0",
+            "sha1": sample_id,
+            "name": name,
+        })
+        members[f"demo/audio/{sample_id}.flac"] = audio
+    output = io.StringIO(newline="")
+    writer = csv.DictWriter(output, fieldnames=rows[0].keys(), lineterminator="\n")
+    writer.writeheader()
+    writer.writerows(rows)
+    members["demo/manifest.csv"] = output.getvalue().encode()
+    members["demo/NOTICE.md"] = (
+        "ASVspoof 2019 LA development subset. ODC-By 1.0. CSTR VCTK CC BY 4.0."
+    ).encode()
+    runtime = json.loads(members["runtime_manifest.json"])
+    runtime["demo_sample_count"] = len(rows)
+    members["runtime_manifest.json"] = json.dumps(runtime).encode()
+    return members
+
+
 def test_verified_bundle_extracts_only_runtime_files(tmp_path: Path) -> None:
     archive = tmp_path / "runtime.zip"
     destination = tmp_path / "unpacked"
@@ -51,6 +86,30 @@ def test_verified_bundle_extracts_only_runtime_files(tmp_path: Path) -> None:
 
     assert {p.relative_to(destination).as_posix() for p in destination.rglob("*") if p.is_file()} == ARTIFACT_MEMBERS
     assert json.loads((destination / "runtime_manifest.json").read_text())["training_counts"]["legacy_for2sec"] == 10
+
+
+def test_verified_bundle_accepts_attributed_balanced_demo_assets(tmp_path: Path) -> None:
+    archive = tmp_path / "runtime-with-demo.zip"
+    destination = tmp_path / "unpacked-with-demo"
+    members = _with_demo_members(_valid_members())
+    digest = _write_bundle(archive, members)
+
+    _validate_bundle(archive, digest, destination)
+
+    files = {path.relative_to(destination).as_posix() for path in destination.rglob("*") if path.is_file()}
+    assert files == ARTIFACT_MEMBERS | (set(members) - ARTIFACT_MEMBERS)
+    assert json.loads((destination / "runtime_manifest.json").read_text())["demo_sample_count"] == 4
+
+
+def test_demo_bundle_rejects_audio_that_does_not_match_manifest_hash(tmp_path: Path) -> None:
+    archive = tmp_path / "runtime-bad-demo.zip"
+    members = _with_demo_members(_valid_members())
+    audio_name = next(name for name in members if name.startswith("demo/audio/"))
+    members[audio_name] = b"tampered"
+    digest = _write_bundle(archive, members)
+
+    with pytest.raises(ValueError, match="audio hash"):
+        _validate_bundle(archive, digest, tmp_path / "unpacked")
 
 
 def test_bundle_checksum_must_match(tmp_path: Path) -> None:
