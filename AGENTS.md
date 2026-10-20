@@ -1,36 +1,32 @@
-# AGENTS.md — Synthetic Voice Forensics
+# Repository guidance
 
-Tool-neutral instructions for any coding agent working in this repository. Place at the repo root.
+## Project contract
 
-## Project
-MCA (DS & AI) dissertation, Babu Banarasi Das University. Detects **real (0)** vs **synthetic/fake (1)** speech. Score = P(fake). The research focus is **robustness and generalization** (unseen attacks, noise, compression, telephone-style audio, short clips), not a single accuracy number. Deliverables: trained model + evaluation, and a **working** FastAPI + HTML/JS app (upload check, live microphone check, live call monitor, dashboard, history, model & evaluation, settings).
+This is a CPU-oriented speech-forensics research project. Labels are `0 = real/bona fide` and `1 = synthetic/spoof`; scores are estimates, not proof. The research goal is robustness and generalization. Current performance and deployment limitations are in [docs/PROJECT_STATE.md](docs/PROJECT_STATE.md).
 
-## Where the truth lives
-- Plan and rules: `docs/COPILOT_RECOVERY_PROMPT.md` (highest priority), `docs/COPILOT_ASVSPOOF_DATA_PROMPT.md`, `docs/APP_BLUEPRINT.md`, then `docs/MASTER_PROMPT.md`.
-- Current state: `docs/PROJECT_STATE.md`, `docs/STATE_RECONSTRUCTION.md`.
-- Dataset facts: `docs/DATASET_NOTES.md`. Evidence of results: `results/`. Model metadata: `models/model_meta.json`.
-- Wherever older docs say "Copilot", it means "you, the current agent".
+## Evidence and implementation rules
 
-## Environment
-Windows 11, ≤8 GB RAM, Intel integrated graphics, **CPU only**, Python venv. Use `pathlib`, Windows-safe commands. Never load a whole dataset into memory. Target browser: Chrome/Edge on `http://localhost`.
+1. Report exact commands and outputs. Mark anything without direct evidence **NOT VERIFIED**.
+2. Do not add hard-coded/demo scores, fake progress, sample records, `Math.random`, or constant-returning APIs. Test fixtures belong only in `tests/`.
+3. Every visible control must work through to its real behavior or be removed.
+4. Keep train/validation/test/demo splits leakage-safe. Fit preprocessing/scalers on train only; use validation for selection; never train/tune on locked demo holdout.
+5. Reuse the same audio preprocessing/features for training, evaluation, uploads, and streaming.
+6. Preserve datasets, manifests, models, reports, and results. Do not delete, regenerate, overwrite, or retrain them without the student's approval.
+7. Report weak results and uncertainty plainly. Do not overclaim detector accuracy or certification.
+8. Call Monitor analyzes audio provided by this device/browser. It is not connected to a phone network.
+9. Work one phase at a time and update [docs/PROJECT_STATE.md](docs/PROJECT_STATE.md) with proof and remaining risks.
+10. Never commit `.env`, credentials, databases, audio, datasets, `data/`, `models/`, `results/`, or `.venv/`. The repository intentionally excludes model and evaluation artifacts.
+11. Before installing a package, tell the student the exact command.
 
-## Hard rules
-1. **Evidence over assertion.** Do not say "works", "fixed", "done" or "verified" without the exact command and its real output. Otherwise write NOT VERIFIED.
-2. **No fabricated data or numbers** in code, HTML, JS or API responses: no hard-coded demo values, `Math.random`, fake progress timers, constant-returning endpoints. Fixtures only in `tests/`.
-3. **No dead UI controls.** Each control works end-to-end or is removed.
-4. **No leakage.** Splits: train = official train, val = official dev (model/threshold selection), test = official eval minus demo speakers, `demo_holdout` = locked, never used for training, validation, tuning or thresholds. Scalers fit on train only.
-5. **One shared preprocessing/feature implementation** for training, evaluation, upload, streaming.
-6. **Protect existing work.** Do not delete, rename, overwrite, retrain or regenerate data, splits, models or results without listing them, giving the reason, and getting the student's approval. Work on a git branch, small commits, no big rewrites, no test edits to force a pass.
-7. **Do not hide bad results.** Report real metrics; "Uncertain" is acceptable output; overclaiming is not.
-8. **Honesty about call monitoring:** it analyzes an audio stream on this device (microphone, system/tab audio, demo replay). It is **not** integrated with any phone network.
-9. Work **one phase at a time**, stop at its gate with proof, update `docs/PROJECT_STATE.md`.
-10. Tell the student the exact command before installing any package. Never commit `data/`, `models/`, `.venv/`.
+## Environment and commands
 
-## Standard commands (update if they change)
-- Tests: `python -m pytest -q`
-- Start app: `python -m uvicorn app.main:app --reload` then open `http://localhost:8000`
-- No-mock scan: `python scripts/scan_no_mock.py`
-- Streaming evaluation: `python scripts/stream_eval.py`
+Windows 11, Python virtual environment, CPU-only, target browser Chrome/Edge on localhost. Use `pathlib` and do not load full datasets into memory.
 
-## Response format for each phase
-1. Plan (≤8 lines) 2. Files created/changed (reused vs replaced) 3. Commands run with real output 4. Proof against the phase gate 5. Risks / NOT VERIFIED items 6. PROJECT_STATE.md updated 7. Next phase (wait for go-ahead)
+```powershell
+python -m pytest -q
+python scripts/scan_no_mock.py
+node --check app/static/stitch-runtime.js
+python scripts/run_app.py
+```
+
+See [README.md](README.md) for the short setup and [docs/WIRING_MATRIX.md](docs/WIRING_MATRIX.md) for page/API behavior. Dataset details are in [docs/DATASET_NOTES.md](docs/DATASET_NOTES.md).

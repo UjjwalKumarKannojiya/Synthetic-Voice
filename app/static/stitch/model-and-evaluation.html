@@ -20,13 +20,9 @@
 </div>
 </div>
 <div class="flex items-center gap-3">
-<button class="h-10 px-4 rounded-lg bg-surface-panel text-on-surface border border-border-subtle hover:bg-surface-canvas hover:border-border-strong font-body-md text-body-md font-medium transition-colors flex items-center gap-2 shadow-sm" id="reeval-suite-btn">
-<span class="material-symbols-outlined text-[18px] text-waveform-threshold">restart_alt</span>
-<span>Re-evaluate Test Suite</span>
-</button>
-<button class="h-10 px-4 rounded-lg bg-primary-container text-on-primary hover:bg-primary font-body-md text-body-md font-medium transition-colors flex items-center gap-2 shadow-sm" id="export-report-btn">
-<span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
-<span>Export Validation Report (PDF)</span>
+<button class="h-10 px-4 rounded-lg bg-primary-container text-on-primary hover:bg-primary font-body-md text-body-md font-medium transition-colors flex items-center gap-2 shadow-sm" id="export-report-btn" type="button">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span data-report-label>Download evaluation JSON</span>
 </button>
 </div>
 </div>
@@ -96,8 +92,8 @@
 <div class="p-3.5 rounded-lg bg-surface-canvas flex flex-col gap-1 border border-border-subtle/70">
 <span class="font-label-code text-label-code text-waveform-threshold uppercase">Weight Checksum (SHA-256)</span>
 <div class="flex items-center gap-1.5 mt-0.5">
-<span class="font-label-code text-label-code text-on-surface font-mono">9a4f78c2e11894d0...</span>
-<button class="text-waveform-threshold hover:text-on-surface transition-colors" onclick="navigator.clipboard.writeText('9a4f78c2e11894d033a5b6d9128f70043e498cda67b2d29486c91a329ef02dae')" title="Copy full SHA-256 hash">
+<span id="model-hash-display" class="font-label-code text-label-code text-on-surface font-mono">—</span>
+<button id="copy-model-hash" class="text-waveform-threshold hover:text-on-surface transition-colors" type="button" title="Copy full SHA-256 hash">
 <span class="material-symbols-outlined text-[16px]">content_copy</span>
 </button>
 </div>
@@ -553,36 +549,7 @@
 </div>
 </div>
 </div>
-<script>
-  // Simple micro-interactions for evaluation screen
-  document.getElementById('reeval-suite-btn')?.addEventListener('click', function() {
-    const btn = this;
-    const originalText = btn.innerHTML;
-    btn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span><span>Running Test Splits...</span>';
-    btn.classList.add('opacity-75');
-    
-    setTimeout(() => {
-      btn.innerHTML = '<span class="material-symbols-outlined text-[18px] text-verdict-real-base">check</span><span>Re-evaluation Complete</span>';
-      setTimeout(() => {
-        btn.innerHTML = originalText;
-        btn.classList.remove('opacity-75');
-      }, 2500);
-    }, 1800);
-  });
-
-  document.getElementById('export-report-btn')?.addEventListener('click', function() {
-    const btn = this;
-    const originalText = btn.innerHTML;
-    btn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">downloading</span><span>Generating PDF...</span>';
-    
-    setTimeout(() => {
-      btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">file_download_done</span><span>Report Downloaded</span>';
-      setTimeout(() => {
-        btn.innerHTML = originalText;
-      }, 2500);
-    }, 1500);
-  });
-</script></main></div><script src="/static/stitch-runtime.js?v=6"></script></body></html>
+</main></div><script src="/static/stitch-runtime.js?v=6"></script></body></html>
 
 
 

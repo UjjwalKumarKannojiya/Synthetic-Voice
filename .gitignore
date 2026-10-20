@@ -30,3 +30,19 @@ results/
 *.log
 *.pem
 *.key
+
+# Working notes and duplicate source design exports are retained locally only.
+.local-notes/
+/APP_BLUEPRINT.md
+/COPILOT_APP_PROMPT.md
+/COPILOT_ASVSPOOF_DATA_PROMPT.md
+/COPILOT_RECOVERY_PROMPT.md
+/HANDOFF_PROMPT.md
+/MASTER_PROMPT.md
+/STITCH_PROMPT.md
+/copilot-instructions.md
+/docs/DIAGNOSIS.md
+/docs/WORK_LOG.md
+/docs/decision.md
+/docs/flow.md
+/frontend_design/

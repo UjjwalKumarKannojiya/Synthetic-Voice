@@ -36,10 +36,20 @@
     document.querySelector("#reeval-suite-btn")?.remove();
     const report = document.querySelector("#export-report-btn");
     if (report) {
-      report.textContent = "Download evaluation JSON";
+      const label = report.querySelector("[data-report-label]");
+      if (label) label.textContent = "Download evaluation JSON";
       report.onclick = async () => {
-        const payload = await fetch(`/api/model/metrics?profile=${encodeURIComponent(activeProfile)}`).then((response) => response.json());
-        downloadFile(`${activeProfile}-evaluation.json`, JSON.stringify(payload, null, 2), "application/json");
+        report.disabled = true;
+        try {
+          const response = await fetch(`/api/model/metrics?profile=${encodeURIComponent(activeProfile)}`);
+          const payload = await response.json();
+          if (!response.ok || !payload.available) throw new Error(payload.detail || "Evaluation report is unavailable.");
+          downloadFile(`${activeProfile}-evaluation.json`, JSON.stringify(payload, null, 2), "application/json");
+        } catch (error) {
+          window.alert(error.message || "Evaluation report could not be downloaded.");
+        } finally {
+          report.disabled = false;
+        }
       };
     }
     document.querySelectorAll("button").forEach((button) => {
@@ -922,7 +932,8 @@
       unsupportedDuration?.parentElement?.parentElement?.remove();
       [...document.querySelectorAll("main span")].find((element) => element.textContent.trim() === "Local SQLite Storage")?.parentElement?.parentElement?.remove();
       [...document.querySelectorAll("main span")].find((element) => element.textContent.trim() === "Execution Context")?.closest(".bg-surface-panel")?.remove();
-      replaceText("1,428 Analyses Logged", `${history.length} saved analyses`);
+      const analysisCount = document.querySelector("#settings-analysis-count");
+      if (analysisCount) analysisCount.textContent = `${history.length} saved analyses`;
       replaceText("Retention: 30 Days", "");
       replaceText("34.8 MB", "");
       document.querySelectorAll("button").forEach((button) => { if (button.textContent.includes("Export Backup")) button.remove(); });
@@ -934,7 +945,6 @@
       replaceText("Scores at or above this value trigger a \"Likely Synthetic\" verdict. Lower values increase sensitivity but elevate false alarms.", `The saved threshold is ${Number(model.threshold).toFixed(3)}. Scores above ${Math.min(1, Number(model.threshold) + Number(settings.uncertain_band)).toFixed(3)} are Likely Synthetic; scores in the uncertain band are not.`);
       replaceText("Windows below this RMS audio power are classified as \"no speech\" and skipped by the inference pipeline to preserve GPU/CPU cycles.", "Audio windows below the selected RMS energy gate are marked as no speech; no model score is produced for those windows.");
       replaceText("-45 dBFS (Default)", "-45 dBFS preset");
-      replaceText("1,428 analysis sessions, hashes, and per-hop synthetic probability traces will be permanently destroyed.", `${history.length} saved analysis records will be permanently deleted.`);
       replaceText("TABLES: SESSIONS, SPECTRAL_CHUNKS, AUDIT_LOG", "Local analysis history");
       replaceText("Active Profile: #SEC-STITCH-LOCAL-01", `Active model: ${model.name}`);
       replaceText("/api/v1/forensics/settings", "local application settings");
@@ -1017,17 +1027,6 @@
     replaceText("Split Cutoff: 0.50", `Split Cutoff: ${Number(model.threshold).toFixed(3)}`);
     replaceText("Uncertain Region [0.40 – 0.60]", `Uncertain Region [${(model.threshold - model.uncertain_band).toFixed(3)} – ${(model.threshold + model.uncertain_band).toFixed(3)}]`);
     const main = document.querySelector("main");
-    if (location.pathname === "/dashboard") {
-      const emptyState = [...document.querySelectorAll("button")].find((button) => button.textContent.trim() === "Empty State");
-      emptyState?.remove();
-      const telemetry = [...document.querySelectorAll("button")].find((button) => button.textContent.trim() === "Telemetry");
-      if (telemetry) {
-        const label = document.createElement("span");
-        label.className = "px-3 py-1.5 text-xs text-secondary";
-        label.textContent = "Saved analyses";
-        telemetry.replaceWith(label);
-      }
-    }
     if (location.pathname === "/call-monitor") {
       const fakeSummary = [...document.querySelectorAll("main h2,main h3,main span")].find((element) => element.textContent.trim() === "Ongoing Session Buffer Summary");
       let summaryCard = fakeSummary;
@@ -1078,9 +1077,8 @@
     replaceText("(Band: 0.40–0.60)", `(Band: ${(model.threshold - model.uncertain_band).toFixed(3)}–${(model.threshold + model.uncertain_band).toFixed(3)})`);
     replaceText("0.40–0.60 Band", `${(model.threshold - model.uncertain_band).toFixed(3)}–${(model.threshold + model.uncertain_band).toFixed(3)} Band`);
     replaceText("0.40 - 0.60", `${(model.threshold - model.uncertain_band).toFixed(3)} - ${(model.threshold + model.uncertain_band).toFixed(3)}`);
-    replaceText("9a4f78c2e11894d0...", `${model.model_hash.slice(0, 16)}...`);
-    replaceText("419476ec81b40a6e...", `${model.model_hash.slice(0, 16)}...`);
-    replaceText("a93f...b81d", `${model.model_hash.slice(0, 4)}...${model.model_hash.slice(-4)}`);
+    const modelHash = document.querySelector("#model-hash-display");
+    if (modelHash) modelHash.textContent = `${model.model_hash.slice(0, 16)}...`;
     replaceText("FastAPI · Uvicorn #2", "FastAPI on this device");
     replaceText("FP16 TorchScript serialization", "Joblib SVM pipeline artifact");
     replaceText("+0.8% vs v1.3", "Measured on saved test report");
@@ -1092,19 +1090,23 @@
       replaceText("Evaluated on N = 10,350 held-out FoR-2s test clips", `Evaluated on N = ${Number(test.count).toLocaleString()} held-out test clips`);
     }
     if (validation) replaceText("Active Checkpoint: " + model.model_version, `Validation threshold source: EER (${Number(validation.eer).toFixed(3)})`);
-    setValueNear("TOTAL INGESTED", String(dashboard.total));
+    const dashboardBindings = {
+      "dashboard-total": dashboard.total,
+      "dashboard-flagged": dashboard.flagged,
+      "dashboard-uncertain": dashboard.uncertain,
+      "dashboard-flagged-percent": `${dashboard.total ? (100 * dashboard.flagged / dashboard.total).toFixed(1) : "0.0"}%`,
+      "dashboard-uncertain-percent": `${dashboard.total ? (100 * dashboard.uncertain / dashboard.total).toFixed(1) : "0.0"}%`,
+      "dashboard-total-count": dashboard.total,
+      "dashboard-recent-count": Math.min(history.length, 6),
+    };
+    Object.entries(dashboardBindings).forEach(([id, value]) => {
+      const element = document.getElementById(id);
+      if (element) element.textContent = String(value);
+    });
     setValueNear("FLAGGED SYNTHETIC", String(dashboard.flagged));
     setValueNear("INCONCLUSIVE BAND", String(dashboard.uncertain));
     setValueNear("ENGINE LATENCY", dashboard.avg_latency_ms == null ? "—" : `${Number(dashboard.avg_latency_ms).toFixed(1)}ms`);
     drawDashboardGraph(dashboard.series || [], Number(model.threshold), Number(model.uncertain_band));
-    replaceText("12.9%", dashboard.total ? `${((dashboard.flagged / dashboard.total) * 100).toFixed(1)}%` : "0.0%");
-    replaceText("6.7%", dashboard.total ? `${((dashboard.uncertain / dashboard.total) * 100).toFixed(1)}%` : "0.0%");
-    textNodes().forEach((node) => {
-      if (node.nodeValue.trim() === "1,428" && node.parentElement?.parentElement?.textContent.includes("analyses")) {
-        node.nodeValue = dashboard.total.toLocaleString();
-      }
-    });
-    replaceText("of 1,428 analyses", `of ${dashboard.total.toLocaleString()} analyses`);
     replaceText("Confidence ≥ 0.60 threshold", `Score ≥ ${Number(model.threshold).toFixed(3)} threshold`);
     replaceText("Range [0.40 – 0.60] split", `Range [${(model.threshold - model.uncertain_band).toFixed(3)} – ${(model.threshold + model.uncertain_band).toFixed(3)}]`);
     replaceText("Decision Threshold\n0.50 (±0.10)", `Decision Threshold\n${Number(model.threshold).toFixed(3)} (±${Number(model.uncertain_band).toFixed(3)})`);
@@ -1170,18 +1172,36 @@
         [...document.querySelectorAll("main p")].filter((element) => element.textContent.includes("Telemetry metrics represent probabilistic anomaly vectors")).forEach((element) => element.closest(".bg-surface-panel")?.remove());
         replaceText("BUFFER POOL: SYNCED", `${history.length} saved analyses`);
       }
-      const verdictFilter = document.querySelector("main select");
+      const verdictFilter = document.querySelector("#voiceguard-verdict-filter");
       const search = document.querySelector('main input[placeholder*="Search by session"]');
+      const sourceMount = document.querySelector("#voiceguard-source-filter-mount");
+      let sourceFilter = document.querySelector("#voiceguard-source-filter");
+      if (sourceMount && !sourceFilter) {
+        const label = document.createElement("label");
+        label.className = "sr-only";
+        label.textContent = "Filter by source";
+        sourceFilter = document.createElement("select");
+        sourceFilter.id = "voiceguard-source-filter";
+        sourceFilter.className = verdictFilter?.className || "rounded-lg border border-border-subtle bg-surface-canvas px-3 py-2";
+        sourceFilter.setAttribute("aria-label", "Filter by source");
+        sourceFilter.add(new Option("All sources", ""));
+        const sourceNames = { Upload: "File upload", mic: "Live check", system: "System or tab audio", replay: "Demo replay", Demo: "Demo clip analysis" };
+        [...new Set(history.map((row) => row.source))].sort().forEach((source) => sourceFilter.add(new Option(sourceNames[source] || source, source)));
+        label.append(sourceFilter);
+        sourceMount.replaceChildren(label);
+      }
       const drawRows = () => {
         const query = search?.value.trim().toLowerCase() || "";
-        const verdict = verdictFilter?.value === "All Verdicts" ? "" : verdictFilter?.value || "";
-        const rows = history.filter((row) => (!verdict || row.verdict === verdict) && (!query || `${row.id} ${row.name} ${row.source}`.toLowerCase().includes(query)));
+        const verdict = verdictFilter?.value || "";
+        const source = sourceFilter?.value || "";
+        const rows = history.filter((row) => (!source || row.source === source) && (!verdict || row.verdict === verdict) && (!query || `${row.id} ${row.name} ${row.source}`.toLowerCase().includes(query)));
         historyTable.querySelector("tbody").innerHTML = rows.length ? rows.map((row) => `<tr class="hover:bg-surface-canvas/60 transition-colors"><td class="py-3.5 px-4 font-label-numeric text-label-numeric text-secondary whitespace-nowrap">${escapeHtml(new Date(row.created_at).toLocaleString())}</td><td class="py-3.5 px-4">${escapeHtml(row.source)}</td><td class="py-3.5 px-4 font-medium">${escapeHtml(row.name)} <span class="text-secondary">#${Number(row.id)}</span></td><td class="py-3.5 px-3 text-right">${Number(row.duration_s).toFixed(2)}s</td><td class="py-3.5 px-4">${escapeHtml(row.verdict)}</td><td class="py-3.5 px-3 text-right">${row.mean_prob == null ? "—" : Number(row.mean_prob).toFixed(3)}</td><td class="py-3.5 px-3 text-right">${row.max_prob == null ? "—" : Number(row.max_prob).toFixed(3)}</td><td class="py-3.5 px-3 text-right">${Number(row.latency_ms).toFixed(1)} ms</td><td class="py-3.5 px-3 text-center"><button type="button" data-analysis-detail="${Number(row.id)}" class="text-primary">Details</button></td></tr>`).join("") : '<tr><td colspan="9" class="py-8 px-4 text-center text-secondary">No analyses match these filters.</td></tr>';
         if (location.pathname === "/history") {
           if (historyFooter) historyFooter.textContent = `Showing ${rows.length} of ${history.length} saved analyses`;
         }
       };
       drawRows();
+      sourceFilter?.addEventListener("change", drawRows);
       verdictFilter?.addEventListener("change", drawRows);
       search?.addEventListener("input", drawRows);
       historyTable.addEventListener("click", async (event) => {
@@ -1189,11 +1209,25 @@
         if (!button) return;
         const existing = button.closest("tr").nextElementSibling;
         if (existing?.classList.contains("voiceguard-detail")) { existing.remove(); return; }
-        const detail = await fetch(`/api/history/${button.dataset.analysisDetail}`).then((response) => response.json());
         const next = document.createElement("tr");
         next.className = "voiceguard-detail bg-surface-canvas";
-        next.innerHTML = `<td colspan="9" class="p-4"><pre class="overflow-auto text-xs">${escapeHtml(JSON.stringify(detail.windows, null, 2))}</pre></td>`;
+        const cell = document.createElement("td");
+        cell.colSpan = 9;
+        cell.className = "p-4";
+        cell.textContent = "Loading analysis details…";
+        next.append(cell);
         button.closest("tr").after(next);
+        try {
+          const response = await fetch(`/api/history/${button.dataset.analysisDetail}`);
+          const detail = await response.json();
+          if (!response.ok) throw new Error(detail.detail || "Analysis details are unavailable.");
+          const pre = document.createElement("pre");
+          pre.className = "overflow-auto text-xs";
+          pre.textContent = JSON.stringify(detail.windows, null, 2);
+          cell.replaceChildren(pre);
+        } catch (error) {
+          cell.textContent = error.message || "Analysis details are unavailable.";
+        }
       });
     }
     if (document.querySelector("#audio-input")) addLiveResultPanel();
@@ -1216,8 +1250,15 @@
       }
     }
     if (["/live-check", "/call-monitor"].includes(location.pathname)) drawLiveGraph([], Number(model.threshold), Number(model.uncertain_band));
-    const checksumCopy = [...document.querySelectorAll("button[onclick*='navigator.clipboard']")][0];
-    if (checksumCopy) checksumCopy.onclick = async () => { await navigator.clipboard.writeText(model.model_hash); checksumCopy.title = "Model hash copied"; };
+    const checksumCopy = document.querySelector("#copy-model-hash");
+    if (checksumCopy) checksumCopy.onclick = async () => {
+      try {
+        await navigator.clipboard.writeText(model.model_hash);
+        checksumCopy.title = "Model hash copied";
+      } catch (error) {
+        checksumCopy.title = error.message || "Clipboard access is unavailable";
+      }
+    };
     bindPageActions();
     bindLiveControls();
     await bindSettings(model, history);

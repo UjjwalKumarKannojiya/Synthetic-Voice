@@ -32,6 +32,12 @@ ACTIVE_FRONTEND = (
 )
 FORBIDDEN = re.compile(r"Math\.random|faker|lorem", re.IGNORECASE)
 FAKE_TIMER = re.compile(r"setTimeout\s*\([^)]*(?:progress|loading|result|analysis)", re.IGNORECASE | re.DOTALL)
+FAKE_UI_MARKERS = re.compile(
+    r"Running Test Splits|Re-evaluation Complete|Generating PDF|Report Downloaded|"
+    r"toggle-empty-view|voicemail_ext_882\.wav|REC-202410-0982|"
+    r"ARCHIVE-HASH: 7F4A-981D|1,428|1–7 entries",
+    re.IGNORECASE,
+)
 NUMERIC_CHART_ARRAY = re.compile(
     r"(?:new\s+Chart|Chart\s*\()\s*[\s\S]{0,800}?(?:data|datasets)\s*:\s*\[\s*[\d\s.,+-]+\]",
     re.IGNORECASE,
@@ -104,6 +110,8 @@ def main() -> int:
             errors.append(f"{path}: forbidden mock marker")
         if FAKE_TIMER.search(text):
             errors.append(f"{path}: fake progress timer pattern")
+        if path.suffix == ".html" and FAKE_UI_MARKERS.search(text):
+            errors.append(f"{path}: stale demo UI/data marker")
         if NUMERIC_CHART_ARRAY.search(text):
             errors.append(f"{path}: hard-coded numeric chart data")
         if path.suffix == ".html":
