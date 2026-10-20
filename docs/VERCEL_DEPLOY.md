@@ -16,12 +16,14 @@ Upload that archive to private HTTPS object storage. Configure the Vercel projec
 
 | Variable | Value |
 |---|---|
-| `DATABASE_URL` | PostgreSQL connection URL. Use the provider's pooled URL when available. |
+| `DATABASE_URL` | PostgreSQL connection URL. For Supabase, use Dashboard → Connect → Transaction pooler (port 6543) and include `sslmode=require`. The runtime selects SQLAlchemy `NullPool` and disables Psycopg auto-prepared statements for this port. |
 | `VOICEGUARD_ARTIFACTS_URL` | Private HTTPS download URL for the ZIP. Do not use a public bucket URL. |
 | `VOICEGUARD_ARTIFACTS_SHA256` | The digest printed by the packaging command. |
 | `VOICEGUARD_ARTIFACTS_TOKEN` | Optional bearer token if the private object endpoint requires one. |
 
 Set these as Vercel environment variables for Preview and Production. Do not put the values in Git or expose the bundle URL in application logs. The app downloads the bundle into Vercel's writable `/tmp`, validates the checksum and exact allowed file list, then loads model weights from that directory. A missing URL, invalid digest, bad archive, or missing PostgreSQL URL fails startup clearly instead of serving unscored results.
+
+Supabase is supported because it provides PostgreSQL. Its [connection guide](https://supabase.com/docs/guides/database/connecting-to-postgres) recommends the IPv4 shared transaction pooler for serverless functions; copy the exact host and username from the Supabase dashboard rather than constructing them. The app follows Supabase's [SQLAlchemy guidance](https://supabase.com/docs/guides/troubleshooting/using-sqlalchemy-with-supabase-FUqebT) by using `NullPool` and disabling Psycopg auto-prepared statements on port 6543. The app keeps Alembic's migration and its transaction-scoped advisory lock within one transaction. Verify startup migrations against the Preview database: Supabase recommends direct connections for migration tools, so if the transaction pooler rejects startup migrations, switch `DATABASE_URL` to Supabase's session pooler and monitor the database connection limits.
 
 ## 2. Import and preview the GitHub project
 

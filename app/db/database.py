@@ -14,6 +14,7 @@ from alembic import command
 from alembic.config import Config
 from sqlalchemy.engine import Connection, Engine, Result
 from sqlalchemy.engine.url import URL, make_url
+from sqlalchemy.pool import NullPool
 
 
 class CompatRow(Mapping[str, Any]):
@@ -121,11 +122,15 @@ class Database:
         self.url = url
         if os.environ.get("VERCEL") == "1" and url.get_backend_name() != "postgresql":
             raise RuntimeError("Vercel deployments require persistent PostgreSQL; SQLite files are not durable")
-        pool_options = (
-            {"pool_size": 1, "max_overflow": 0, "pool_recycle": 300}
-            if os.environ.get("VERCEL") == "1" and url.get_backend_name() == "postgresql"
-            else {}
-        )
+        pool_options = {}
+        if os.environ.get("VERCEL") == "1" and url.get_backend_name() == "postgresql":
+            if url.port == 6543:
+                # Supabase transaction poolers expect one-off client connections and
+                # do not support Psycopg's automatic prepared statements.
+                pool_options = {"poolclass": NullPool}
+                connect_args["prepare_threshold"] = None
+            else:
+                pool_options = {"pool_size": 1, "max_overflow": 0, "pool_recycle": 300}
         self.engine: Engine = sa.create_engine(url, connect_args=connect_args, pool_pre_ping=True, **pool_options)
         if url.get_backend_name() == "sqlite":
             @sa.event.listens_for(self.engine, "connect")

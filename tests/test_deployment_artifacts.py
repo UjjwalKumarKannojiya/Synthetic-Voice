@@ -8,6 +8,7 @@ import zipfile
 from pathlib import Path
 
 import pytest
+import app.db.database as database_module
 
 from app import deployment_artifacts
 from app.deployment_artifacts import ARTIFACT_MEMBERS, _validate_bundle, prepare_runtime_artifacts
@@ -92,6 +93,25 @@ def test_vercel_rejects_ephemeral_sqlite_database(tmp_path: Path, monkeypatch: p
     monkeypatch.setenv("VERCEL", "1")
     with pytest.raises(RuntimeError, match="persistent PostgreSQL"):
         Database(tmp_path / "ephemeral.sqlite3")
+
+
+def test_vercel_supabase_transaction_pooler_disables_client_pool_and_prepares(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("VERCEL", "1")
+    captured = {}
+
+    def fake_create_engine(url, **kwargs):
+        captured["url"] = url
+        captured.update(kwargs)
+        return object()
+
+    monkeypatch.setattr(database_module.sa, "create_engine", fake_create_engine)
+
+    database = Database("postgresql://db-user:fixture-password@aws-0-test.pooler.supabase.com:6543/postgres")
+
+    assert database.engine is not None
+    assert captured["poolclass"] is database_module.NullPool
+    assert captured["connect_args"]["prepare_threshold"] is None
+    assert "pool_size" not in captured
 
 
 def test_vercel_download_verifies_and_caches_private_bundle(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
