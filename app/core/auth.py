@@ -5,7 +5,6 @@ from __future__ import annotations
 import hashlib
 import hmac
 import secrets
-import secrets
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
@@ -87,7 +86,7 @@ def create_account(
         with database.connect() as connection:
             cursor = connection.execute(
                 "INSERT INTO users(username, email, display_name, password_salt, password_hash, created_at) "
-                "VALUES (?, ?, ?, ?, ?, ?)",
+                "VALUES (?, ?, ?, ?, ?, ?) RETURNING id",
                 (clean_username, clean_email, clean_name, "", encoded_hash, created_at),
             )
             row = connection.execute("SELECT * FROM users WHERE id = ?", (cursor.lastrowid,)).fetchone()
@@ -159,7 +158,7 @@ def auth_attempt_count(database: Database, identifier: str, ip: str, action: str
     query = "SELECT COUNT(*) FROM login_attempts WHERE action = ? AND created_at >= ? AND ip = ? AND email_lower = ?"
     params: tuple[Any, ...] = (action, since, ip[:64], identifier.strip().casefold()[:320])
     if failures_only:
-        query += " AND success = 0"
+        query += " AND success = false"
     with database.connect() as connection:
         return int(connection.execute(query, params).fetchone()[0])
 
@@ -195,7 +194,7 @@ def session_user(database: Database, token: str | None) -> dict[str, Any] | None
         row = connection.execute(
             "SELECT users.* FROM auth_sessions JOIN users ON users.id = auth_sessions.user_id "
             "WHERE auth_sessions.token_hash = ? AND auth_sessions.expires_at > ? "
-            "AND auth_sessions.revoked_at IS NULL AND users.is_active = 1",
+            "AND auth_sessions.revoked_at IS NULL AND users.is_active = true",
             (token_hash, now),
         ).fetchone()
     return _public_user(row) if row else None

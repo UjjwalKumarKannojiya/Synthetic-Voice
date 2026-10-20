@@ -20,6 +20,7 @@ def save_analysis(database: Database, source: str, name: str, result: dict[str, 
             (user_id, created_at, source, name, duration_s, sample_rate, mean_prob, max_prob,
              verdict, speech_ratio, latency_ms, model_version, threshold, band)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            RETURNING id
             """,
             (
                 user_id,
@@ -42,7 +43,7 @@ def save_analysis(database: Database, source: str, name: str, result: dict[str, 
         connection.executemany(
             "INSERT INTO windows (analysis_id, t_start, t_end, prob, speech) VALUES (?, ?, ?, ?, ?)",
             [
-                (analysis_id, window["t_start"], window["t_end"], window["prob"], int(window["speech"]))
+                (analysis_id, window["t_start"], window["t_end"], window["prob"], bool(window["speech"]))
                 for window in result["windows"]
             ],
         )

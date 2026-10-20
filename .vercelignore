@@ -1,4 +1,11 @@
 .venv
+.env*
+.vercel
+.pytest_cache
+.pytest-tmp*
+*.sqlite
+*.sqlite3
+*.db
 data
 models
 results

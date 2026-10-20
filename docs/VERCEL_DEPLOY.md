@@ -50,6 +50,24 @@ Live Check and Call Monitor use the FastAPI `/ws/live` endpoint. Vercel's WebSoc
 
 The public repository excludes demo audio and manifests, so Demo Replay has no hosted samples until separately provisioned. Microphone live monitoring and uploaded-file analysis use the bundled model artifacts and do not require the training dataset.
 
-## Deployment status
+## Earlier Preview failure notes (superseded by the current status below)
 
 **Preview is deployed but not runtime-ready.** The private Blob artifact download and bundle validation completed. The most recent protected `/api/health` call returned `FUNCTION_INVOCATION_FAILED`; sanitized runtime logs show the connection attempt resolves to Supabase's direct IPv6 database endpoint and fails with `Cannot assign requested address` from Vercel. The previous URL-encoding parse error was corrected for Preview, so this is now an IPv4/IPv6 route issue. Vercel needs the exact Supabase shared-pooler hostname, project-qualified username, port, and SSL options from the Supabase project connection settings; do not guess a pooler hostname. The connected Supabase tools confirmed the project is healthy and its database has no tables or migrations yet. The app's startup migrations are designed to create the schema. For the app's `postgres` database role, table and sequence defaults were tightened in Supabase and verified; the app migration also enforces table RLS and revokes Supabase API-role grants when it creates the schema. The connection metadata is not available from the `sb_secret_...` API key. That key was shared in chat and must be rotated immediately; the previously shared database password must also be rotated before Production. The connected tools do not expose the pooler URL or credential-rotation controls, so Vercel's database URL and credential rotation remain blocked. Production has not been promoted. Hosted migrations, inference, account isolation, upload/history, and WebSocket streaming remain **NOT VERIFIED**. Login has no email verification or password-reset flow.
+
+Additional Preview proof on 2026-10-20: Vercel's request log recorded HTTP 500 for `/api/health`. Matching Python 3.14 runtime logs show both the direct-IPv6 database connection failure and `ImportError: cannot import name 'vc_handler' from 'vercel_runtime.vc_init'`; recheck the adapter error after a fresh Preview build. The no-upload `vercel deploy --dry --json` manifest reports 88 included files (740,442 bytes), 77 ignored paths, and no included `.env*`, local data, model, result, or SQLite paths. `.vercelignore` now explicitly excludes environment files, local Vercel state, pytest scratch folders, and local database files.
+
+## Current verified Preview — 2026-10-20
+
+Protected Preview deployment `dpl_434Uvkv3p2zTMe9Zpz4fj6LPPEiv` is READY at [voicegaurd-pf1k3ztnx](https://voicegaurd-pf1k3ztnx-ujjwal21822s-projects.vercel.app). Vercel CLI `/api/health` returned:
+
+```json
+{"status":"ok","ready":true,"database_connected":true,"model_loaded":true,"model_version":"classical_for_2sec","profiles":{"legacy_for2sec":true,"asvspoof_la_balanced2500":true}}
+```
+
+The hosted auth check passed signup (`201`), login (`200`), authenticated `/api/auth/me`, account deletion (`200`), and confirmed the deleted account's session no longer authenticated. A generated 2-second tone from the existing test helper was uploaded through both `legacy_for2sec` and `asvspoof_la_balanced2500`; both returned HTTP `200` with a model window, and History returned two saved `Upload` records. The temporary account and its analyses were deleted. The tone is not speech, so this proves the server-side inference and storage path runs; it is not a model accuracy check.
+
+The latest full local suite returned `66 passed, 2 warnings in 93.34s`; warnings are librosa short-input `n_fft=1024` notices. `node --check app\static\app-runtime.js`, Python compilation, and the no-mock scan passed. Vercel's upload-free dry run included 88 files (748,881 bytes), ignored 86 paths, and included zero sensitive paths; environment files, local notes, virtualenv, data, models, results, and tests were ignored.
+
+The temporary cleanup endpoint and its Preview-only token were removed before this clean deployment; a POST to that route returns `404`. The Preview database URL uses a separate limited app role. The database owner password and Supabase API secret shared in chat have not been rotated and must be rotated before Production.
+
+**Not verified:** Vercel WebSocket upgrade/streaming for `/ws/live`, microphone/shared-tab capture on the hosted site, and Demo Replay (demo audio is excluded). Local browser fake-audio acceptance is recorded in [PROJECT_STATE.md](PROJECT_STATE.md), but it does not prove Vercel WebSocket support. Production has not been promoted.
