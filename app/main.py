@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import hashlib
 import csv
+import mimetypes
 import os
 import re
 import tempfile
@@ -84,13 +85,15 @@ MODEL_PROFILES = {
     },
 }
 RUNTIME_MANIFEST = ROOT / "runtime_manifest.json"
-DEMO_MANIFEST = ROOT / "data" / "manifests" / "asvspoof_la_demo_holdout.csv"
+LOCAL_DEMO_ROOT = ROOT / ".local-notes" / "demo-assets-r9"
+DEMO_MANIFEST = LOCAL_DEMO_ROOT / "manifest.csv"
+DEMO_AUDIO_ROOT = LOCAL_DEMO_ROOT
 
 
 def configure_artifact_root(artifact_root: Path) -> None:
     """Point model/report reads at verified writable storage on Vercel."""
 
-    global MODEL_PROFILES, RUNTIME_MANIFEST
+    global MODEL_PROFILES, RUNTIME_MANIFEST, DEMO_MANIFEST, DEMO_AUDIO_ROOT
     MODEL_PROFILES = {
         "legacy_for2sec": {
             "meta": artifact_root / "models" / "model_meta.json",
@@ -104,6 +107,14 @@ def configure_artifact_root(artifact_root: Path) -> None:
         },
     }
     RUNTIME_MANIFEST = artifact_root / "runtime_manifest.json"
+    packaged_demo_root = artifact_root / "demo"
+    packaged_demo_manifest = packaged_demo_root / "manifest.csv"
+    if packaged_demo_manifest.is_file():
+        DEMO_MANIFEST = packaged_demo_manifest
+        DEMO_AUDIO_ROOT = packaged_demo_root
+    else:
+        DEMO_MANIFEST = LOCAL_DEMO_ROOT / "manifest.csv"
+        DEMO_AUDIO_ROOT = LOCAL_DEMO_ROOT
     training_count.cache_clear()
     _load_legacy_detector.cache_clear()
     _load_asvspoof_detector.cache_clear()
@@ -262,23 +273,35 @@ def profile_info(profile: str, user_id: int | None = None) -> dict[str, Any]:
 
 def demo_samples() -> list[dict[str, Any]]:
     if not DEMO_MANIFEST.exists():
-        raise HTTPException(status_code=503, detail="Demo holdout manifest is unavailable")
+        raise HTTPException(status_code=503, detail="Demo sample set is not provisioned")
     with DEMO_MANIFEST.open(encoding="utf-8", newline="") as stream:
         rows = list(csv.DictReader(stream))
     samples = []
     for row in rows:
-        path = Path(row["path"])
+        path = _demo_audio_path(row)
         samples.append({
             "id": row["sha1"],
-            "name": path.name,
+            "name": row.get("name") or path.name,
             "duration_s": float(row["duration_s"]),
         })
     return samples
 
 
+def _demo_audio_path(row: dict[str, str]) -> Path:
+    relative = row.get("path", "")
+    root = DEMO_AUDIO_ROOT.resolve()
+    path_part = Path(relative)
+    if "\\" in relative or path_part.is_absolute() or ".." in path_part.parts:
+        raise HTTPException(status_code=503, detail="Demo audio path is invalid")
+    path = (root / path_part).resolve()
+    if not path.is_relative_to(root) or not path.is_file():
+        raise HTTPException(status_code=503, detail="Demo audio file is unavailable")
+    return path
+
+
 def demo_row(sample_id: str) -> dict[str, str]:
     if not DEMO_MANIFEST.exists():
-        raise HTTPException(status_code=503, detail="Demo holdout manifest is unavailable")
+        raise HTTPException(status_code=503, detail="Demo sample set is not provisioned")
     with DEMO_MANIFEST.open(encoding="utf-8", newline="") as stream:
         for row in csv.DictReader(stream):
             if row["sha1"] == sample_id:
@@ -675,20 +698,16 @@ def demo_sample_list(request: Request) -> list[dict[str, Any]]:
 def demo_audio(sample_id: str, request: Request) -> FileResponse:
     _require_authenticated_user(request)
     row = demo_row(sample_id)
-    path = Path(row["path"]).resolve()
-    data_root = (ROOT / "LA").resolve()
-    if data_root not in path.parents or not path.is_file():
-        raise HTTPException(status_code=503, detail="Demo audio file is unavailable")
-    return FileResponse(path, media_type="audio/flac", filename=path.name)
+    path = _demo_audio_path(row)
+    media_type = mimetypes.guess_type(path.name)[0] or "application/octet-stream"
+    return FileResponse(path, media_type=media_type, filename=path.name)
 
 
 @app.post("/api/demo/analyze/{sample_id}")
 def analyze_demo(sample_id: str, request: Request) -> dict[str, Any]:
     user = _require_authenticated_user(request)
     row = demo_row(sample_id)
-    path = Path(row["path"])
-    if not path.is_file():
-        raise HTTPException(status_code=503, detail="Demo audio file is unavailable")
+    path = _demo_audio_path(row)
     started = time.perf_counter()
     try:
         audio, sample_rate = decode_audio_file(path)
@@ -705,7 +724,7 @@ def analyze_demo(sample_id: str, request: Request) -> dict[str, Any]:
         analysis_id = save_analysis(
             DATABASE,
             "Demo",
-            path.name,
+            row.get("name") or path.name,
             result,
             latency_ms,
             "asvspoof_la_balanced2500",

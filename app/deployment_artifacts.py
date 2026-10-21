@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import hashlib
+import csv
+import io
 import json
 import os
 import re
@@ -28,6 +30,10 @@ ARTIFACT_MEMBERS = frozenset(
         "runtime_manifest.json",
     }
 )
+DEMO_MANIFEST_MEMBER = "demo/manifest.csv"
+DEMO_NOTICE_MEMBER = "demo/NOTICE.md"
+DEMO_AUDIO_PREFIX = "demo/audio/"
+MAX_DEMO_SAMPLES = 12
 MAX_ARCHIVE_BYTES = 32 * 1024 * 1024
 MAX_EXPANDED_BYTES = 64 * 1024 * 1024
 _SHA256_RE = re.compile(r"^[a-f0-9]{64}$")
@@ -41,6 +47,59 @@ def _sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
+def _demo_bundle_members(archive: zipfile.ZipFile, names: set[str]) -> set[str]:
+    extras = names - ARTIFACT_MEMBERS
+    if not extras:
+        return set()
+    if DEMO_MANIFEST_MEMBER not in extras or DEMO_NOTICE_MEMBER not in extras:
+        raise ValueError("Runtime artifact bundle contains an unexpected file set")
+    try:
+        manifest_text = archive.read(DEMO_MANIFEST_MEMBER).decode("utf-8")
+        rows = list(csv.DictReader(io.StringIO(manifest_text, newline="")))
+        notice = archive.read(DEMO_NOTICE_MEMBER).decode("utf-8")
+    except (KeyError, UnicodeDecodeError, OSError) as exc:
+        raise ValueError("Runtime demo manifest or attribution notice is invalid") from exc
+    required = {"path", "label", "split", "speaker", "attack_id", "sha1", "name"}
+    if not rows or not required.issubset(rows[0]):
+        raise ValueError("Runtime demo manifest is missing sample metadata")
+    if len(rows) > MAX_DEMO_SAMPLES or len(rows) < 4 or len(rows) % 2:
+        raise ValueError("Runtime demo manifest has an invalid sample count")
+    if any(row["split"] != "val" or row["label"] not in {"0", "1"} for row in rows):
+        raise ValueError("Runtime demo manifest must use labeled development samples")
+    if any(sum(row["label"] == label for row in rows) != len(rows) // 2 for label in ("0", "1")):
+        raise ValueError("Runtime demo manifest is not class-balanced")
+    sample_ids = [row["sha1"].lower() for row in rows]
+    if any(not re.fullmatch(r"[a-f0-9]{40}", sample_id) for sample_id in sample_ids):
+        raise ValueError("Runtime demo sample IDs are invalid")
+    if len(sample_ids) != len(set(sample_ids)) or len({row["speaker"] for row in rows}) != len(rows):
+        raise ValueError("Runtime demo samples contain duplicate IDs or speakers")
+    if len({row["attack_id"] for row in rows if row["label"] == "1"}) < 2:
+        raise ValueError("Runtime demo samples must cover multiple spoof attacks")
+    if any(
+        "\\" in row["path"]
+        or row["path"] != f"audio/{sample_id}.flac"
+        or Path(row["name"]).name != row["name"]
+        or not row["name"].lower().endswith(".flac")
+        for row, sample_id in zip(rows, sample_ids, strict=True)
+    ):
+        raise ValueError("Runtime demo manifest contains an unsafe audio path or name")
+    if "ASVspoof 2019" not in notice or "ODC-By" not in notice or "CSTR VCTK" not in notice:
+        raise ValueError("Runtime demo attribution notice is missing")
+
+    expected_audio = {f"{DEMO_AUDIO_PREFIX}{sample_id}.flac" for sample_id in sample_ids}
+    expected = {DEMO_MANIFEST_MEMBER, DEMO_NOTICE_MEMBER, *expected_audio}
+    if extras != expected:
+        raise ValueError("Runtime artifact bundle contains an unexpected file set")
+    for info in archive.infolist():
+        if info.filename in expected_audio:
+            sample_id = Path(info.filename).stem
+            if info.file_size > 8 * 1024 * 1024:
+                raise ValueError("Runtime demo audio file exceeds the size limit")
+            if hashlib.sha1(archive.read(info.filename)).hexdigest() != sample_id:
+                raise ValueError("Runtime demo audio hash does not match its manifest")
+    return expected
+
+
 def _validate_bundle(archive_path: Path, expected_sha256: str, destination: Path) -> None:
     if not _SHA256_RE.fullmatch(expected_sha256):
         raise ValueError("VOICEGUARD_ARTIFACTS_SHA256 must be a 64-character SHA-256 hex digest")
@@ -51,7 +110,10 @@ def _validate_bundle(archive_path: Path, expected_sha256: str, destination: Path
         with zipfile.ZipFile(archive_path) as archive:
             infos = archive.infolist()
             names = [info.filename for info in infos]
-            if len(names) != len(set(names)) or set(names) != ARTIFACT_MEMBERS:
+            if len(names) != len(set(names)):
+                raise ValueError("Runtime artifact bundle contains an unexpected file set")
+            expected_members = ARTIFACT_MEMBERS | _demo_bundle_members(archive, set(names))
+            if set(names) != expected_members:
                 raise ValueError("Runtime artifact bundle contains an unexpected file set")
             if sum(info.file_size for info in infos) > MAX_EXPANDED_BYTES:
                 raise ValueError("Runtime artifact bundle expands beyond the allowed size")
@@ -87,6 +149,16 @@ def _validate_bundle(archive_path: Path, expected_sha256: str, destination: Path
         counts = manifest["training_counts"]
         if any(type(counts[key]) is not int or counts[key] < 0 for key in ("legacy_for2sec", "asvspoof_la_balanced2500")):
             raise ValueError
+        demo_count = manifest.get("demo_sample_count", 0)
+        if type(demo_count) is not int or demo_count < 0 or demo_count > MAX_DEMO_SAMPLES:
+            raise ValueError
+        has_demo_assets = (destination / DEMO_MANIFEST_MEMBER).is_file()
+        if has_demo_assets != (demo_count > 0):
+            raise ValueError
+        if has_demo_assets:
+            with (destination / DEMO_MANIFEST_MEMBER).open(encoding="utf-8", newline="") as stream:
+                if sum(1 for _ in csv.DictReader(stream)) != demo_count:
+                    raise ValueError
     except (OSError, KeyError, TypeError, json.JSONDecodeError, ValueError) as exc:
         raise ValueError("Runtime artifact training-count manifest is invalid") from exc
 

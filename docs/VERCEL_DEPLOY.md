@@ -10,13 +10,12 @@ From the repository root, with the local trained model and result artifacts pres
 .venv\Scripts\python.exe scripts\package_runtime_artifacts.py
 ```
 
-The script writes `.local-notes/deployment/voiceguard-runtime.zip`, prints the SHA-256 digest, and refuses to overwrite an existing bundle. The archive contains only the two active SVM models, their metadata, their evaluation JSON files, and counts derived from the local training manifest. It does not contain audio, dataset manifests, split rows, feature caches, or training score CSVs. Keep this file out of Git.
+The script writes `.local-notes/deployment/voiceguard-runtime-r9-demo.zip`, prints its SHA-256 digest, and refuses to overwrite an existing bundle. It contains the two active SVM models, metadata, evaluation JSON, training counts, and—when the ignored local `.local-notes/demo-assets-r9` set exists—eight balanced, attributed validation-partition replay clips. It never includes the locked evaluation holdout, full dataset audio, dataset manifests, split rows, feature caches, or training score CSVs. Keep the ZIP and source clips out of Git.
 
-Upload that archive to private HTTPS object storage. Vercel Blob is supported directly: link the correct Vercel project, create a private store, and upload the ignored archive:
+Upload the archive to private HTTPS object storage. The current Vercel project uses a private Blob store; upload the ignored archive with the authenticated Vercel CLI:
 
 ```powershell
-npx --yes vercel@latest blob create-store voiceguard-models --access private --yes
-npx --yes vercel@latest blob put .local-notes\deployment\voiceguard-runtime-r8.zip --access private
+npx --yes --package vercel@64.7.0 vercel --global-config .local-notes/vercel-cli blob put .local-notes/deployment/voiceguard-runtime-r9-demo.zip --access private --pathname voiceguard/runtime-r9-demo.zip
 ```
 
 Keep the private URL printed by `blob put` for `VOICEGUARD_ARTIFACTS_URL`. When a private Blob store is connected to the Vercel project, the app prefers Vercel's short-lived OIDC token and falls back to the store's `BLOB_READ_WRITE_TOKEN`; either token is sent only to `*.private.blob.vercel-storage.com`. See Vercel's [private Blob authentication guide](https://vercel.com/docs/vercel-blob/private-storage).
@@ -30,7 +29,7 @@ Configure the Vercel project with:
 | `VOICEGUARD_ARTIFACTS_SHA256` | The digest printed by the packaging command. |
 | `VOICEGUARD_ARTIFACTS_TOKEN` | Optional bearer token for other private HTTPS storage. Private Vercel Blob uses project OIDC or its connected Blob token automatically. |
 
-Set these as Vercel environment variables for Preview and Production. Do not put the values in Git or expose the bundle URL in application logs. The app downloads the bundle into Vercel's writable `/tmp`, validates the checksum and exact allowed file list, then loads model weights from that directory. A missing URL, invalid digest, bad archive, or missing PostgreSQL URL fails startup clearly instead of serving unscored results.
+Set the variables only in the environment you intend to update. For a Preview-only update, keep the existing Production variables on their current artifact and add the new URL and digest to Preview scope only. Do not put values in Git or expose the private bundle URL in application logs. The app downloads the bundle into Vercel's writable `/tmp`, validates the checksum, file list, labels, attribution, and every replay clip hash, then loads the models and demo audio from that directory. A missing URL, invalid digest, bad archive, or missing PostgreSQL URL fails startup clearly instead of serving unscored results.
 
 Treat database passwords and Supabase secret API keys as secrets: enter them only in Supabase/Vercel settings, never in Git or chat. If either was shared, rotate it before using the project for Production. A Supabase `sb_secret_...` key grants elevated project data access; it is not a PostgreSQL connection string or a Supabase Management API token, and must never be stored in this app.
 
@@ -48,7 +47,7 @@ After Vercel has built a Preview deployment, visit `/api/health`. It must return
 
 Live Check and Call Monitor use the FastAPI `/ws/live` endpoint. Vercel's WebSocket knowledge-base article says Functions natively support WebSockets, while its Limits page still says Functions cannot act as a WebSocket server. A Preview must prove microphone streaming, scoring windows, session save, and reconnect/stop behavior before relying on those pages. If the Preview does not upgrade `/ws/live`, host the FastAPI service on a WebSocket-capable Python host; this source cannot honestly promise live streaming without that test.
 
-The public repository excludes demo audio and manifests, so Demo Replay has no hosted samples until separately provisioned. Microphone live monitoring and uploaded-file analysis use the bundled model artifacts and do not require the training dataset.
+The public repository excludes demo audio and manifests. The replay picker is enabled only when the verified private bundle contains its attributed development clips; otherwise the API returns a clear unavailable response and the UI disables replay. These examples also informed threshold selection, so they are not independent accuracy evidence. Microphone live monitoring and uploaded-file analysis use the bundled model artifacts and do not require the training dataset.
 
 ## Earlier Preview failure notes (superseded by the current status below)
 
@@ -81,3 +80,9 @@ The existing `voicegaurd` project in team `ujjwal21822s-projects` is live at [ht
 Production sign-up/login passed with disposable accounts and the test accounts were deleted. Generated-tone uploads through both model profiles returned a score and were saved in History. An authenticated `/ws/live` session accepted PCM frames, emitted one scored window, returned a summary, and saved the session. Deleting the disposable account returned HTTP `200` and removed its three temporary records. These smoke tests prove the deployed pipeline and persistence only; the tone is not speech and does not validate model accuracy. A direct Production Demo Replay check returned HTTP `503` from `/api/demo/samples` with `Demo holdout manifest is unavailable`. The manifest is under excluded `data/`, and its FLAC files are under excluded `LA/`; the deployed app therefore has no samples to list or replay. This is intentional to keep the locked evaluation holdout and audio out of the deployment. A separately approved, non-holdout demo set is needed before enabling hosted Demo Replay.
 
 A later Vercel runtime log showed one `sfo1` Python cold start failing while extracting NumPy/SciPy with `No space left on device`; the matching log was for `/api/auth/me`, not a captured sign-up/login POST. The Python function is now pinned to `bom1` (Mumbai), where the preceding deployment initialized successfully. Production was redeployed as `dpl_Gc5EBJhwzZcZqkekP2uyS19n9C8t`; live health, auth, both generated-tone upload profiles, and an authenticated tone-stream session passed. Vercel reported a 437.75 MB dependency bundle, so reliability across future cold starts remains **NOT VERIFIED**. Real-speech accuracy and physical mic/tab capture remain **NOT VERIFIED**. The deployed `/api/health` confirms model loading but does not prove inference accuracy. The PostgreSQL owner password and Supabase secret API key previously shared in chat remain unrotated, though the app now uses the restricted database role. Do not put either value in Git or documentation.
+
+## R9 Demo Replay Preview — 2026-10-21
+
+The `codex/frontend-pages-naming` Preview for commit `95830a76c22756df464e2f8a47402692e6256c8e` is `READY` at [voicegaurd-ba1rqs4rx](https://voicegaurd-ba1rqs4rx-ujjwal21822s-projects.vercel.app). Its protected health route returned `ready=true`, `database_connected=true`, `model_loaded=true`, and both profiles available. The private runtime bundle contains the model artifacts plus eight attributed, balanced ASVspoof validation clips; the locked evaluation holdout and full dataset audio are not included. The Vercel artifact URL and checksum variables are scoped to Preview. Production remains on its previous deployment and artifact.
+
+Authenticated hosted smoke check: disposable sign-up `201`; `/api/demo/samples` `200` with eight entries and no labels; authenticated audio `GET` `200` with `audio/flac`; `/api/demo/analyze/{id}` `200` with a model score and the label revealed after analysis; History `200` with one saved Demo row; disposable account deletion `200`. These checks establish the hosted replay flow and model execution, not model accuracy. Microphone/shared-tab device capture and representative speech accuracy remain **NOT VERIFIED**.

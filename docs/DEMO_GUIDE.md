@@ -2,9 +2,10 @@
 
 ## Start
 
-1. Confirm this checkout has its ignored local model artifacts and dataset/demo files. The public repository does not contain them, so a clean clone cannot score audio by itself.
-2. From the repository root, run `python scripts/run_app.py` and open `http://127.0.0.1:8000/`.
-3. Create or sign in to a local account. Local SQLite persists accounts and analysis history under the ignored `data/` directory.
+1. Confirm this checkout has its ignored local model artifacts, `data/manifests/asvspoof_la_val.csv`, and source audio under `LA/`. A clean clone does not contain these research artifacts.
+2. If `.local-notes/demo-assets-r9/manifest.csv` is missing, run `.venv\Scripts\python.exe scripts\prepare_demo_assets.py`. This prepares eight attributed replay clips from the validation partition and never uses the locked evaluation holdout. The script refuses to overwrite an existing demo set.
+3. From the repository root, run `.venv\Scripts\python.exe scripts\run_app.py` and open `http://127.0.0.1:8000/`.
+4. Create or sign in to a local account. Local SQLite persists accounts and analysis history under the ignored `data/` directory.
 
 ## Demonstrate a recorded sample
 
