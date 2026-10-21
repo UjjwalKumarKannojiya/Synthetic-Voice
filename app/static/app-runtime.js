@@ -253,6 +253,27 @@
     }
   }
 
+  function showAsvspoofDomainWarning(model) {
+    const main = document.querySelector("main");
+    if (!main || activeProfile !== "asvspoof_la_balanced2500" || document.querySelector("#asvspoof-domain-warning")) return;
+    const warning = document.createElement("aside");
+    warning.id = "asvspoof-domain-warning";
+    warning.className = "mx-4 mt-4 rounded-xl border border-verdict-uncertain-border bg-verdict-uncertain-surface p-4 text-sm text-on-surface";
+    warning.setAttribute("role", "note");
+    const title = document.createElement("strong");
+    title.className = "block font-semibold text-verdict-uncertain-base";
+    title.textContent = "Cross-domain reliability warning";
+    const detail = document.createElement("p");
+    detail.className = "mt-1";
+    if (model.model_version === "asvspoof_la_mfcc_svm_balanced2500_seed42") {
+      detail.textContent = "In a project diagnostic on re-recorded audio, this model classified all 408 bona fide clips as synthetic at its saved threshold. That split was previously screened during development, so this is a warning signal rather than an independent accuracy estimate. Do not rely on this verdict for microphone or re-recorded speech; no adjusted threshold has been validated.";
+    } else {
+      detail.textContent = "There is no verified re-recorded-audio evaluation for this model artifact. Scores are research estimates and may not transfer to microphone, room, codec, or re-recording conditions.";
+    }
+    warning.append(title, detail);
+    main.prepend(warning);
+  }
+
   function audioSocketUrl() {
     return `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/ws/live`;
   }
@@ -1029,6 +1050,7 @@
     window.voiceguardBand = Number(model.uncertain_band);
     window.voiceguardWindow = Number(model.window_s);
     window.voiceguardSampleRate = Number(model.sample_rate);
+    showAsvspoofDomainWarning(model);
     replaceText("16 kHz · Mono PCM (Linear-16)", `${Number(model.sample_rate).toLocaleString()} Hz · mono PCM16`);
     replaceText("ws://localhost:8000/ws/live", audioSocketUrl());
     replaceText("Async-Thread-01 (GPU: 0)", "CPU inference · latency measured per window");
