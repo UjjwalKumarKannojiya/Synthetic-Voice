@@ -80,8 +80,32 @@
     const style = document.createElement("style");
     style.textContent = `
       #voiceguard-mobile-nav{display:none}
+      html{
+        min-height:100%;
+        overflow-x:hidden;
+        overflow-y:auto!important;
+        overscroll-behavior-y:auto!important;
+        scrollbar-width:thin;
+      }
+      body{
+        min-height:100vh;
+        min-height:100dvh;
+        height:auto!important;
+        overflow:visible!important;
+        overscroll-behavior-y:auto!important;
+      }
+      aside.fixed{
+        max-height:100vh;
+        max-height:100dvh;
+        overflow-y:auto;
+        overscroll-behavior-y:contain;
+        scrollbar-width:thin;
+      }
+      ::-webkit-scrollbar{display:block!important;width:10px;height:10px}
+      ::-webkit-scrollbar-thumb{border:2px solid transparent;border-radius:8px;background:rgba(100,116,139,.48);background-clip:content-box}
       @media(max-width:767px){
-        html,body{width:100%;max-width:100vw;overflow-x:hidden}
+        html{width:100%;max-width:100%;overflow-x:hidden!important;overflow-y:auto!important}
+        body{width:100%;max-width:100%;overflow-x:visible!important;overflow-y:visible!important}
         aside{display:none!important}
         .pl-\\[240px\\]{box-sizing:border-box;width:100%;max-width:100%;min-width:0;padding-left:0!important}
         header.fixed{left:0!important;right:0!important;width:100%;box-sizing:border-box;padding-left:1rem!important;padding-right:1rem!important}
