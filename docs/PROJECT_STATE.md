@@ -248,3 +248,26 @@ Remaining checks are Production inference using representative speech and its ac
 - Final regression after the split tooling change: `.venv\Scripts\python.exe -m pytest -q --basetemp .pytest-tmp-finish-all-20261021` → `72 passed, 2 warnings in 84.25s`; warnings are the existing librosa short-input `n_fft=1024` notices. `scripts\scan_no_mock.py` passed with 32 active files; `node --check app\static\app-runtime.js`, Python compilation for the changed code, and `git diff --check` passed.
 - Read-only Vercel API verification showed the branch Preview deployment for commit `bd80365d6c4a63c7c88f74c190f64eec7ab877e1` in `READY` state, and Production `READY` on `master` at `74644eb2ecb1388762419f42d334966a3512856e` with the `voicegaurd-delta.vercel.app` alias. `Invoke-WebRequest` to the Production health route returned an app JSON response once, then later timed out; the immutable deployment URL returned HTTP 200 Vercel authentication HTML. Authenticated `vercel curl` could not run: `npx --yes --package vercel@64.7.0 vercel --global-config .local-notes/vercel-cli curl /api/health` failed resolving `registry.npmjs.org` (`ENOTFOUND`). No deployment was made and no project dependency was installed.
 - After the final status/evaluation push (`a457fb1e5841f55302257e6db2aa6ba154467545`), read-only Vercel API polling observed its Preview transition from `BUILDING` to `READY` on `voicegaurd-ornia8kxe-ujjwal21822s-projects.vercel.app`; Production stayed `READY` on `master`. The preview health route remains **NOT VERIFIED** because the immutable URL is deployment-protected and the authenticated CLI check could not be installed from npm due DNS failure.
+
+## Cross-screen page scrolling — 2026-10-22
+
+- Source review found the shared page templates hid every WebKit scrollbar and set `overscroll-behavior:none` on `body`. The mobile shell also set `overflow-x:hidden` on both `html` and `body`. The hidden scrollbar removed the visible scroll affordance across every page; the shell did not explicitly preserve the root document's vertical scroll container.
+- Replaced the hidden-scrollbar rule in all seven page templates with a normal scrollbar size and bumped their shared runtime asset query to `20261022-scrollfix` so browsers request the updated responsive shell. Updated `app/static/app-runtime.js` so the document root scrolls vertically, the body stays in natural document flow, and the fixed desktop sidebar can scroll when its contents exceed a short viewport. At mobile widths the root retains vertical scrolling while horizontal overflow stays clipped at the document edge.
+- Root-cause search before the edit: `rg -l '::-webkit-scrollbar\{display:none;\}' app\static\pages`
+- Its output listed all seven affected templates: `call-monitor.html`, `dashboard.html`, `settings.html`, `live-check.html`, `analyze-file.html`, `model-and-evaluation.html`, and `history.html`.
+- Post-edit source checks: `rg -l '::-webkit-scrollbar\{width:10px;height:10px\}' app\static\pages` and `rg -l 'app-runtime\.js\?v=20261022-scrollfix' app\static\pages` each returned all seven page templates listed above. `rg -l '::-webkit-scrollbar\{display:none;\}' app\static\pages` returned no matches (`search_exit=1`).
+- Inspection command: `rg -n 'html\{|body\{|aside\.fixed|::-webkit-scrollbar|@media\(max-width:767px\)' app\static\app-runtime.js`
+- Output:
+
+  ```text
+  83:      html{
+  90:      body{
+  97:      aside.fixed{
+  104:      ::-webkit-scrollbar{display:block!important;width:10px;height:10px}
+  105:      ::-webkit-scrollbar-thumb{border:2px solid transparent;border-radius:8px;background:rgba(100,116,139,.48);background-clip:content-box}
+  106:      @media(max-width:767px){
+  107:        html{width:100%;max-width:100%;overflow-x:hidden!important;overflow-y:auto!important}
+  108:        body{width:100%;max-width:100%;overflow-x:visible!important;overflow-y:visible!important}
+  ```
+
+- Browser/device acceptance across desktop, narrow mobile, touch scrolling, and short landscape viewports is **NOT VERIFIED** in this pass. No application or model behavior was changed.
